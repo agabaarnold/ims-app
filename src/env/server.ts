@@ -1,0 +1,11 @@
+import { createEnv } from "@t3-oss/env-core";
+import { z } from "zod";
+
+export const serverEnv = createEnv({
+  server: {
+    DATABASE_URL: z.url(),
+    NODE_ENV: z.enum(["development", "production"]).default("production"),
+  },
+  runtimeEnv: process.env,
+  emptyStringAsUndefined: true,
+});
