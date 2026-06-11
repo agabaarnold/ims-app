@@ -8,23 +8,24 @@ datasource db {
 }
 
 model User {
-  id             String          @id
-  name           String
-  email          String
-  emailVerified  Boolean         @default(false)
-  image          String?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  role           String?
-  banned         Boolean?        @default(false)
-  banReason      String?
-  banExpires     DateTime?
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  role          String?
+  banned        Boolean?  @default(false)
+  banReason     String?
+  banExpires    DateTime?
 
   sessions       Session[]
   accounts       Account[]
   stockMovements StockMovement[]
   orders         Order[]
   purchaseOrders PurchaseOrder[]
+  stockTransfers StockTransfer[]
 
   @@unique([email])
   @@map("user")
@@ -202,6 +203,8 @@ model StockTransfer {
   createdById     String
   createdAt       DateTime            @default(now())
   completedAt     DateTime?
+  
+  createdBy       User                @relation(fields: [createdById], references: [id])
 
   @@map("stockTransfer")
 }
