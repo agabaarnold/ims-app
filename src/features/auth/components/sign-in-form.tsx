@@ -54,17 +54,25 @@ export default function SignInForm() {
     });
 
     const handleGoogleLogin = async () => {
-        await authClient.signIn.social({
-            callbackURL: search.redirect ?? "/",
-            provider: "google",
-        });
+        try {
+            await authClient.signIn.social({
+                callbackURL: search.redirect ?? "/",
+                provider: "google",
+            });
+        } catch {
+            toast.error("Failed to sign in with Google");
+        }
     };
 
     const handleGithubLogin = async () => {
-        await authClient.signIn.social({
-            callbackURL: search.redirect ?? "/",
-            provider: "github",
-        });
+        try {
+            await authClient.signIn.social({
+                callbackURL: search.redirect ?? "/",
+                provider: "github",
+            });
+        } catch {
+            toast.error("Failed to sign in with GitHub");
+        }
     };
 
     const isGoogle = authClient.isLastUsedLoginMethod("google");
