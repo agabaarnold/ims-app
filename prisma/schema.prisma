@@ -15,7 +15,7 @@ model User {
   image         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  role          String?
+  role          String    @default("staff")
   banned        Boolean?  @default(false)
   banReason     String?
   banExpires    DateTime?

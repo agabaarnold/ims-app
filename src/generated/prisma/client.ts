@@ -102,6 +102,11 @@ export type StockTransfer = Prisma.StockTransferModel
  */
 export type StockTransferItem = Prisma.StockTransferItemModel
 /**
+ * Model Customer
+ * 
+ */
+export type Customer = Prisma.CustomerModel
+/**
  * Model Order
  * 
  */
