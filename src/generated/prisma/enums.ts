@@ -9,7 +9,46 @@
 * 🟢 You can import this file directly.
 */
 
+export const MovementType = {
+  RECEIVE: 'RECEIVE',
+  SELL: 'SELL',
+  ADJUST: 'ADJUST',
+  TRANSFER_IN: 'TRANSFER_IN',
+  TRANSFER_OUT: 'TRANSFER_OUT',
+  RETURN: 'RETURN'
+} as const
+
+export type MovementType = (typeof MovementType)[keyof typeof MovementType]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const TransferStatus = {
+  PENDING: 'PENDING',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type TransferStatus = (typeof TransferStatus)[keyof typeof TransferStatus]
+
+
+export const OrderStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  PICKING: 'PICKING',
+  SHIPPED: 'SHIPPED',
+  DELIVERED: 'DELIVERED',
+  CANCELLED: 'CANCELLED',
+  RETURNED: 'RETURNED'
+} as const
+
+export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
+
+
+export const POStatus = {
+  DRAFT: 'DRAFT',
+  SENT: 'SENT',
+  PARTIAL: 'PARTIAL',
+  RECEIVED: 'RECEIVED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type POStatus = (typeof POStatus)[keyof typeof POStatus]
