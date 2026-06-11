@@ -1,6 +1,6 @@
 import { IconAlertTriangle, IconChevronDown } from "@tabler/icons-react";
 import { type ErrorComponentProps, useRouter } from "@tanstack/react-router";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Button } from "../ui/button";
 import {
     Collapsible,
@@ -24,9 +24,8 @@ export default function DefaultErrorBoundary({
     const message = isDev
         ? rawMessage
         : "An unexpected error occurred. Please try again.";
-    const stack = error instanceof Error ? error.stack : undefined;
 
-    async function handleRetry() {
+    const handleRetry = useCallback(async () => {
         setIsRetrying(true);
 
         try {
@@ -35,7 +34,9 @@ export default function DefaultErrorBoundary({
         } finally {
             setIsRetrying(false);
         }
-    }
+    }, [reset, router]);
+
+    const componentStack = info?.componentStack;
 
     return (
         <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-4">
@@ -81,7 +82,7 @@ export default function DefaultErrorBoundary({
                 )}
 
                 {/* Stack trace - dev only */}
-                {isDev && stack && (
+                {isDev && componentStack && (
                     <Collapsible
                         onOpenChange={setDetailsOpen}
                         open={detailsOpen}
@@ -102,7 +103,7 @@ export default function DefaultErrorBoundary({
                         <CollapsibleContent>
                             <div className="mt-1 max-h-60 overflow-auto rounded-md border border-border bg-muted/30 p-4">
                                 <pre className="whitespace-pre-wrap break-all font-mono text-muted-foreground text-xs leading-relaxed">
-                                    {stack}
+                                    {componentStack}
                                 </pre>
                             </div>
                         </CollapsibleContent>
