@@ -135,7 +135,6 @@ model Product {
   stockMovements     StockMovement[]
   stockTransferItems StockTransferItem[]
 
-  @@index([sku])
   @@index([categoryId])
   @@index([supplierId])
   @@map("product")
