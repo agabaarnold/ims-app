@@ -41,10 +41,10 @@ export const registerSchema = z.object({
 });
 export type RegisterInput = z.infer<typeof registerSchema>;
 
-export const forgotPasswordShema = z.object({
+export const forgotPasswordSchema = z.object({
     email: z.email(),
 });
-export type ForgotPasswordInput = z.infer<typeof forgotPasswordShema>;
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 
 export const resetPasswordSchema = z
     .object({
