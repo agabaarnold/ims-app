@@ -28,6 +28,9 @@ const transporter = createTransport({
     host: serverEnv.SMTP_HOST,
     port: serverEnv.SMTP_PORT,
     secure: serverEnv.SMTP_PORT === 465,
+    connectionTimeout: 10_000,
+    greetingTimeout: 10_000,
+    socketTimeout: 20_000,
 });
 
 function getFromAddress() {
