@@ -14,7 +14,7 @@ import { authClient } from "#/lib/auth-client";
 import type { ForgotPasswordInput } from "../schema";
 import { forgotPasswordShema } from "../schema";
 
-export default function ForgotPasswordForm () {
+export default function ForgotPasswordForm() {
     const defaultValues: ForgotPasswordInput = { email: "" };
 
     const form = useAppForm({
@@ -83,4 +83,4 @@ export default function ForgotPasswordForm () {
             </CardContent>
         </Card>
     );
-};
+}
