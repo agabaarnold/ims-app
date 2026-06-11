@@ -15,7 +15,7 @@ export function FormCheckbox ({ label }: FormCheckboxProps) {
                 checked={field.state.value}
                 id={field.name}
                 name={field.name}
-                onCheckedChange={(e) => field.handleChange(e)}
+                onCheckedChange={(checked) => field.handleChange(checked)}
             />
             <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
         </Field>
