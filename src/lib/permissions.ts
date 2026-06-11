@@ -14,7 +14,8 @@ const statement = {
 
 export const ac = createAccessControl(statement);
 
-const adminRole = ac.newRole({
+const superAdminRole = ac.newRole({
+    ...adminAc.statements,
     product: ["create", "read", "update", "delete"],
     category: ["create", "read", "update", "delete"],
     supplier: ["create", "read", "update", "delete"],
@@ -22,7 +23,18 @@ const adminRole = ac.newRole({
     order: ["create", "read", "update", "approve", "cancel"],
     purchaseOrder: ["create", "read", "update", "approve", "cancel"],
     report: ["read", "export"],
+    user: [...adminAc.statements.user, "impersonate-admins"],
+});
+
+const adminRole = ac.newRole({
     ...adminAc.statements,
+    product: ["create", "read", "update", "delete"],
+    category: ["create", "read", "update", "delete"],
+    supplier: ["create", "read", "update", "delete"],
+    inventory: ["read", "adjust", "transfer"],
+    order: ["create", "read", "update", "approve", "cancel"],
+    purchaseOrder: ["create", "read", "update", "approve", "cancel"],
+    report: ["read", "export"],
 });
 
 const managerRole = ac.newRole({
@@ -45,7 +57,8 @@ const staffRole = ac.newRole({
 });
 
 export const roles = {
+    superAdmin: superAdminRole,
     admin: adminRole,
     manager: managerRole,
-    staff: staffRole
+    staff: staffRole,
 } as const;
