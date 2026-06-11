@@ -14,7 +14,7 @@ import { authClient } from "#/lib/auth-client";
 import type { ResetPasswordInput } from "../schema";
 import { resetPasswordSchema } from "../schema";
 
-export default function ResetPasswordForm(){
+export default function ResetPasswordForm() {
     const navigate = useNavigate();
     const search = useSearch({ from: "/_auth/reset-password" });
 
@@ -46,6 +46,22 @@ export default function ResetPasswordForm(){
         }),
         validators: { onSubmit: resetPasswordSchema },
     });
+
+    if (!search?.token) {
+        return (
+            <Card className="w-full max-w-md">
+                <CardHeader className="text-center">
+                    <CardTitle className="font-semibold text-xl">
+                        Invalid Reset Link
+                    </CardTitle>
+                    <CardDescription>
+                        The password reset link is invalid or has expired.
+                        Please request a new password reset.
+                    </CardDescription>
+                </CardHeader>
+            </Card>
+        );
+    }
 
     return (
         <Card className="w-full max-w-md">
