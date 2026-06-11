@@ -8,7 +8,10 @@ export const Route = createFileRoute("/_auth/sign-in")({
         redirect: z
             .string()
             .refine(
-                (value) => value.startsWith("/") && !value.startsWith("//"),
+                (value) =>
+                    value.startsWith("/") &&
+                    !value.startsWith("//") &&
+                    !value.includes("\\"),
                 "Invalid redirect path"
             )
             .optional(),
