@@ -135,6 +135,9 @@ model Product {
   stockMovements     StockMovement[]
   stockTransferItems StockTransferItem[]
 
+  @@index([sku])
+  @@index([categoryId])
+  @@index([supplierId])
   @@map("product")
 }
 
@@ -153,15 +156,18 @@ model Warehouse {
 }
 
 model InventoryItem {
-  id          String    @id @default(cuid())
-  productId   String
-  product     Product   @relation(fields: [productId], references: [id])
-  warehouseId String
-  warehouse   Warehouse @relation(fields: [warehouseId], references: [id])
-  quantity    Int       @default(0)
-  updatedAt   DateTime  @updatedAt
+  id               String    @id @default(cuid())
+  productId        String
+  product          Product   @relation(fields: [productId], references: [id])
+  warehouseId      String
+  warehouse        Warehouse @relation(fields: [warehouseId], references: [id])
+  quantity         Int
+  reservedQuantity Int       @default(0)
+  updatedAt        DateTime  @updatedAt
 
   @@unique([productId, warehouseId])
+  @@index([warehouseId])
+  @@index([productId])
   @@map("inventoryItem")
 }
 
@@ -203,8 +209,8 @@ model StockTransfer {
   createdById     String
   createdAt       DateTime            @default(now())
   completedAt     DateTime?
-  
-  createdBy       User                @relation(fields: [createdById], references: [id])
+
+  createdBy User @relation(fields: [createdById], references: [id])
 
   @@map("stockTransfer")
 }
@@ -227,21 +233,36 @@ model StockTransferItem {
   @@map("stockTransferItem")
 }
 
+model Customer {
+  id String @id @default(cuid())
+
+  name    String
+  email   String?
+  phone   String?
+  address String?
+
+  orders Order[]
+
+  @@map("customer")
+}
+
 model Order {
-  id           String      @id @default(cuid())
-  orderNumber  String      @unique
-  status       OrderStatus @default(PENDING)
-  customerId   String? // optional — IMS may be B2B or internal
-  customerName String?
-  items        OrderItem[]
-  totalAmount  Decimal     @default(0) @db.Decimal(10, 2)
-  note         String?
-  createdById  String
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  id          String      @id @default(cuid())
+  orderNumber String      @unique
+  status      OrderStatus @default(PENDING)
+  customerId  String?
+  items       OrderItem[]
+  totalAmount Decimal     @default(0) @db.Decimal(10, 2)
+  note        String?
+  createdById String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
-  createdBy User @relation(fields: [createdById], references: [id])
+  createdBy User      @relation(fields: [createdById], references: [id])
+  customer  Customer? @relation(fields: [customerId], references: [id])
 
+  @@index([status])
+  @@index([createdAt])
   @@map("order")
 }
 
