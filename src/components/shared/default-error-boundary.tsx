@@ -1,6 +1,6 @@
 import { IconAlertTriangle, IconChevronDown } from "@tabler/icons-react";
 import { type ErrorComponentProps, useRouter } from "@tanstack/react-router";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { Button } from "../ui/button";
 import {
     Collapsible,
@@ -25,7 +25,7 @@ export default function DefaultErrorBoundary({
         ? rawMessage
         : "An unexpected error occurred. Please try again.";
 
-    const handleRetry = useCallback(async () => {
+    const handleRetry = async () => {
         setIsRetrying(true);
 
         try {
@@ -34,7 +34,7 @@ export default function DefaultErrorBoundary({
         } finally {
             setIsRetrying(false);
         }
-    }, [reset, router]);
+    };
 
     const componentStack = info?.componentStack;
 
