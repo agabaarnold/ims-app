@@ -53,17 +53,25 @@ export default function SignUpForm() {
     });
 
     const handleGoogleSignUp = async () => {
-        await authClient.signIn.social({
-            callbackURL: search.redirect ?? "/",
-            provider: "google",
-        });
+        try {
+            await authClient.signIn.social({
+                callbackURL: search.redirect ?? "/",
+                provider: "google",
+            }); 
+        } catch {
+            toast.error("Failed to sign up with Google");
+        }
     };
 
     const handleGithubSignUp = async () => {
-        await authClient.signIn.social({
-            callbackURL: search.redirect ?? "/",
-            provider: "github",
-        });
+        try {
+            await authClient.signIn.social({
+                callbackURL: search.redirect ?? "/",
+                provider: "github",
+            });
+        } catch {
+            toast.error("Failed to sign up with GitHub");
+        }
     };
 
     return (
