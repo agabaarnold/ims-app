@@ -5,5 +5,6 @@
     "ultracite/biome/react",
     "ultracite/biome/tanstack",
     "ultracite/biome/vitest"
-  ]
+  ],
+  "formatter": { "indentWidth": 4 }
 }
