@@ -49,7 +49,7 @@ export async function sendAuthEmail(payload: AuthEmailPayload) {
         await transporter.sendMail({
             from,
             html,
-            subject: "Invenease password reset",
+            subject: "InvenEase password reset",
             text: [
                 `Hi ${payload.name ?? "there"},`,
                 "",
