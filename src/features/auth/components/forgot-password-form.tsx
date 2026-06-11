@@ -12,7 +12,7 @@ import { FieldDescription, FieldGroup } from "#/components/ui/field";
 import { useAppForm } from "#/hooks/use-form";
 import { authClient } from "#/lib/auth-client";
 import type { ForgotPasswordInput } from "../schema";
-import { forgotPasswordShema } from "../schema";
+import { forgotPasswordSchema } from "../schema";
 
 export default function ForgotPasswordForm() {
     const defaultValues: ForgotPasswordInput = { email: "" };
