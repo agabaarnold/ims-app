@@ -16,9 +16,9 @@ export function getInitials(name: string) {
         .toUpperCase();
 }
 
-export function formatDate(value: Date) {
-    return new Intl.DateTimeFormat("en-UG", {
+export function formatDate(value: Date, locale = "en-UG") {
+    return new Intl.DateTimeFormat(locale, {
         dateStyle: "long",
         timeStyle: "short",
-    }).format(new Date(value));
+    }).format(value);
 }
