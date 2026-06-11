@@ -37,14 +37,12 @@ export default function DefaultErrorBoundary({
         }
     }
 
-    console.log(info)
-
     return (
         <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background px-4">
             {/* Subtle noise / grid backdrop */}
             <div
                 aria-hidden="true"
-                className="linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] mask-[radial-gradient(ellipse_80%_60%_at_50%_50%,black_30%,transparent_100%)] pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px), bg-size-[4rem_4rem] opacity-40"
+                className="mask-[radial-gradient(ellipse_80%_60%_at_50%_50%,black_30%,transparent_100%)] pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-size-[4rem_4rem] opacity-40"
             />
 
             <div className="relative z-10 flex w-full max-w-lg flex-col gap-8">
