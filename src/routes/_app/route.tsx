@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { getUserSession } from "#/features/auth/functions";
 
 export const Route = createFileRoute("/_app")({
@@ -7,7 +7,7 @@ export const Route = createFileRoute("/_app")({
         if (!session) {
             throw redirect({
                 to: "/sign-in",
-                search: { redirect: location.href },
+                search: { redirect: location.pathname },
             });
         }
 
@@ -17,5 +17,5 @@ export const Route = createFileRoute("/_app")({
 });
 
 function AppLayout() {
-    return <div>Hello "/_app"!</div>;
+    return <Outlet />;
 }
