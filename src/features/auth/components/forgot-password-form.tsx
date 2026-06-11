@@ -37,7 +37,7 @@ export default function ForgotPasswordForm() {
             mode: "submit",
             modeAfterSubmission: "blur",
         }),
-        validators: { onSubmit: forgotPasswordShema },
+        validators: { onSubmit: forgotPasswordSchema },
     });
 
     return (
