@@ -1,10 +1,13 @@
-import { IconCaretUpDown } from "@tabler/icons-react";
-import { useRouteContext } from "@tanstack/react-router";
+import { IconCaretUpDown, IconLogout2 } from "@tabler/icons-react";
+import { useNavigate, useRouteContext } from "@tanstack/react-router";
+import { toast } from "react-hot-toast";
 import { useIsMobile } from "#/hooks/use-mobile";
+import { authClient } from "#/lib/auth-client";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuGroup,
+    DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
@@ -13,10 +16,22 @@ import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 import UserAvatar from "./user-avatar";
 
 function NavUser() {
+    const navigate = useNavigate();
     const { session } = useRouteContext({ from: "/_app" });
     const user = session.user;
 
     const isMobile = useIsMobile();
+
+    const handleLogout = async () => {
+        await authClient.signOut({
+            fetchOptions: {
+                onSuccess: () => {
+                    toast.success("Logged out successfully");
+                    navigate({ to: "/sign-in", replace: true });
+                },
+            },
+        });
+    };
 
     return (
         <SidebarMenu>
@@ -45,6 +60,10 @@ function NavUser() {
                             </DropdownMenuLabel>
 
                             <DropdownMenuSeparator />
+
+                            <DropdownMenuItem onClick={handleLogout}>
+                                <IconLogout2 /> Logout
+                            </DropdownMenuItem>
                         </DropdownMenuGroup>
                     </DropdownMenuContent>
                 </DropdownMenu>
