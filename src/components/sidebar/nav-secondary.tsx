@@ -10,16 +10,17 @@ import {
 
 function NavSecondary() {
     return (
-        <SidebarGroup>
+        <SidebarGroup className="mt-auto">
             <SidebarGroupContent>
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton
                             render={
                                 <Link to="/settings">
-                                    <IconSettings /> Settings
+                                    <IconSettings /> <span>Settings</span>
                                 </Link>
                             }
+                            size="sm"
                         />
                     </SidebarMenuItem>
                 </SidebarMenu>
