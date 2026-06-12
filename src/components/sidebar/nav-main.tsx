@@ -3,7 +3,9 @@ import { SidebarGroup, SidebarGroupLabel } from "../ui/sidebar";
 function NavMain() {
     return (
         <SidebarGroup>
-            <SidebarGroupLabel className="uppercase">Navigation</SidebarGroupLabel>
+            <SidebarGroupLabel className="uppercase">
+                Navigation
+            </SidebarGroupLabel>
         </SidebarGroup>
     );
 }

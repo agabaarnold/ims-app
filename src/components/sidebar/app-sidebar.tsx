@@ -10,9 +10,9 @@ import {
     SidebarMenuItem,
     SidebarRail,
 } from "../ui/sidebar";
-import NavUser from "./nav-user";
 import NavMain from "./nav-main";
 import NavSecondary from "./nav-secondary";
+import NavUser from "./nav-user";
 
 function AppSidebar() {
     return (

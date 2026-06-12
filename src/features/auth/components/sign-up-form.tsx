@@ -57,7 +57,7 @@ export default function SignUpForm() {
             await authClient.signIn.social({
                 callbackURL: search.redirect ?? "/",
                 provider: "google",
-            }); 
+            });
         } catch {
             toast.error("Failed to sign up with Google");
         }

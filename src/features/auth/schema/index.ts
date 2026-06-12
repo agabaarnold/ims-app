@@ -3,7 +3,7 @@ import { z } from "zod";
 const PASSWORD_MIN_LENGTH = 8;
 const NAME_MIN_LENGTH = 4;
 
-const whiteSpaceRegex = /\s/u
+const whiteSpaceRegex = /\s/u;
 
 export const passwordSchema = z
     .string()
@@ -19,7 +19,10 @@ export const passwordSchema = z
         /[^A-Za-z0-9\s]/u,
         "Password must contain at least one special character"
     )
-    .refine((v) => !whiteSpaceRegex.test(v), "Password must not contain whitespace");
+    .refine(
+        (v) => !whiteSpaceRegex.test(v),
+        "Password must not contain whitespace"
+    );
 
 export const loginSchema = z.object({
     email: z.email(),
