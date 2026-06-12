@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/a11y/useSemanticElements: It is intentional */
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { IconChevronRight, IconDots } from "@tabler/icons-react";
@@ -69,6 +70,7 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
             className={cn("font-normal text-foreground", className)}
             data-slot="breadcrumb-page"
             role="link"
+            tabIndex={-1}
             {...props}
         />
     );

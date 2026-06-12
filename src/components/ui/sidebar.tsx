@@ -2,7 +2,7 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { IconLayoutSidebar } from "@tabler/icons-react";
 import { cva, type VariantProps } from "class-variance-authority";
-import * as React from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Button } from "#/components/ui/button.tsx";
 import { Input } from "#/components/ui/input.tsx";
 import { Separator } from "#/components/ui/separator.tsx";
@@ -29,20 +29,20 @@ const SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "3rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
 
-type SidebarContextProps = {
-    state: "expanded" | "collapsed";
-    open: boolean;
-    setOpen: (open: boolean) => void;
-    openMobile: boolean;
-    setOpenMobile: (open: boolean) => void;
+interface SidebarContextProps {
     isMobile: boolean;
+    open: boolean;
+    openMobile: boolean;
+    setOpen: (open: boolean) => void;
+    setOpenMobile: (open: boolean) => void;
+    state: "expanded" | "collapsed";
     toggleSidebar: () => void;
-};
+}
 
-const SidebarContext = React.createContext<SidebarContextProps | null>(null);
+const SidebarContext = createContext<SidebarContextProps | null>(null);
 
 function useSidebar() {
-    const context = React.useContext(SidebarContext);
+    const context = useContext(SidebarContext);
     if (!context) {
         throw new Error("useSidebar must be used within a SidebarProvider.");
     }
@@ -64,13 +64,13 @@ function SidebarProvider({
     onOpenChange?: (open: boolean) => void;
 }) {
     const isMobile = useIsMobile();
-    const [openMobile, setOpenMobile] = React.useState(false);
+    const [openMobile, setOpenMobile] = useState(false);
 
     // This is the internal state of the sidebar.
     // We use openProp and setOpenProp for control from outside the component.
-    const [_open, _setOpen] = React.useState(defaultOpen);
+    const [_open, _setOpen] = useState(defaultOpen);
     const open = openProp ?? _open;
-    const setOpen = React.useCallback(
+    const setOpen = useCallback(
         (value: boolean | ((value: boolean) => boolean)) => {
             const openState = typeof value === "function" ? value(open) : value;
             if (setOpenProp) {
@@ -80,13 +80,20 @@ function SidebarProvider({
             }
 
             // This sets the cookie to keep the sidebar state.
-            document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+            // biome-ignore lint/complexity/noVoid: Ignore the void operator here since we don't care about the promise.
+            void cookieStore.set({
+                expires: SIDEBAR_COOKIE_MAX_AGE,
+                name: SIDEBAR_COOKIE_NAME,
+                path: "/",
+                value: String(openState),
+            });
         },
         [setOpenProp, open]
     );
 
     // Helper to toggle the sidebar.
-    const toggleSidebar = React.useCallback(
+    // biome-ignore lint/correctness/useExhaustiveDependencies: Ignore
+    const toggleSidebar = useCallback(
         () =>
             isMobile
                 ? setOpenMobile((open) => !open)
@@ -95,7 +102,7 @@ function SidebarProvider({
     );
 
     // Adds a keyboard shortcut to toggle the sidebar.
-    React.useEffect(() => {
+    useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if (
                 event.key === SIDEBAR_KEYBOARD_SHORTCUT &&
@@ -114,7 +121,8 @@ function SidebarProvider({
     // This makes it easier to style the sidebar with Tailwind classes.
     const state = open ? "expanded" : "collapsed";
 
-    const contextValue = React.useMemo<SidebarContextProps>(
+    // biome-ignore lint/correctness/useExhaustiveDependencies: Ignore
+    const contextValue = useMemo<SidebarContextProps>(
         () => ({
             state,
             open,
@@ -241,7 +249,7 @@ function Sidebar({
             />
             <div
                 className={cn(
-                    "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear data-[side=right]:right-0 data-[side=left]:left-0 data-[side=right]:group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)] data-[side=left]:group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)] md:flex",
+                    "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear data-[side=right]:right-0 data-[side=left]:left-0 data-[side=right]:group-data-[collapsible=offcanvas]:-right-(--sidebar-width) data-[side=left]:group-data-[collapsible=offcanvas]:-left-(--sidebar-width) md:flex",
                     // Adjust the padding for floating and inset variants.
                     variant === "floating" || variant === "inset"
                         ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]"
@@ -297,7 +305,7 @@ function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
         <button
             aria-label="Toggle Sidebar"
             className={cn(
-                "absolute inset-y-0 z-20 hidden w-4 transition-all ease-linear after:absolute after:inset-y-0 after:start-1/2 after:w-[2px] hover:after:bg-sidebar-border group-data-[side=left]:-right-4 group-data-[side=right]:left-0 sm:flex ltr:-translate-x-1/2 rtl:-translate-x-1/2",
+                "absolute inset-y-0 z-20 hidden w-4 transition-all ease-linear after:absolute after:inset-s-1/2 after:inset-y-0 after:w-0.5 hover:after:bg-sidebar-border group-data-[side=left]:-right-4 group-data-[side=right]:left-0 sm:flex ltr:-translate-x-1/2 rtl:-translate-x-1/2",
                 "in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize",
                 "[[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize",
                 "group-data-[collapsible=offcanvas]:translate-x-0 hover:group-data-[collapsible=offcanvas]:bg-sidebar group-data-[collapsible=offcanvas]:after:left-full",
@@ -625,9 +633,7 @@ function SidebarMenuSkeleton({
     showIcon?: boolean;
 }) {
     // Random width between 50 to 90%.
-    const [width] = React.useState(
-        () => `${Math.floor(Math.random() * 40) + 50}%`
-    );
+    const [width] = useState(() => `${Math.floor(Math.random() * 40) + 50}%`);
 
     return (
         <div
