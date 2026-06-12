@@ -2,7 +2,6 @@ import type { UserWithRole } from "better-auth/plugins";
 import { getInitials } from "#/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
-
 interface UserAvatarProps {
     user: UserWithRole;
 }
@@ -14,7 +13,9 @@ function UserAvatar({ user }: UserAvatarProps) {
         <>
             <Avatar>
                 <AvatarImage alt={user.name} src={user.image ?? undefined} />
-                <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
+                <AvatarFallback className="rounded-lg">
+                    {initials}
+                </AvatarFallback>
             </Avatar>
 
             <div className="grid flex-1 text-left text-sm leading-tight">

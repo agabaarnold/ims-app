@@ -19,7 +19,7 @@
   },
   "iconLibrary": "tabler",
   "rtl": false,
-  "menuColor": "default-translucent",
-  "menuAccent": "subtle",
+  "menuColor": "default",
+  "menuAccent": "bold",
   "registries": {}
 }

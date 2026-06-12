@@ -6,7 +6,7 @@ interface FormCheckboxProps {
     label: string;
 }
 
-export function FormCheckbox ({ label }: FormCheckboxProps) {
+export function FormCheckbox({ label }: FormCheckboxProps) {
     const field = useFieldContext<boolean>();
 
     return (
@@ -20,4 +20,4 @@ export function FormCheckbox ({ label }: FormCheckboxProps) {
             <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
         </Field>
     );
-};
+}
