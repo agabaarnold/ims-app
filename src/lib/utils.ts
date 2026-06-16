@@ -22,3 +22,10 @@ export function formatDate(value: Date, locale = "en-UG") {
         timeStyle: "short",
     }).format(value);
 }
+
+export function formatCurrency(value: number | string, locale = "en-UG") {
+    return new Intl.NumberFormat(locale, {
+        style: "currency",
+        currency: "UGX",
+    }).format(Number(value));
+}
