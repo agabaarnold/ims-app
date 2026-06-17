@@ -3,6 +3,7 @@ import { z } from "zod";
 export const getProductsSchema = z.object({
     page: z.number().int().min(1),
     pageSize: z.number().int().min(1),
+    search:z.string().default(""),
 });
 export type GetProductsInput = z.infer<typeof getProductsSchema>;
 
@@ -39,8 +40,3 @@ export type UpdateProductInput = z.infer<typeof updateProductSchema>;
 
 export const archiveProductSchema = getProductSchema;
 export type ArchiveProductInput = z.infer<typeof archiveProductSchema>;
-
-export const searchProductsSchema = z.object({
-    search: z.string(),
-});
-export type SearchProductsInput = z.infer<typeof searchProductsSchema>;
