@@ -13,25 +13,28 @@ export const Route = createFileRoute("/_app/products/")({
     loaderDeps: ({ search }) => ({
         page: search.page,
         pageSize: search.pageSize,
+        search: search.search,
     }),
     loader: ({ context: { queryClient }, deps }) =>
         queryClient.ensureQueryData(
             getProductsQuery({
                 page: deps.page,
                 pageSize: deps.pageSize,
+                search: deps.search,
             })
         ),
     validateSearch: z.object({
         page: z.number().int().min(1).default(1).catch(1),
         pageSize: z.number().int().min(5).max(100).default(10).catch(10),
+        search: z.string().default(""),
     }),
 });
 
 function ProductPage() {
-    const { page, pageSize } = Route.useSearch();
+    const { page, pageSize, search } = Route.useSearch();
     const {
         data: { products, total, pageCount },
-    } = useSuspenseQuery(getProductsQuery({ page, pageSize }));
+    } = useSuspenseQuery(getProductsQuery({ page, pageSize, search }));
 
     return (
         <div className="space-y-8">
@@ -55,6 +58,7 @@ function ProductPage() {
                     page={page}
                     pageCount={pageCount}
                     pageSize={pageSize}
+                    search={search}
                     total={total}
                 />
             </Suspense>
