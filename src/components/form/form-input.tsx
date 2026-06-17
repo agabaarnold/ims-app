@@ -6,7 +6,10 @@ import { useFieldContext } from "#/hooks/use-form-context";
 interface FormInputProps {
     label: string;
     placeholder: string;
-    type: Exclude<ComponentProps<"input">["type"], "password" | "checkbox">;
+    type: Exclude<
+        ComponentProps<"input">["type"],
+        "password" | "checkbox" | "number"
+    >;
 }
 
 export function FormInput({ label, placeholder, type }: FormInputProps) {
