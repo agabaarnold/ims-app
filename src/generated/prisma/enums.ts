@@ -52,3 +52,36 @@ export const POStatus = {
 } as const
 
 export type POStatus = (typeof POStatus)[keyof typeof POStatus]
+
+
+export const AuditAction = {
+  CREATE: 'CREATE',
+  UPDATE: 'UPDATE',
+  DELETE: 'DELETE',
+  APPROVE: 'APPROVE',
+  CANCEL: 'CANCEL',
+  RECEIVE: 'RECEIVE',
+  TRANSFER: 'TRANSFER',
+  ADJUST: 'ADJUST'
+} as const
+
+export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction]
+
+
+export const AuditEntityType = {
+  USER: 'USER',
+  CATEGORY: 'CATEGORY',
+  SUPPLIER: 'SUPPLIER',
+  PRODUCT: 'PRODUCT',
+  WAREHOUSE: 'WAREHOUSE',
+  INVENTORY_ITEM: 'INVENTORY_ITEM',
+  STOCK_MOVEMENT: 'STOCK_MOVEMENT',
+  STOCK_TRANSFER: 'STOCK_TRANSFER',
+  CUSTOMER: 'CUSTOMER',
+  ORDER: 'ORDER',
+  ORDER_ITEM: 'ORDER_ITEM',
+  PURCHASE_ORDER: 'PURCHASE_ORDER',
+  PURCHASE_ORDER_ITEM: 'PURCHASE_ORDER_ITEM'
+} as const
+
+export type AuditEntityType = (typeof AuditEntityType)[keyof typeof AuditEntityType]

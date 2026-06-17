@@ -16,7 +16,11 @@ import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
+import { Route as AppProductsIndexRouteImport } from './routes/_app/products/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as AppProductsNewRouteImport } from './routes/_app/products/new'
+import { Route as AppProductsProductIdIndexRouteImport } from './routes/_app/products/$productId/index'
+import { Route as AppProductsProductIdEditRouteImport } from './routes/_app/products/$productId/edit'
 
 const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/_auth',
@@ -51,11 +55,33 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const AppProductsIndexRoute = AppProductsIndexRouteImport.update({
+  id: '/products/',
+  path: '/products/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppProductsNewRoute = AppProductsNewRouteImport.update({
+  id: '/products/new',
+  path: '/products/new',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppProductsProductIdIndexRoute =
+  AppProductsProductIdIndexRouteImport.update({
+    id: '/products/$productId/',
+    path: '/products/$productId/',
+    getParentRoute: () => AppRouteRoute,
+  } as any)
+const AppProductsProductIdEditRoute =
+  AppProductsProductIdEditRouteImport.update({
+    id: '/products/$productId/edit',
+    path: '/products/$productId/edit',
+    getParentRoute: () => AppRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
@@ -63,7 +89,11 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof AuthResetPasswordRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
+  '/products/new': typeof AppProductsNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/products/': typeof AppProductsIndexRoute
+  '/products/$productId/edit': typeof AppProductsProductIdEditRoute
+  '/products/$productId/': typeof AppProductsProductIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
@@ -71,7 +101,11 @@ export interface FileRoutesByTo {
   '/reset-password': typeof AuthResetPasswordRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
+  '/products/new': typeof AppProductsNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/products': typeof AppProductsIndexRoute
+  '/products/$productId/edit': typeof AppProductsProductIdEditRoute
+  '/products/$productId': typeof AppProductsProductIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -82,7 +116,11 @@ export interface FileRoutesById {
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_auth/sign-up': typeof AuthSignUpRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/products/new': typeof AppProductsNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/_app/products/': typeof AppProductsIndexRoute
+  '/_app/products/$productId/edit': typeof AppProductsProductIdEditRoute
+  '/_app/products/$productId/': typeof AppProductsProductIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -92,7 +130,11 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sign-in'
     | '/sign-up'
+    | '/products/new'
     | '/api/auth/$'
+    | '/products/'
+    | '/products/$productId/edit'
+    | '/products/$productId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -100,7 +142,11 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sign-in'
     | '/sign-up'
+    | '/products/new'
     | '/api/auth/$'
+    | '/products'
+    | '/products/$productId/edit'
+    | '/products/$productId'
   id:
     | '__root__'
     | '/_app'
@@ -110,7 +156,11 @@ export interface FileRouteTypes {
     | '/_auth/sign-in'
     | '/_auth/sign-up'
     | '/_app/'
+    | '/_app/products/new'
     | '/api/auth/$'
+    | '/_app/products/'
+    | '/_app/products/$productId/edit'
+    | '/_app/products/$productId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -170,6 +220,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/_app/products/': {
+      id: '/_app/products/'
+      path: '/products'
+      fullPath: '/products/'
+      preLoaderRoute: typeof AppProductsIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -177,15 +234,44 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/products/new': {
+      id: '/_app/products/new'
+      path: '/products/new'
+      fullPath: '/products/new'
+      preLoaderRoute: typeof AppProductsNewRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/products/$productId/': {
+      id: '/_app/products/$productId/'
+      path: '/products/$productId'
+      fullPath: '/products/$productId/'
+      preLoaderRoute: typeof AppProductsProductIdIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/products/$productId/edit': {
+      id: '/_app/products/$productId/edit'
+      path: '/products/$productId/edit'
+      fullPath: '/products/$productId/edit'
+      preLoaderRoute: typeof AppProductsProductIdEditRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
   }
 }
 
 interface AppRouteRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
+  AppProductsNewRoute: typeof AppProductsNewRoute
+  AppProductsIndexRoute: typeof AppProductsIndexRoute
+  AppProductsProductIdEditRoute: typeof AppProductsProductIdEditRoute
+  AppProductsProductIdIndexRoute: typeof AppProductsProductIdIndexRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppIndexRoute: AppIndexRoute,
+  AppProductsNewRoute: AppProductsNewRoute,
+  AppProductsIndexRoute: AppProductsIndexRoute,
+  AppProductsProductIdEditRoute: AppProductsProductIdEditRoute,
+  AppProductsProductIdIndexRoute: AppProductsProductIdIndexRoute,
 }
 
 const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
