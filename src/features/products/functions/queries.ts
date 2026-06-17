@@ -5,9 +5,10 @@ import { getProducts } from "./index";
 export const getProductsQuery = ({
     page = 1,
     pageSize = 10,
+    search = "",
 }: GetProductsInput) =>
     queryOptions({
-        queryKey: ["products", page, pageSize],
-        queryFn: () => getProducts({ data: { page, pageSize } }),
+        queryKey: ["products", page, pageSize, search],
+        queryFn: () => getProducts({ data: { page, pageSize, search } }),
         placeholderData: keepPreviousData,
     });
