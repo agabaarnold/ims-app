@@ -733,14 +733,6 @@ export type DecimalFieldUpdateOperationsInput = {
   divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type ProductCreateNestedOneWithoutInventoryItemsInput = {
   create?: Prisma.XOR<Prisma.ProductCreateWithoutInventoryItemsInput, Prisma.ProductUncheckedCreateWithoutInventoryItemsInput>
   connectOrCreate?: Prisma.ProductCreateOrConnectWithoutInventoryItemsInput

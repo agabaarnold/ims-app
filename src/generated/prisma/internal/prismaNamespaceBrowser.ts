@@ -156,6 +156,7 @@ export const CategoryScalarFieldEnum = {
   code: 'code',
   description: 'description',
   parentId: 'parentId',
+  skuSequence: 'skuSequence',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
