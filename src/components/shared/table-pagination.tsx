@@ -4,6 +4,7 @@ import {
     IconChevronsLeft,
     IconChevronsRight,
 } from "@tabler/icons-react";
+import { useNavigate } from "@tanstack/react-router";
 import type { Table } from "@tanstack/react-table";
 import { Button } from "../ui/button";
 import {
@@ -15,6 +16,9 @@ import {
 } from "../ui/select";
 
 interface TablePaginationProps<TData> {
+    page: number; // 1-based, from Route.useSearch()
+    pageCount: number; // from query data
+    pageSize: number; // from Route.useSearch()
     table: Table<TData>;
     total: number;
 }
@@ -22,20 +26,25 @@ interface TablePaginationProps<TData> {
 export function TablePagination<TData>({
     table,
     total,
+    page,
+    pageSize,
+    pageCount,
 }: TablePaginationProps<TData>) {
-    const { pageIndex, pageSize } = table.getState().pagination;
-    const from = pageIndex * pageSize + 1;
+    const navigate = useNavigate({ from: "/products/" });
+
+    const from = (page - 1) * pageSize + 1;
     const to = Math.min(from + pageSize - 1, total);
+    const canGoBack = page > 1;
+    const canGoForward = page < pageCount;
 
     return (
         <div className="flex w-full items-center justify-between px-2">
-            {/* Row count */}
             <p className="text-muted-foreground text-sm">
                 {from}–{to} of {total} rows
             </p>
 
             <div className="flex items-center gap-6">
-                {/* Page size selector */}
+                {/* Rows per page */}
                 <div className="flex items-center gap-2">
                     <span className="font-medium text-sm">Rows per page</span>
                     <Select
@@ -48,7 +57,7 @@ export function TablePagination<TData>({
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent side="top">
-                            {[5, 10, 20, 50, 100].map((size) => (
+                            {[10, 20, 50, 100].map((size) => (
                                 <SelectItem key={size} value={String(size)}>
                                     {size}
                                 </SelectItem>
@@ -59,46 +68,71 @@ export function TablePagination<TData>({
 
                 {/* Page indicator */}
                 <span className="font-medium text-sm">
-                    Page {pageIndex + 1} of {table.getPageCount()}
+                    Page {page} of {pageCount}
                 </span>
 
-                {/* Navigation buttons */}
+                {/* Navigation — navigate directly, no table methods */}
                 <div className="flex items-center gap-1">
                     <Button
-                        className="size-8"
-                        disabled={!table.getCanPreviousPage()}
-                        onClick={() => table.firstPage()}
+                        className="h-8 w-8"
+                        disabled={!canGoBack}
+                        onClick={() =>
+                            navigate({
+                                search: (prev) => ({ ...prev, page: 1 }),
+                            })
+                        }
                         size="icon"
                         variant="outline"
                     >
-                        <IconChevronsLeft className="size-4" />
+                        <IconChevronsLeft className="h-4 w-4" />
                     </Button>
                     <Button
-                        className="size-8"
-                        disabled={!table.getCanPreviousPage()}
-                        onClick={() => table.previousPage()}
+                        className="h-8 w-8"
+                        disabled={!canGoBack}
+                        onClick={() =>
+                            navigate({
+                                search: (prev) => ({
+                                    ...prev,
+                                    page: prev.page - 1,
+                                }),
+                            })
+                        }
                         size="icon"
                         variant="outline"
                     >
-                        <IconChevronLeft className="size-4" />
+                        <IconChevronLeft className="h-4 w-4" />
                     </Button>
                     <Button
-                        className="size-8"
-                        disabled={!table.getCanNextPage()}
-                        onClick={() => table.nextPage()}
+                        className="h-8 w-8"
+                        disabled={!canGoForward}
+                        onClick={() =>
+                            navigate({
+                                search: (prev) => ({
+                                    ...prev,
+                                    page: prev.page + 1,
+                                }),
+                            })
+                        }
                         size="icon"
                         variant="outline"
                     >
-                        <IconChevronRight className="size-4" />
+                        <IconChevronRight className="h-4 w-4" />
                     </Button>
                     <Button
-                        className="size-8"
-                        disabled={!table.getCanNextPage()}
-                        onClick={() => table.lastPage()}
+                        className="h-8 w-8"
+                        disabled={!canGoForward}
+                        onClick={() =>
+                            navigate({
+                                search: (prev) => ({
+                                    ...prev,
+                                    page: pageCount,
+                                }),
+                            })
+                        }
                         size="icon"
                         variant="outline"
                     >
-                        <IconChevronsRight className="size-4" />
+                        <IconChevronsRight className="h-4 w-4" />
                     </Button>
                 </div>
             </div>
