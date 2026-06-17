@@ -4,7 +4,6 @@ import {
     IconChevronsLeft,
     IconChevronsRight,
 } from "@tabler/icons-react";
-import { useNavigate } from "@tanstack/react-router";
 import type { Table } from "@tanstack/react-table";
 import { Button } from "../ui/button";
 import {
@@ -16,6 +15,7 @@ import {
 } from "../ui/select";
 
 interface TablePaginationProps<TData> {
+    onPageChange: (page: number) => void;
     page: number; // 1-based, from Route.useSearch()
     pageCount: number; // from query data
     pageSize: number; // from Route.useSearch()
@@ -29,11 +29,10 @@ export function TablePagination<TData>({
     page,
     pageSize,
     pageCount,
+    onPageChange,
 }: TablePaginationProps<TData>) {
-    const navigate = useNavigate({ from: "/products/" });
-
-    const from = (page - 1) * pageSize + 1;
-    const to = Math.min(from + pageSize - 1, total);
+    const from = total === 0 ? 0 : (page - 1) * pageSize + 1;
+    const to = total === 0 ? 0 : Math.min(from + pageSize - 1, total);
     const canGoBack = page > 1;
     const canGoForward = page < pageCount;
 
@@ -74,65 +73,44 @@ export function TablePagination<TData>({
                 {/* Navigation — navigate directly, no table methods */}
                 <div className="flex items-center gap-1">
                     <Button
-                        className="h-8 w-8"
+                        aria-label="First page"
+                        className="size-8"
                         disabled={!canGoBack}
-                        onClick={() =>
-                            navigate({
-                                search: (prev) => ({ ...prev, page: 1 }),
-                            })
-                        }
+                        onClick={() => onPageChange(1)}
                         size="icon"
                         variant="outline"
                     >
-                        <IconChevronsLeft className="h-4 w-4" />
+                        <IconChevronsLeft className="size-4" />
                     </Button>
                     <Button
-                        className="h-8 w-8"
+                        aria-label="Previous page"
+                        className="size-8"
                         disabled={!canGoBack}
-                        onClick={() =>
-                            navigate({
-                                search: (prev) => ({
-                                    ...prev,
-                                    page: prev.page - 1,
-                                }),
-                            })
-                        }
+                        onClick={() => onPageChange(page - 1)}
                         size="icon"
                         variant="outline"
                     >
-                        <IconChevronLeft className="h-4 w-4" />
+                        <IconChevronLeft className="size-4" />
                     </Button>
                     <Button
-                        className="h-8 w-8"
+                        aria-label="Next page"
+                        className="size-8"
                         disabled={!canGoForward}
-                        onClick={() =>
-                            navigate({
-                                search: (prev) => ({
-                                    ...prev,
-                                    page: prev.page + 1,
-                                }),
-                            })
-                        }
+                        onClick={() => onPageChange(page + 1)}
                         size="icon"
                         variant="outline"
                     >
-                        <IconChevronRight className="h-4 w-4" />
+                        <IconChevronRight className="size-4" />
                     </Button>
                     <Button
-                        className="h-8 w-8"
+                        aria-label="Last page"
+                        className="size-8"
                         disabled={!canGoForward}
-                        onClick={() =>
-                            navigate({
-                                search: (prev) => ({
-                                    ...prev,
-                                    page: pageCount,
-                                }),
-                            })
-                        }
+                        onClick={() => onPageChange(pageCount)}
                         size="icon"
                         variant="outline"
                     >
-                        <IconChevronsRight className="h-4 w-4" />
+                        <IconChevronsRight className="size-4" />
                     </Button>
                 </div>
             </div>
