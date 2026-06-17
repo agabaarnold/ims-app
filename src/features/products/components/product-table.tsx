@@ -41,6 +41,10 @@ export function ProductTable<PData, PValue>({
 }: ProductTableProps<PData, PValue>) {
     const navigate = useNavigate({ from: "/products/" });
 
+    const handlePageChange = (page: number) => {
+        navigate({ search: (prev) => ({ ...prev, page }) });
+    };
+
     const [sorting, setSorting] = useState<SortingState>([]);
     const [globalFilter, setGlobalFilter] = useState("");
 
@@ -155,6 +159,7 @@ export function ProductTable<PData, PValue>({
             </div>
 
             <TablePagination
+                onPageChange={handlePageChange}
                 page={page}
                 pageCount={pageCount}
                 pageSize={pageSize}
