@@ -153,6 +153,7 @@ export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[k
 export const CategoryScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  code: 'code',
   description: 'description',
   parentId: 'parentId',
   createdAt: 'createdAt',
