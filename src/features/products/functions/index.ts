@@ -6,7 +6,6 @@ import {
     createProductSchema,
     getProductSchema,
     getProductsSchema,
-    searchProductsSchema,
     updateProductSchema,
 } from "../schema";
 
@@ -14,7 +13,7 @@ export const getProducts = createServerFn({ method: "GET" })
     .middleware([authMiddleware])
     .validator(getProductsSchema)
     .handler(async ({ data }) => {
-        const { page, pageSize } = data;
+        const { page, pageSize, search } = data;
         const skip = (page - 1) * pageSize;
 
         const [products, total] = await prisma.$transaction([
@@ -23,6 +22,23 @@ export const getProducts = createServerFn({ method: "GET" })
                 orderBy: { createdAt: "desc" },
                 skip,
                 take: pageSize,
+                where: {
+                    OR: [
+                        { name: { contains: search, mode: "insensitive" } },
+                        { sku: { contains: search, mode: "insensitive" } },
+                        { unit: { contains: search, mode: "insensitive" } },
+                        {
+                            category: {
+                                name: { contains: search, mode: "insensitive" },
+                            },
+                        },
+                        {
+                            supplier: {
+                                name: { contains: search, mode: "insensitive" },
+                            },
+                        },
+                    ],
+                },
             }),
             prisma.product.count(),
         ]);
@@ -62,9 +78,20 @@ export const getProduct = createServerFn({ method: "GET" })
 export const createProduct = createServerFn({ method: "POST" })
     .middleware([authMiddleware])
     .validator(createProductSchema)
-    .handler(async ({ data }) => {
+    .handler(async ({ context: { session }, data }) => {
+        const user = session.user;
+
         const newProduct = await prisma.product.create({
             data,
+        });
+
+        await prisma.auditLog.create({
+            data: {
+                action: "CREATE",
+                userId: user.id,
+                entityId: newProduct.id,
+                entityType: "PRODUCT",
+            },
         });
 
         return {
@@ -116,28 +143,5 @@ export const archiveProduct = createServerFn({ method: "POST" })
             ...archivedProduct,
             costPrice: archivedProduct.costPrice.toNumber(),
             sellingPrice: archivedProduct.sellingPrice.toNumber(),
-        };
-    });
-
-export const searchProducts = createServerFn({ method: "GET" })
-    .middleware([authMiddleware])
-    .validator(searchProductsSchema)
-    .handler(async ({ data }) => {
-        const products = await prisma.product.findMany({
-            where: {
-                OR: [
-                    { name: { contains: data.search, mode: "insensitive" } },
-                    { sku: { contains: data.search, mode: "insensitive" } },
-                ],
-                isActive: true,
-            },
-        });
-
-        return {
-            products: products.map((product) => ({
-                ...product,
-                costPrice: product.costPrice.toNumber(),
-                sellingPrice: product.sellingPrice.toNumber(),
-            })),
         };
     });
