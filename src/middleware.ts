@@ -12,3 +12,21 @@ export const authMiddleware = createMiddleware().server(async ({ next }) => {
 
     return next({ context: { session } });
 });
+
+export const createProductMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { product: ["create"] } },
+        });
+        if (!hasPermission) {
+            throw new Error(
+                "You do not have permission to create a product. Please contact your administrator."
+            );
+        }
+
+        return next();
+    }
+);
