@@ -95,6 +95,7 @@ export function ProductTable<PData, PValue>({
         <div className="space-y-4">
             <div className="flex items-center justify-between">
                 <Input
+                    aria-label="Search products"
                     className="max-w-sm"
                     onChange={(e) => setGlobalFilter(e.target.value)}
                     placeholder="Search..."
