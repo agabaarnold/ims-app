@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const getProductsSchema = z.object({
-    page: z.number(),
-    pageSize: z.number(),
+    page: z.number().int().min(1),
+    pageSize: z.number().int().min(1),
 });
 export type GetProductsInput = z.infer<typeof getProductsSchema>;
 
@@ -26,8 +26,9 @@ export const createProductSchema = z
         isActive: z.boolean().default(true),
         supplierId: z.string().optional(),
     })
-    .refine((data) => data.sellingPrice <= data.costPrice, {
+    .refine((data) => data.sellingPrice >= data.costPrice, {
         error: "Selling price must be greater than or equal to cost price",
+        path: ["sellingPrice"],
     });
 export type CreateProductInput = z.infer<typeof createProductSchema>;
 
