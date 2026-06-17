@@ -1,22 +1,20 @@
 import { prisma } from "./db";
 
 export async function generateSku(categoryId: string) {
-    const category = await prisma.category.findUniqueOrThrow({
+    const category = await prisma.category.update({
         where: {
             id: categoryId,
         },
+        data: {
+            skuSequence: {
+                increment: 1,
+            },
+        },
         select: {
             code: true,
+            skuSequence: true,
         },
     });
 
-    const count = await prisma.product.count({
-        where: {
-            categoryId,
-        },
-    });
-
-    const sequence = String(count + 1).padStart(5, "0");
-
-    return `PRD-${category.code}-${sequence}`;
+    return `PRD-${category.code}-${category.skuSequence}`;
 }
