@@ -41,8 +41,14 @@ export const productColumns: ColumnDef<Product>[] = [
     },
     { accessorKey: "sku", header: "SKU" },
     { accessorKey: "name", header: "Name" },
-    { accessorFn: ({ category }) => category.name, header: "Category" },
-    { accessorFn: ({ supplier }) => supplier?.name, header: "Supplier" },
+    {
+        header: "Category",
+        cell: ({ row }) => (
+            <span className="truncate">
+                {row.original.category.name}
+            </span>
+        ),
+    },
     { accessorKey: "unit", header: "Unit" },
     {
         accessorKey: "costPrice",
