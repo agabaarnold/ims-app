@@ -10,7 +10,7 @@ import {
     type SortingState,
     useReactTable,
 } from "@tanstack/react-table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TablePagination } from "#/components/shared/table-pagination";
 import { Input } from "#/components/ui/input";
 import {
@@ -21,6 +21,7 @@ import {
     TableHeader,
     TableRow,
 } from "#/components/ui/table";
+import { useDebounce } from "#/hooks/use-debounce";
 
 interface ProductTableProps<PData, PValue> {
     columns: ColumnDef<PData, PValue>[];
@@ -28,6 +29,7 @@ interface ProductTableProps<PData, PValue> {
     page: number;
     pageCount: number;
     pageSize: number;
+    search: string;
     total: number;
 }
 
@@ -37,16 +39,30 @@ export function ProductTable<PData, PValue>({
     page,
     pageCount,
     pageSize,
+    search,
     total,
 }: ProductTableProps<PData, PValue>) {
     const navigate = useNavigate({ from: "/products/" });
 
-    const handlePageChange = (page: number) => {
-        navigate({ search: (prev) => ({ ...prev, page }) });
-    };
-
     const [sorting, setSorting] = useState<SortingState>([]);
-    const [globalFilter, setGlobalFilter] = useState("");
+    const [searchInput, setSearchInput] = useState(search);
+
+    const debouncedSearch = useDebounce(searchInput, 500);
+
+    useEffect(() => {
+        setSearchInput(search);
+    }, [search]);
+
+    useEffect(() => {
+        navigate({
+            search: (prev) => ({
+                ...prev,
+                search: debouncedSearch,
+                page: 1,
+            }),
+            replace: true,
+        });
+    }, [debouncedSearch, navigate]);
 
     const pagination: PaginationState = {
         pageIndex: page - 1,
@@ -77,6 +93,10 @@ export function ProductTable<PData, PValue>({
         });
     };
 
+    const handlePageChange = (page: number) => {
+        navigate({ search: (prev) => ({ ...prev, page }) });
+    };
+
     const table = useReactTable({
         columns,
         data,
@@ -84,11 +104,10 @@ export function ProductTable<PData, PValue>({
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         onSortingChange: setSorting,
-        onGlobalFilterChange: setGlobalFilter,
         onPaginationChange: handlePaginationChange,
         manualPagination: true,
         pageCount,
-        state: { sorting, globalFilter, pagination },
+        state: { sorting, pagination },
     });
 
     return (
@@ -97,9 +116,9 @@ export function ProductTable<PData, PValue>({
                 <Input
                     aria-label="Search products"
                     className="max-w-sm"
-                    onChange={(e) => setGlobalFilter(e.target.value)}
-                    placeholder="Search..."
-                    value={globalFilter}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    placeholder="Search products..."
+                    value={searchInput}
                 />
             </div>
 
