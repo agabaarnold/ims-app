@@ -26,6 +26,7 @@ model User {
   orders         Order[]
   purchaseOrders PurchaseOrder[]
   stockTransfers StockTransfer[]
+  auditLogs      AuditLog[]
 
   @@unique([email])
   @@map("user")
@@ -329,15 +330,50 @@ model PurchaseOrderItem {
 }
 
 model AuditLog {
-  id         String   @id @default(cuid())
+  id         String          @id @default(cuid())
   userId     String
-  action     String // e.g. "product.update", "order.approve"
-  entityType String
+  action     AuditAction
+  entityType AuditEntityType
   entityId   String
   before     Json?
   after      Json?
-  ip         String?
-  createdAt  DateTime @default(now())
+  metadata   Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime        @default(now())
 
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([action])
+  @@index([entityType, entityId])
+  @@index([createdAt])
   @@map("auditLog")
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  APPROVE
+  CANCEL
+  RECEIVE
+  TRANSFER
+  ADJUST
+}
+
+enum AuditEntityType {
+  USER
+  CATEGORY
+  SUPPLIER
+  PRODUCT
+  WAREHOUSE
+  INVENTORY_ITEM
+  STOCK_MOVEMENT
+  STOCK_TRANSFER
+  CUSTOMER
+  ORDER
+  ORDER_ITEM
+  PURCHASE_ORDER
+  PURCHASE_ORDER_ITEM
 }
