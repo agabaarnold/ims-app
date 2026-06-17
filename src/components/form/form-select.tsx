@@ -1,5 +1,5 @@
 import { useFieldContext } from "#/hooks/use-form-context";
-import { Field } from "../ui/field";
+import { Field, FieldError } from "../ui/field";
 import { Label } from "../ui/label";
 import {
     Select,
@@ -9,20 +9,23 @@ import {
     SelectValue,
 } from "../ui/select";
 
-interface SelectOption {
+interface FormSelectProps<T> {
+    getOptionLabel: (option: T) => string;
+    getOptionValue: (option: T) => string;
     label: string;
-    value: string;
-}
-
-interface FormSelectProps {
-    label: string;
-    options: SelectOption[];
+    options: T[];
     placeholder: string;
 }
 
-function FormSelect({ label, placeholder, options }: FormSelectProps) {
+function FormSelect<T>({
+    label,
+    placeholder,
+    options,
+    getOptionValue,
+    getOptionLabel,
+}: FormSelectProps<T>) {
     const field = useFieldContext<string>();
-    const errorMessage = field.state.meta.errors[0]?.message;
+    const errorMessage = field.state.meta.errors
 
     return (
         <Field>
@@ -37,17 +40,18 @@ function FormSelect({ label, placeholder, options }: FormSelectProps) {
                 </SelectTrigger>
 
                 <SelectContent>
-                    {options.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                        </SelectItem>
-                    ))}
+                    {options.map((option) => {
+                        const value = getOptionValue(option);
+                        return (
+                            <SelectItem key={value} value={value}>
+                                {getOptionLabel(option)}
+                            </SelectItem>
+                        );
+                    })}
                 </SelectContent>
             </Select>
 
-            {errorMessage && (
-                <p className="text-destructive text-sm">{errorMessage}</p>
-            )}
+            <FieldError errors={errorMessage} />
         </Field>
     );
 }
