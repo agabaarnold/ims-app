@@ -22,7 +22,7 @@ export const createProductSchema = z
         costPrice: z.number().positive(),
         sellingPrice: z.number().positive(),
         reorderPoint: z.number().int().min(0),
-        reorderQuantity: z.number().positive(),
+        reorderQty: z.number().positive(),
         isActive: z.boolean().default(true),
         supplierId: z.string().optional(),
     })
