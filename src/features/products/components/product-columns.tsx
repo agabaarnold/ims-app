@@ -2,6 +2,7 @@ import { IconDots } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Button } from "#/components/ui/button";
+import { Checkbox } from "#/components/ui/checkbox";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -16,6 +17,28 @@ export type Products = Awaited<ReturnType<typeof getProducts>>;
 export type Product = Products["products"][number];
 
 export const productColumns: ColumnDef<Product>[] = [
+    {
+        id: "select",
+        header: ({ table }) => (
+            <Checkbox
+                aria-label="Select all"
+                checked={table.getIsAllPageRowsSelected()}
+                indeterminate={table.getIsSomePageRowsSelected()}
+                onCheckedChange={(value) =>
+                    table.toggleAllPageRowsSelected(!!value)
+                }
+            />
+        ),
+        cell: ({ row }) => (
+            <Checkbox
+                aria-label="Select row"
+                checked={row.getIsSelected()}
+                onCheckedChange={(value) => row.toggleSelected(!!value)}
+            />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+    },
     { accessorKey: "sku", header: "SKU" },
     { accessorKey: "name", header: "Name" },
     { accessorFn: ({ category }) => category.name, header: "Category" },
