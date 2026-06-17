@@ -68,8 +68,12 @@ export const productColumns: ColumnDef<Product>[] = [
                 <DropdownMenu>
                     <DropdownMenuTrigger
                         render={
-                            <Button size="icon" variant="ghost">
-                                <IconDots />
+                            <Button
+                                aria-label="Open product actions"
+                                size="icon"
+                                variant="ghost"
+                            >
+                                <IconDots aria-hidden="true" />
                             </Button>
                         }
                     />
