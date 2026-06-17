@@ -52,17 +52,24 @@ export function ProductTable<PData, PValue>({
     const handlePaginationChange: OnChangeFn<PaginationState> = (
         updaterOrValue
     ) => {
-        const next =
-            typeof updaterOrValue === "function"
-                ? updaterOrValue(pagination)
-                : updaterOrValue;
-
         navigate({
-            search: (prev) => ({
-                ...prev,
-                page: next.pageIndex + 1,
-                pageSize: next.pageSize,
-            }),
+            search: (prev) => {
+                const current: PaginationState = {
+                    pageIndex: (prev.page ?? 1) - 1,
+                    pageSize: prev.pageSize ?? 20,
+                };
+
+                const next =
+                    typeof updaterOrValue === "function"
+                        ? updaterOrValue(current)
+                        : updaterOrValue;
+
+                return {
+                    ...prev,
+                    page: Math.max(1, next.pageIndex + 1),
+                    pageSize: next.pageSize,
+                };
+            },
         });
     };
 
@@ -142,9 +149,13 @@ export function ProductTable<PData, PValue>({
                 </Table>
             </div>
 
-            <div className="flex w-full items-center justify-between">
-                <TablePagination table={table} total={total} />
-            </div>
+            <TablePagination
+                page={page}
+                pageCount={pageCount}
+                pageSize={pageSize}
+                table={table}
+                total={total}
+            />
         </div>
     );
 }
