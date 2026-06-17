@@ -24,8 +24,13 @@ export function formatDate(value: Date, locale = "en-UG") {
 }
 
 export function formatCurrency(value: number | string, locale = "en-UG") {
+    const numericValue = typeof value === "string" ? Number(value) : value;
+    if (!Number.isFinite(numericValue)) {
+        throw new Error("formatCurrency received a non-numeric value");
+    }
+
     return new Intl.NumberFormat(locale, {
         style: "currency",
         currency: "UGX",
-    }).format(Number(value));
+    }).format(numericValue);
 }
