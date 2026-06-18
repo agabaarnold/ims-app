@@ -55,9 +55,7 @@ export default function CreateProductForm({
         defaultValues,
         onSubmit: async ({ value }) => {
             try {
-                const normalizeSupplierId = value.supplierId?.trim()
-                    ? value.supplierId.trim()
-                    : null;
+                const normalizeSupplierId = value.supplierId?.trim() || null;
 
                 await createProduct({
                     data: { ...value, supplierId: normalizeSupplierId },
