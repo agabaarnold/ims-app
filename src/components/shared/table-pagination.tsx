@@ -23,6 +23,8 @@ interface TablePaginationProps<TData> {
     total: number;
 }
 
+const PAGE_SIZE_OPTIONS = [5,10,20,50,100] as const
+
 export function TablePagination<TData>({
     table,
     total,
@@ -56,7 +58,7 @@ export function TablePagination<TData>({
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent side="top">
-                            {[5, 10, 20, 50, 100].map((size) => (
+                            {PAGE_SIZE_OPTIONS.map((size) => (
                                 <SelectItem key={size} value={String(size)}>
                                     {size}
                                 </SelectItem>
