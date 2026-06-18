@@ -28,15 +28,13 @@ export default function FormNumberInput({
                 name={field.name}
                 onBlur={(e) => {
                     const nextValue =
-                        //@ts-expect-error
-                        e.currentTarget === "" ? 0 : e.target.valueAsNumber;
+                        e.target.value === "" ? 0 : e.target.valueAsNumber;
                     field.handleChange(nextValue);
                     field.handleBlur();
                 }}
                 onChange={(e) => {
                     const nextValue =
-                        //@ts-expect-error
-                        e.currentTarget === "" ? 0 : e.target.valueAsNumber;
+                        e.target.value === "" ? 0 : e.target.valueAsNumber;
                     field.handleChange(nextValue);
                 }}
                 placeholder={placeholder}
