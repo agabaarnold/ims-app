@@ -14,6 +14,7 @@ import { Separator } from "#/components/ui/separator";
 import {
     type CreateProductInput,
     createProductSchema,
+    PRODUCT_UNITS,
 } from "#/features/products/schema";
 import { useAppForm } from "#/hooks/use-form";
 import { createProduct } from "../functions";
@@ -65,7 +66,7 @@ export default function CreateProductForm({
                 }
             }
         },
-        validators: { onSubmit: createProductSchema },
+        validators: { onDynamic: createProductSchema },
         validationLogic: revalidateLogic({
             mode: "submit",
             modeAfterSubmission: "blur",
@@ -125,13 +126,14 @@ export default function CreateProductForm({
                                 )}
                             </form.AppField>
 
-                            {/* TODO: This should be a dropdown */}
                             <form.AppField name="unit">
                                 {(field) => (
-                                    <field.FormInput
+                                    <field.FormSelect
+                                        getOptionLabel={(u) => u.label}
+                                        getOptionValue={(u) => u.value}
                                         label="Unit"
-                                        placeholder="pcs"
-                                        type="text"
+                                        options={PRODUCT_UNITS}
+                                        placeholder="Select a unit"
                                     />
                                 )}
                             </form.AppField>
@@ -201,7 +203,7 @@ export default function CreateProductForm({
                             </form.AppField>
                         </div>
 
-                        <form.AppField name="name">
+                        <form.AppField name="description">
                             {(field) => (
                                 <field.FormTextArea
                                     label="Description"
