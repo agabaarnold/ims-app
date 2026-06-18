@@ -82,8 +82,9 @@ export const getProduct = createServerFn({ method: "GET" })
         };
     });
 
-export const getProductFormData = createServerFn({ method: "GET" }).handler(
-    async () => {
+export const getProductFormData = createServerFn({ method: "GET" })
+    .middleware([authMiddleware, createProductMiddleware])
+    .handler(async () => {
         const [categories, suppliers] = await prisma.$transaction([
             prisma.category.findMany({
                 orderBy: {
@@ -107,8 +108,7 @@ export const getProductFormData = createServerFn({ method: "GET" }).handler(
         ]);
 
         return { categories, suppliers };
-    }
-);
+    });
 
 export const createProduct = createServerFn({ method: "POST" })
     .middleware([authMiddleware, createProductMiddleware])
@@ -116,9 +116,8 @@ export const createProduct = createServerFn({ method: "POST" })
     .handler(async ({ context: { session }, data }) => {
         const user = session.user;
 
-        const sku = await generateSku(data.categoryId);
-
         const newProduct = await prisma.$transaction(async (tx) => {
+            const sku = await generateSku(data.categoryId, tx);
             const product = await tx.product.create({
                 data: { ...data, sku },
             });
