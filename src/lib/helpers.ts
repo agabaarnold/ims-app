@@ -1,7 +1,12 @@
 import { prisma } from "./db";
 
-export async function generateSku(categoryId: string) {
-    const category = await prisma.category.update({
+type SkuClient = Pick<typeof prisma, "category">;
+
+export async function generateSku(
+    categoryId: string,
+    db: SkuClient = prisma
+): Promise<string> {
+    const category = await db.category.update({
         where: {
             id: categoryId,
         },
