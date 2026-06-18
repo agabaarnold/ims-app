@@ -27,10 +27,18 @@ export default function FormNumberInput({
                 min={min}
                 name={field.name}
                 onBlur={(e) => {
-                    field.handleChange(e.target.valueAsNumber);
+                    const nextValue =
+                        //@ts-expect-error
+                        e.currentTarget === "" ? 0 : e.target.valueAsNumber;
+                    field.handleChange(nextValue);
                     field.handleBlur();
                 }}
-                onChange={(e) => field.handleChange(e.target.valueAsNumber)}
+                onChange={(e) => {
+                    const nextValue =
+                        //@ts-expect-error
+                        e.currentTarget === "" ? 0 : e.target.valueAsNumber;
+                    field.handleChange(nextValue);
+                }}
                 placeholder={placeholder}
                 step={step}
                 type="number"
