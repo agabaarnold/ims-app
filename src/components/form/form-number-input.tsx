@@ -1,19 +1,21 @@
-import type { ComponentProps } from "react";
-import { Field, FieldError, FieldLabel } from "#/components/ui/field";
-import { Input } from "#/components/ui/input";
 import { useFieldContext } from "#/hooks/use-form-context";
+import { Field, FieldError, FieldLabel } from "../ui/field";
+import { Input } from "../ui/input";
 
-interface FormInputProps {
+interface FormNumberInputProps {
     label: string;
+    min?: string;
     placeholder: string;
-    type: Exclude<
-        ComponentProps<"input">["type"],
-        "password" | "checkbox" | "number"
-    >;
+    step?: string;
 }
 
-export function FormInput({ label, placeholder, type }: FormInputProps) {
-    const field = useFieldContext<string>();
+export default function FormNumberInput({
+    label,
+    placeholder,
+    min = "0",
+    step = "0.01",
+}: FormNumberInputProps) {
+    const field = useFieldContext<number>();
     const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 
     return (
@@ -22,14 +24,16 @@ export function FormInput({ label, placeholder, type }: FormInputProps) {
             <Input
                 aria-invalid={isInvalid}
                 id={field.name}
+                min={min}
                 name={field.name}
                 onBlur={(e) => {
-                    field.handleChange(e.target.value.trim());
+                    field.handleChange(e.target.valueAsNumber);
                     field.handleBlur();
                 }}
-                onChange={(e) => field.handleChange(e.target.value)}
+                onChange={(e) => field.handleChange(e.target.valueAsNumber)}
                 placeholder={placeholder}
-                type={type}
+                step={step}
+                type="number"
                 value={field.state.value}
             />
 

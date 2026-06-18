@@ -1,6 +1,7 @@
-import { IconDots } from "@tabler/icons-react";
+import { IconCaretUpDown, IconDots } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
+import { Badge } from "#/components/ui/badge";
 import { Button } from "#/components/ui/button";
 import { Checkbox } from "#/components/ui/checkbox";
 import {
@@ -39,14 +40,26 @@ export const productColumns: ColumnDef<Product>[] = [
         enableSorting: false,
         enableHiding: false,
     },
-    { accessorKey: "sku", header: "SKU" },
-    { accessorKey: "name", header: "Name" },
+    {
+        accessorKey: "sku",
+        header: ({ column }) => (
+            <Button onClick={() => column.toggleSorting()} variant="ghost">
+                <span>SKU</span> <IconCaretUpDown />
+            </Button>
+        ),
+    },
+    {
+        accessorKey: "name",
+        header: ({ column }) => (
+            <Button onClick={() => column.toggleSorting()} variant="ghost">
+                <span>Name</span> <IconCaretUpDown />
+            </Button>
+        ),
+    },
     {
         header: "Category",
         cell: ({ row }) => (
-            <span className="truncate">
-                {row.original.category.name}
-            </span>
+            <span className="truncate">{row.original.category.name}</span>
         ),
     },
     { accessorKey: "unit", header: "Unit" },
@@ -62,8 +75,22 @@ export const productColumns: ColumnDef<Product>[] = [
     },
     {
         accessorKey: "isActive",
-        header: "Active",
-        cell: ({ row }) => (row.original.isActive ? "Active" : "Archived"),
+        header: "Status",
+        cell: ({ row }) => {
+            const isActive = row.original.isActive;
+
+            return (
+                <Badge
+                    className={
+                        isActive
+                            ? "bg-green-200 text-green-800 text-sm dark:bg-green-800 dark:text-green-200"
+                            : "bg-amber-200 text-amber-800 text-sm dark:bg-amber-800 dark:text-amber-200"
+                    }
+                >
+                    {isActive ? "Active" : "Inactive"}
+                </Badge>
+            );
+        },
     },
     {
         header: "Actions",

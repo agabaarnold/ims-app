@@ -1,9 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { prisma } from "#/lib/db";
-import { authMiddleware } from "#/middleware";
+import { generateSku } from "#/lib/helpers";
+import { authMiddleware, createProductMiddleware } from "#/middleware";
 import {
     archiveProductSchema,
-    createProductSchema,
+    createProductServerSchema,
     getProductSchema,
     getProductsSchema,
     updateProductSchema,
@@ -27,6 +28,12 @@ export const getProducts = createServerFn({ method: "GET" })
                         { name: { contains: search, mode: "insensitive" } },
                         { sku: { contains: search, mode: "insensitive" } },
                         { unit: { contains: search, mode: "insensitive" } },
+                        {
+                            description: {
+                                contains: search,
+                                mode: "insensitive",
+                            },
+                        },
                         {
                             category: {
                                 name: { contains: search, mode: "insensitive" },
@@ -75,23 +82,62 @@ export const getProduct = createServerFn({ method: "GET" })
         };
     });
 
+export const getProductFormData = createServerFn({ method: "GET" }).handler(
+    async () => {
+        const [categories, suppliers] = await prisma.$transaction([
+            prisma.category.findMany({
+                orderBy: {
+                    name: "asc",
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    code: true,
+                },
+            }),
+            prisma.supplier.findMany({
+                orderBy: {
+                    name: "asc",
+                },
+                select: {
+                    id: true,
+                    name: true,
+                },
+            }),
+        ]);
+
+        return { categories, suppliers };
+    }
+);
+
 export const createProduct = createServerFn({ method: "POST" })
-    .middleware([authMiddleware])
-    .validator(createProductSchema)
+    .middleware([authMiddleware, createProductMiddleware])
+    .validator(createProductServerSchema)
     .handler(async ({ context: { session }, data }) => {
         const user = session.user;
 
-        const newProduct = await prisma.product.create({
-            data,
-        });
+        const sku = await generateSku(data.categoryId);
 
-        await prisma.auditLog.create({
-            data: {
-                action: "CREATE",
-                userId: user.id,
-                entityId: newProduct.id,
-                entityType: "PRODUCT",
-            },
+        const newProduct = await prisma.$transaction(async (tx) => {
+            const product = await tx.product.create({
+                data: { ...data, sku },
+            });
+
+            await tx.auditLog.create({
+                data: {
+                    action: "CREATE",
+                    userId: user.id,
+                    entityId: product.id,
+                    entityType: "PRODUCT",
+                    after: {
+                        id: product.id,
+                        sku: product.sku,
+                        name: product.name,
+                    },
+                },
+            });
+
+            return product;
         });
 
         return {
@@ -117,7 +163,6 @@ export const updateProduct = createServerFn({ method: "POST" })
                 name: data.name,
                 reorderPoint: data.reorderPoint,
                 reorderQty: data.reorderQty,
-                sku: data.sku,
                 supplierId: data.supplierId,
                 unit: data.unit,
             },
