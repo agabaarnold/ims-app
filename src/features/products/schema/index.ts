@@ -51,6 +51,8 @@ export const PRODUCT_UNITS = UNIT_VALUES.map((value) => ({
     label: UNIT_LABELS[value],
 }));
 
+const emptyStringToNull = (value: unknown) => (value === "" ? null : value);
+
 export const createProductSchema = z
     .object({
         name: z.string().min(1, "Product name is required"),
@@ -61,7 +63,7 @@ export const createProductSchema = z
         costPrice: z.number().nonnegative("Cost price must be 0 or more"),
         sellingPrice: z.number().nonnegative("Selling price must be 0 or more"),
         reorderPoint: z.number().int().nonnegative(),
-        reorderQty: z.number().int().nonnegative,
+        reorderQty: z.number().int().nonnegative(),
         imageUrl: z.url("Enter a valid image URL").optional().nullable(),
         isActive: z.boolean(),
     })
@@ -76,12 +78,15 @@ export const createProductServerSchema = z
         name: z.string().min(1, "Product name is required"),
         description: z.string().optional().nullable(),
         categoryId: z.string().min(1, "Category is required"),
-        supplierId: z.string().optional().nullable(),
+        supplierId: z.preprocess(
+            emptyStringToNull,
+            z.string().optional().nullable()
+        ),
         unit: z.enum(UNIT_VALUES),
         costPrice: z.number().nonnegative("Cost price must be 0 or more"),
         sellingPrice: z.number().nonnegative("Selling price must be 0 or more"),
         reorderPoint: z.number().int().nonnegative(),
-        reorderQty: z.number().int().nonnegative,
+        reorderQty: z.number().int().nonnegative(),
         isActive: z.boolean(),
         imageUrl: z.preprocess(
             (val) => (val === "" || val == null ? undefined : val),
