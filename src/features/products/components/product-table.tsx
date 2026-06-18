@@ -3,7 +3,6 @@ import {
     type ColumnDef,
     flexRender,
     getCoreRowModel,
-    getFilteredRowModel,
     getSortedRowModel,
     type OnChangeFn,
     type PaginationState,
@@ -102,7 +101,7 @@ export function ProductTable<PData, PValue>({
         data,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
+        // getFilteredRowModel: getFilteredRowModel(),
         onSortingChange: setSorting,
         onPaginationChange: handlePaginationChange,
         manualPagination: true,
@@ -178,14 +177,24 @@ export function ProductTable<PData, PValue>({
                 </Table>
             </div>
 
-            <TablePagination
-                onPageChange={handlePageChange}
-                page={page}
-                pageCount={pageCount}
-                pageSize={pageSize}
-                table={table}
-                total={total}
-            />
+            <div className="flex items-center justify-between">
+                {table.getFilteredSelectedRowModel().rows.length > 0 && (
+                    <div className="text-muted-foreground text-sm">
+                        {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                        {table.getFilteredRowModel().rows.length} row(s)
+                        selected.
+                    </div>
+                )}
+                
+                <TablePagination
+                    onPageChange={handlePageChange}
+                    page={page}
+                    pageCount={pageCount}
+                    pageSize={pageSize}
+                    table={table}
+                    total={total}
+                />
+            </div>
         </div>
     );
 }
