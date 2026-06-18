@@ -52,11 +52,11 @@ export function TablePagination<TData>({
                         }
                         value={String(pageSize)}
                     >
-                        <SelectTrigger className="h-8 w-[70px]">
+                        <SelectTrigger className="h-8 w-17.5">
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent side="top">
-                            {[10, 20, 50, 100].map((size) => (
+                            {[5, 10, 20, 50, 100].map((size) => (
                                 <SelectItem key={size} value={String(size)}>
                                     {size}
                                 </SelectItem>
