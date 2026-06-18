@@ -1,4 +1,4 @@
-import { IconDots } from "@tabler/icons-react";
+import { IconCaretUpDown, IconDots } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "#/components/ui/badge";
@@ -40,8 +40,22 @@ export const productColumns: ColumnDef<Product>[] = [
         enableSorting: false,
         enableHiding: false,
     },
-    { accessorKey: "sku", header: "SKU" },
-    { accessorKey: "name", header: "Name" },
+    {
+        accessorKey: "sku",
+        header: ({ column }) => (
+            <Button onClick={() => column.toggleSorting()} variant="ghost">
+                <span>SKU</span> <IconCaretUpDown />
+            </Button>
+        ),
+    },
+    {
+        accessorKey: "name",
+        header: ({ column }) => (
+            <Button onClick={() => column.toggleSorting()} variant="ghost">
+                <span>Name</span> <IconCaretUpDown />
+            </Button>
+        ),
+    },
     {
         header: "Category",
         cell: ({ row }) => (
