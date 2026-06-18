@@ -4,7 +4,7 @@ import { generateSku } from "#/lib/helpers";
 import { authMiddleware, createProductMiddleware } from "#/middleware";
 import {
     archiveProductSchema,
-    createProductSchema,
+    createProductServerSchema,
     getProductSchema,
     getProductsSchema,
     updateProductSchema,
@@ -28,6 +28,12 @@ export const getProducts = createServerFn({ method: "GET" })
                         { name: { contains: search, mode: "insensitive" } },
                         { sku: { contains: search, mode: "insensitive" } },
                         { unit: { contains: search, mode: "insensitive" } },
+                        {
+                            description: {
+                                contains: search,
+                                mode: "insensitive",
+                            },
+                        },
                         {
                             category: {
                                 name: { contains: search, mode: "insensitive" },
@@ -106,7 +112,7 @@ export const getProductFormData = createServerFn({ method: "GET" }).handler(
 
 export const createProduct = createServerFn({ method: "POST" })
     .middleware([authMiddleware, createProductMiddleware])
-    .validator(createProductSchema)
+    .validator(createProductServerSchema)
     .handler(async ({ context: { session }, data }) => {
         const user = session.user;
 
