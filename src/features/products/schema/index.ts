@@ -12,7 +12,44 @@ export const getProductSchema = z.object({
 });
 export type GetProductInput = z.infer<typeof getProductSchema>;
 
-const units = ["pcs", "kg", "l", "box", "pack"] as const;
+export const UNIT_VALUES = [
+    "pcs",
+    "kg",
+    "g",
+    "l",
+    "ml",
+    "box",
+    "pack",
+    "carton",
+    "dozen",
+    "bag",
+    "m",
+    "m2",
+] as const;
+
+export type Unit = (typeof UNIT_VALUES)[number];
+
+// Labels keyed to the type — `satisfies` catches any missing entries
+export const UNIT_LABELS = {
+    pcs: "Pieces",
+    kg: "Kilograms (kg)",
+    g: "Grams (g)",
+    l: "Litres (l)",
+    ml: "Millilitres (ml)",
+    box: "Box",
+    pack: "Pack",
+    carton: "Carton",
+    dozen: "Dozen",
+    bag: "Bag",
+    m: "Metres (m)",
+    m2: "Square metres (m²)",
+} satisfies Record<Unit, string>;
+
+// Derive PRODUCT_UNITS from UNIT_VALUES — not the other way around
+export const PRODUCT_UNITS = UNIT_VALUES.map((value) => ({
+    value,
+    label: UNIT_LABELS[value],
+}));
 
 export const createProductSchema = z
     .object({
@@ -20,23 +57,41 @@ export const createProductSchema = z
         description: z.string().optional().nullable(),
         categoryId: z.string().min(1, "Category is required"),
         supplierId: z.string().optional().nullable(),
-        unit: z.enum(units),
-        costPrice: z.coerce
-            .number()
-            .nonnegative("Cost price must be 0 or more"),
-        sellingPrice: z.coerce
-            .number()
-            .nonnegative("Selling price must be 0 or more"),
-        reorderPoint: z.coerce.number().int().nonnegative().default(0),
-        reorderQty: z.coerce.number().int().nonnegative().default(0),
+        unit: z.enum(UNIT_VALUES),
+        costPrice: z.number().nonnegative("Cost price must be 0 or more"),
+        sellingPrice: z.number().nonnegative("Selling price must be 0 or more"),
+        reorderPoint: z.number().int().nonnegative(),
+        reorderQty: z.number().int().nonnegative,
         imageUrl: z.url("Enter a valid image URL").optional().nullable(),
-        isActive: z.boolean().default(true),
+        isActive: z.boolean(),
     })
     .refine((data) => data.sellingPrice >= data.costPrice, {
         error: "Selling price must be greater than or equal to cost price",
         path: ["sellingPrice"],
     });
 export type CreateProductInput = z.infer<typeof createProductSchema>;
+
+export const createProductServerSchema = z
+    .object({
+        name: z.string().min(1, "Product name is required"),
+        description: z.string().optional().nullable(),
+        categoryId: z.string().min(1, "Category is required"),
+        supplierId: z.string().optional().nullable(),
+        unit: z.enum(UNIT_VALUES),
+        costPrice: z.number().nonnegative("Cost price must be 0 or more"),
+        sellingPrice: z.number().nonnegative("Selling price must be 0 or more"),
+        reorderPoint: z.number().int().nonnegative(),
+        reorderQty: z.number().int().nonnegative,
+        isActive: z.boolean(),
+        imageUrl: z.preprocess(
+            (val) => (val === "" || val == null ? undefined : val),
+            z.url("Enter a valid image URL").optional()
+        ),
+    })
+    .refine((data) => data.sellingPrice >= data.costPrice, {
+        error: "Selling price must be greater than or equal to cost price",
+        path: ["sellingPrice"],
+    });
 
 export const updateProductSchema = createProductSchema.extend({
     id: z.cuid2(),
