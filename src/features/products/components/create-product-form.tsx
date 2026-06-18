@@ -55,7 +55,14 @@ export default function CreateProductForm({
         defaultValues,
         onSubmit: async ({ value }) => {
             try {
-                await createProduct({ data: { ...value } });
+                const normalizeSupplierId = value.supplierId?.trim()
+                    ? value.supplierId.trim()
+                    : null;
+
+                await createProduct({
+                    data: { ...value, supplierId: normalizeSupplierId },
+                });
+
                 toast.success("Product created successfully");
                 router.navigate({ to: "/products", replace: true });
             } catch (error) {
@@ -78,7 +85,7 @@ export default function CreateProductForm({
             <CardHeader>
                 <CardTitle>Product details</CardTitle>
                 <CardDescription>
-                    Fill in the fields below. Required fields are SKU, name,
+                    Fill in the fields below. Required fields are name,
                     category, unit, cost price, and selling price.
                 </CardDescription>
             </CardHeader>
