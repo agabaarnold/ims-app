@@ -127,7 +127,11 @@ function summarizeChanges(before: unknown, after: unknown) {
         return "—";
     }
 
-    const changedKeys = Object.keys(afterObj).filter(
+    const allKeys = new Set([
+        ...Object.keys(beforeObj),
+        ...Object.keys(afterObj),
+    ]);
+    const changedKeys = Array.from(allKeys).filter(
         (key) =>
             JSON.stringify(afterObj[key]) !== JSON.stringify(beforeObj[key])
     );
