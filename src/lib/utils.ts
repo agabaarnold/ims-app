@@ -18,7 +18,7 @@ export function getInitials(name: string) {
 
 export function formatDate(value: Date, locale = "en-UG") {
     return new Intl.DateTimeFormat(locale, {
-        dateStyle: "long",
+        dateStyle: "medium",
         timeStyle: "short",
     }).format(value);
 }
@@ -32,5 +32,6 @@ export function formatCurrency(value: number | string, locale = "en-UG") {
     return new Intl.NumberFormat(locale, {
         style: "currency",
         currency: "UGX",
+        maximumFractionDigits: 0,
     }).format(numericValue);
 }

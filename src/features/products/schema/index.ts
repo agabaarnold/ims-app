@@ -54,6 +54,9 @@ export const PRODUCT_UNITS = UNIT_VALUES.map((value) => ({
 const emptyStringToNull = (value: unknown) =>
     typeof value === "string" && value.trim() === "" ? null : value;
 
+const isBlank = (value: string | null | undefined) =>
+    value === null || value === undefined || value.trim() === "";
+
 export const createProductSchema = z
     .object({
         name: z.string().min(1, "Product name is required"),
@@ -65,7 +68,15 @@ export const createProductSchema = z
         sellingPrice: z.number().nonnegative("Selling price must be 0 or more"),
         reorderPoint: z.number().int().nonnegative(),
         reorderQty: z.number().int().nonnegative(),
-        imageUrl: z.url("Enter a valid image URL").optional().nullable(),
+        imageUrl: z
+            .url()
+            .optional()
+            .nullable()
+            .refine(
+                // biome-ignore lint/style/noNonNullAssertion: Ignore
+                (value) => isBlank(value) || z.url().safeParse(value!).success,
+                { message: "Enter a valid image URL" }
+            ),
         isActive: z.boolean(),
     })
     .refine((data) => data.sellingPrice >= data.costPrice, {
@@ -99,9 +110,17 @@ export const createProductServerSchema = z
         path: ["sellingPrice"],
     });
 
-export const updateProductSchema = createProductSchema.extend({
-    id: z.cuid2(),
-});
+export const updateProductSchema = createProductSchema
+    .extend({
+        id: z.cuid2(),
+    })
+    .transform((data) => ({
+        ...data,
+        imageUrl:
+            data.imageUrl === "" || data.imageUrl === null
+                ? undefined
+                : data.imageUrl,
+    }));
 export type UpdateProductInput = z.infer<typeof updateProductSchema>;
 
 export const archiveProductSchema = getProductSchema;
