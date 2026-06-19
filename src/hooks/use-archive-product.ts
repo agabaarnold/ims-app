@@ -9,7 +9,6 @@ export const useArchiveProduct = (productId: string) => {
         try {
             await archiveProduct({ data: { id: productId } });
             toast.success("Product archived successfully!");
-            router.clearCache();
             router.invalidate();
         } catch (error) {
             if (error instanceof Error) {
