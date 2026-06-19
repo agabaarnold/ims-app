@@ -1,3 +1,5 @@
+/** biome-ignore-all lint/style/noNestedTernary: For simplicity */
+
 import { useFieldContext } from "#/hooks/use-form-context";
 import { Field, FieldError, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
@@ -27,14 +29,27 @@ export default function FormNumberInput({
                 min={min}
                 name={field.name}
                 onBlur={(e) => {
+                    const parsed = e.target.valueAsNumber;
                     const nextValue =
-                        e.target.value === "" ? 0 : e.target.valueAsNumber;
+                        e.target.value === ""
+                            ? 0
+                            : Number.isNaN(parsed)
+                              ? 0
+                              : parsed
+                                
+                                ;
                     field.handleChange(nextValue);
                     field.handleBlur();
                 }}
                 onChange={(e) => {
+                    const parsed = e.target.valueAsNumber;
                     const nextValue =
-                        e.target.value === "" ? 0 : e.target.valueAsNumber;
+                        e.target.value === ""
+                            ? 0
+                            : Number.isNaN(parsed)
+                              ? 0
+                              : parsed;
+
                     field.handleChange(nextValue);
                 }}
                 placeholder={placeholder}
