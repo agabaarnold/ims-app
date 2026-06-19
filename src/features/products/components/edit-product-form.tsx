@@ -52,7 +52,10 @@ export default function EditProductForm({
         defaultValues,
         onSubmit: async ({ value }) => {
             try {
-                await updateProduct({ data: value });
+                const normalizeSupplierId = value.supplierId?.trim() || null;
+                await updateProduct({
+                    data: { ...value, supplierId: normalizeSupplierId },
+                });
                 toast.success("Product updated");
                 router.navigate({
                     to: "/products/$productId",
