@@ -42,7 +42,13 @@ function ForbiddenPage() {
                             />
 
                             <Button
-                                onClick={() => router.history.back()}
+                                onClick={() => {
+                                    if (router.history.length > 1) {
+                                        router.history.back();
+                                    } else {
+                                        router.navigate({ to: "/" });
+                                    }
+                                }}
                                 size="lg"
                                 variant="outline"
                             >
