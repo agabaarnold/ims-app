@@ -51,7 +51,8 @@ export const PRODUCT_UNITS = UNIT_VALUES.map((value) => ({
     label: UNIT_LABELS[value],
 }));
 
-const emptyStringToNull = (value: unknown) => (value === "" ? null : value);
+const emptyStringToNull = (value: unknown) =>
+    typeof value === "string" && value.trim() === "" ? null : value;
 
 export const createProductSchema = z
     .object({
