@@ -9,8 +9,10 @@ import {
     DropdownMenuContent,
     DropdownMenuGroup,
     DropdownMenuItem,
+    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "#/components/ui/dropdown-menu";
+import { useArchiveProduct } from "#/hooks/use-archive-product";
 import { formatCurrency } from "#/lib/utils";
 import type { getProducts } from "../functions";
 
@@ -96,6 +98,9 @@ export const productColumns: ColumnDef<Product>[] = [
         header: "Actions",
         cell: ({ row }) => {
             const product = row.original;
+            const productId = product.id;
+
+            const { archive } = useArchiveProduct(productId);
 
             return (
                 <DropdownMenu>
@@ -135,6 +140,17 @@ export const productColumns: ColumnDef<Product>[] = [
                                 }
                             />
                         </DropdownMenuGroup>
+
+                        <DropdownMenuSeparator />
+
+                        <DropdownMenuItem
+                            onClick={() => archive()}
+                            render={
+                                <span className="text-destructive">
+                                    Archive
+                                </span>
+                            }
+                        />
                     </DropdownMenuContent>
                 </DropdownMenu>
             );
