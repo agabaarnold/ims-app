@@ -112,8 +112,17 @@ export default function ProductAuditLogTab({
 }
 
 function summarizeChanges(before: unknown, after: unknown) {
-    const beforeObj = before as Record<string, unknown> | null;
-    const afterObj = after as Record<string, unknown> | null;
+function summarizeChanges(before: unknown, after: unknown) {
+    if (
+        !before ||
+        !after ||
+        typeof before !== "object" ||
+        typeof after !== "object"
+    ) {
+        return "—";
+    }
+    const beforeObj = before as Record<string, unknown>;
+    const afterObj = after as Record<string, unknown>;
     if (!(beforeObj && afterObj)) {
         return "—";
     }
