@@ -112,10 +112,8 @@ export default function ProductAuditLogTab({
 }
 
 function summarizeChanges(before: unknown, after: unknown) {
-function summarizeChanges(before: unknown, after: unknown) {
     if (
-        !before ||
-        !after ||
+        !(before && after) ||
         typeof before !== "object" ||
         typeof after !== "object"
     ) {
