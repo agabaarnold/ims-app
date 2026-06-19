@@ -55,10 +55,10 @@ export default function CreateProductForm({
         defaultValues,
         onSubmit: async ({ value }) => {
             try {
-                const normalizeSupplierId = value.supplierId?.trim() || null;
+                const normalizedSupplierId = value.supplierId?.trim() || null;
 
                 await createProduct({
-                    data: { ...value, supplierId: normalizeSupplierId },
+                    data: { ...value, supplierId: normalizedSupplierId },
                 });
 
                 toast.success("Product created successfully");
