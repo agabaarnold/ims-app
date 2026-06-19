@@ -36,7 +36,7 @@ function ProductDetailPage() {
         try {
             await archiveProduct({ data: { id: product.id } });
             toast.success("Product archived");
-            navigate({ to: "/products" });
+            await navigate({ to: "/products" });
         } catch (error) {
             toast.error(
                 error instanceof Error
