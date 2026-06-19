@@ -18,7 +18,7 @@ export function getInitials(name: string) {
 
 export function formatDate(value: Date, locale = "en-UG") {
     return new Intl.DateTimeFormat(locale, {
-        dateStyle: "long",
+        dateStyle: "medium",
         timeStyle: "short",
     }).format(value);
 }
