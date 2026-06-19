@@ -110,9 +110,17 @@ export const createProductServerSchema = z
         path: ["sellingPrice"],
     });
 
-export const updateProductSchema = createProductSchema.extend({
-    id: z.cuid2(),
-});
+export const updateProductSchema = createProductSchema
+    .extend({
+        id: z.cuid2(),
+    })
+    .transform((data) => ({
+        ...data,
+        imageUrl:
+            data.imageUrl === "" || data.imageUrl === null
+                ? undefined
+                : data.imageUrl,
+    }));
 export type UpdateProductInput = z.infer<typeof updateProductSchema>;
 
 export const archiveProductSchema = getProductSchema;
