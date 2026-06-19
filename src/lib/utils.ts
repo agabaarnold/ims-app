@@ -32,5 +32,6 @@ export function formatCurrency(value: number | string, locale = "en-UG") {
     return new Intl.NumberFormat(locale, {
         style: "currency",
         currency: "UGX",
+        maximumFractionDigits: 0,
     }).format(numericValue);
 }
