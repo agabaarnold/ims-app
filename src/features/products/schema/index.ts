@@ -105,3 +105,21 @@ export type UpdateProductInput = z.infer<typeof updateProductSchema>;
 
 export const archiveProductSchema = getProductSchema;
 export type ArchiveProductInput = z.infer<typeof archiveProductSchema>;
+
+export const getProductMovementsSchema = z.object({
+    id: z.cuid2(),
+    page: z.number().int().min(1),
+    pageSize: z.number().int().min(1),
+});
+export type GetProductMovementsInput = z.infer<
+    typeof getProductMovementsSchema
+>;
+
+export const getProductAuditLogsSchema = z.object({
+    id: z.cuid2(),
+    page: z.number().int().min(1),
+    pageSize: z.number().int().min(1),
+});
+export type GetProductAuditLogsInput = z.infer<
+    typeof getProductAuditLogsSchema
+>;
