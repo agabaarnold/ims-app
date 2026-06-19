@@ -96,64 +96,55 @@ export const productColumns: ColumnDef<Product>[] = [
     },
     {
         header: "Actions",
-        cell: ({ row }) => {
-            const product = row.original;
-            const productId = product.id;
-
-            const { archive } = useArchiveProduct(productId);
-
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger
-                        render={
-                            <Button
-                                aria-label="Open product actions"
-                                size="icon"
-                                variant="ghost"
-                            >
-                                <IconDots aria-hidden="true" />
-                            </Button>
-                        }
-                    />
-
-                    <DropdownMenuContent>
-                        <DropdownMenuGroup>
-                            <DropdownMenuItem
-                                render={
-                                    <Link
-                                        params={{ productId: product.id }}
-                                        to="/products/$productId"
-                                    >
-                                        View
-                                    </Link>
-                                }
-                            />
-
-                            <DropdownMenuItem
-                                render={
-                                    <Link
-                                        params={{ productId: product.id }}
-                                        to="/products/$productId/edit"
-                                    >
-                                        Edit
-                                    </Link>
-                                }
-                            />
-                        </DropdownMenuGroup>
-
-                        <DropdownMenuSeparator />
-
-                        <DropdownMenuItem
-                            onClick={() => archive()}
-                            render={
-                                <span className="text-destructive">
-                                    Archive
-                                </span>
-                            }
-                        />
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            );
-        },
+        cell: ({ row }) => <ProductActionsCell product={row.original} />,
     },
 ];
+
+const ProductActionsCell = ({ product }: { product: Product }) => {
+    const { archive } = useArchiveProduct(product.id);
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger
+                render={
+                    <Button
+                        aria-label="Open product actions"
+                        size="icon"
+                        variant="ghost"
+                    >
+                        <IconDots aria-hidden="true" />
+                    </Button>
+                }
+            />
+            <DropdownMenuContent>
+                <DropdownMenuGroup>
+                    <DropdownMenuItem
+                        render={
+                            <Link
+                                params={{ productId: product.id }}
+                                to="/products/$productId"
+                            >
+                                View
+                            </Link>
+                        }
+                    />
+                    <DropdownMenuItem
+                        render={
+                            <Link
+                                params={{ productId: product.id }}
+                                to="/products/$productId/edit"
+                            >
+                                Edit
+                            </Link>
+                        }
+                    />
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                    onClick={archive}
+                    render={<span className="text-destructive">Archive</span>}
+                />
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
+};
