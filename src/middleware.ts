@@ -21,10 +21,40 @@ export const createProductMiddleware = createMiddleware().server(
             headers,
             body: { permissions: { product: ["create"] } },
         });
-        if (!hasPermission) {
-            throw new Error(
-                "You do not have permission to create a product. Please contact your administrator."
-            );
+        if (!hasPermission.success) {
+            throw redirect({ to: "/forbidden" });
+        }
+
+        return next();
+    }
+);
+
+export const updateProductMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { product: ["update"] } },
+        });
+        if (!hasPermission.success) {
+            throw redirect({ to: "/forbidden", replace: true });
+        }
+
+        return next();
+    }
+);
+
+export const archiveProductMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { product: ["delete"] } },
+        });
+        if (!hasPermission.success) {
+            throw new Error("You do not have permission to archive products");
         }
 
         return next();
