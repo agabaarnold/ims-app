@@ -24,9 +24,9 @@ function UnauthorizedPage() {
                                 Action failed
                             </h1>
                             <p className="max-w-xl text-base text-muted-foreground leading-7 sm:text-lg">
-                                You do not have permission to perform this action.
-                                Please contact your administrator if you believe
-                                this is a mistake.
+                                You do not have permission to perform this
+                                action. Please contact your administrator if you
+                                believe this is a mistake.
                             </p>
                         </div>
 
@@ -42,7 +42,13 @@ function UnauthorizedPage() {
                             />
 
                             <Button
-                                onClick={() => router.history.back()}
+                                onClick={() => {
+                                    if (router.history.length > 1) {
+                                        router.history.back();
+                                    } else {
+                                        router.navigate({ to: "/" });
+                                    }
+                                }}
                                 size="lg"
                                 variant="outline"
                             >
