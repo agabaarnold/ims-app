@@ -1,6 +1,6 @@
 import { revalidateLogic } from "@tanstack/react-form";
-import { useRouter } from "@tanstack/react-router";
-import toast from "react-hot-toast";
+import { useParams, useRouter } from "@tanstack/react-router";
+import { toast } from "react-hot-toast";
 import { Button } from "#/components/ui/button";
 import {
     Card,
@@ -11,67 +11,66 @@ import {
 } from "#/components/ui/card";
 import { FieldGroup } from "#/components/ui/field";
 import { Separator } from "#/components/ui/separator";
-import {
-    type CreateProductInput,
-    createProductSchema,
-    PRODUCT_UNITS,
-} from "#/features/products/schema";
 import { useAppForm } from "#/hooks/use-form";
-import { createProduct } from "../functions";
+import { type getProductDetails, updateProduct } from "../functions";
+import {
+    PRODUCT_UNITS,
+    type UpdateProductInput,
+    updateProductSchema,
+} from "../schema";
 
-interface CreateProductFormProps {
-    categories: {
-        id: string;
-        name: string;
-        code: string;
-    }[];
-    suppliers: {
-        id: string;
-        name: string;
-    }[];
+interface EditProductFormProps {
+    categories: { id: string; name: string; code: string }[];
+    product: Awaited<ReturnType<typeof getProductDetails>>;
+    suppliers: { id: string; name: string }[];
 }
 
-export default function CreateProductForm({
+export default function EditProductForm({
+    product,
     categories,
     suppliers,
-}: CreateProductFormProps) {
+}: EditProductFormProps) {
     const router = useRouter();
+    const { productId } = useParams({ from: "/_app/products/$productId/edit" });
 
-    const defaultValues: CreateProductInput = {
-        name: "",
-        description: "",
-        categoryId: "",
-        supplierId: "",
-        unit: "pcs",
-        costPrice: 0,
-        sellingPrice: 0,
-        reorderPoint: 0,
-        reorderQty: 0,
-        imageUrl: "",
-        isActive: true,
+    const defaultValues: UpdateProductInput = {
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        categoryId: product.categoryId,
+        supplierId: product.supplierId,
+        unit: product.unit,
+        costPrice: product.costPrice,
+        sellingPrice: product.sellingPrice,
+        reorderPoint: product.reorderPoint,
+        reorderQty: product.reorderQty,
+        imageUrl: product.imageUrl,
+        isActive: product.isActive,
     };
 
     const form = useAppForm({
         defaultValues,
         onSubmit: async ({ value }) => {
             try {
-                const normalizedSupplierId = value.supplierId?.trim() || null;
-
-                await createProduct({
-                    data: { ...value, supplierId: normalizedSupplierId },
+                const normalizeSupplierId = value.supplierId?.trim() || null;
+                await updateProduct({
+                    data: { ...value, supplierId: normalizeSupplierId },
                 });
-
-                toast.success("Product created successfully");
-                router.navigate({ to: "/products", replace: true });
+                toast.success("Product updated");
+                router.navigate({
+                    to: "/products/$productId",
+                    params: { productId },
+                    replace: true,
+                });
             } catch (error) {
-                if (error instanceof Error) {
-                    toast.error(error.message);
-                } else {
-                    toast.error("Failed to create product");
-                }
+                toast.error(
+                    error instanceof Error
+                        ? error.message
+                        : "Failed to update product"
+                );
             }
         },
-        validators: { onDynamic: createProductSchema },
+        validators: { onDynamic: updateProductSchema },
         validationLogic: revalidateLogic({
             mode: "submit",
             modeAfterSubmission: "blur",
@@ -81,10 +80,9 @@ export default function CreateProductForm({
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Product details</CardTitle>
+                <CardTitle>Product update</CardTitle>
                 <CardDescription>
-                    Fill in the fields below. Required fields are name,
-                    category, unit, cost price, and selling price.
+                    Use the form below to update the product
                 </CardDescription>
             </CardHeader>
 
@@ -229,7 +227,7 @@ export default function CreateProductForm({
                             </Button>
 
                             <form.AppForm>
-                                <form.SubmitButton label="Create product" />
+                                <form.SubmitButton label="Update product" />
                             </form.AppForm>
                         </div>
                     </FieldGroup>

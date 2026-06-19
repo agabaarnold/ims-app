@@ -51,6 +51,9 @@ export const PRODUCT_UNITS = UNIT_VALUES.map((value) => ({
     label: UNIT_LABELS[value],
 }));
 
+const emptyStringToNull = (value: unknown) =>
+    typeof value === "string" && value.trim() === "" ? null : value;
+
 export const createProductSchema = z
     .object({
         name: z.string().min(1, "Product name is required"),
@@ -61,7 +64,7 @@ export const createProductSchema = z
         costPrice: z.number().nonnegative("Cost price must be 0 or more"),
         sellingPrice: z.number().nonnegative("Selling price must be 0 or more"),
         reorderPoint: z.number().int().nonnegative(),
-        reorderQty: z.number().int().nonnegative,
+        reorderQty: z.number().int().nonnegative(),
         imageUrl: z.url("Enter a valid image URL").optional().nullable(),
         isActive: z.boolean(),
     })
@@ -76,12 +79,15 @@ export const createProductServerSchema = z
         name: z.string().min(1, "Product name is required"),
         description: z.string().optional().nullable(),
         categoryId: z.string().min(1, "Category is required"),
-        supplierId: z.string().optional().nullable(),
+        supplierId: z.preprocess(
+            emptyStringToNull,
+            z.string().optional().nullable()
+        ),
         unit: z.enum(UNIT_VALUES),
         costPrice: z.number().nonnegative("Cost price must be 0 or more"),
         sellingPrice: z.number().nonnegative("Selling price must be 0 or more"),
         reorderPoint: z.number().int().nonnegative(),
-        reorderQty: z.number().int().nonnegative,
+        reorderQty: z.number().int().nonnegative(),
         isActive: z.boolean(),
         imageUrl: z.preprocess(
             (val) => (val === "" || val == null ? undefined : val),
@@ -100,3 +106,21 @@ export type UpdateProductInput = z.infer<typeof updateProductSchema>;
 
 export const archiveProductSchema = getProductSchema;
 export type ArchiveProductInput = z.infer<typeof archiveProductSchema>;
+
+export const getProductMovementsSchema = z.object({
+    id: z.cuid2(),
+    page: z.number().int().min(1),
+    pageSize: z.number().int().min(1),
+});
+export type GetProductMovementsInput = z.infer<
+    typeof getProductMovementsSchema
+>;
+
+export const getProductAuditLogsSchema = z.object({
+    id: z.cuid2(),
+    page: z.number().int().min(1),
+    pageSize: z.number().int().min(1),
+});
+export type GetProductAuditLogsInput = z.infer<
+    typeof getProductAuditLogsSchema
+>;
