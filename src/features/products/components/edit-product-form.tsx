@@ -53,8 +53,14 @@ export default function EditProductForm({
         onSubmit: async ({ value }) => {
             try {
                 const normalizeSupplierId = value.supplierId?.trim() || null;
+                const imageUrl = value.imageUrl?.trim() || null;
+                
                 await updateProduct({
-                    data: { ...value, supplierId: normalizeSupplierId },
+                    data: {
+                        ...value,
+                        imageUrl,
+                        supplierId: normalizeSupplierId,
+                    },
                 });
                 toast.success("Product updated");
                 router.navigate({
