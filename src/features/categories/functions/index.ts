@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { Prisma } from "#/generated/prisma/client";
 import { prisma } from "#/lib/db";
 import {
     authMiddleware,
@@ -74,10 +75,11 @@ async function wouldCreateCycle(
         }
         visited.add(currentId);
 
-        const current = await tx.category.findUnique({
-            where: { id: currentId },
-            select: { parentId: true },
-        });
+        const current: { parentId: string | null } | null =
+            await tx.category.findUnique({
+                where: { id: currentId },
+                select: { parentId: true },
+            });
         currentId = current?.parentId ?? null;
     }
 
@@ -89,55 +91,77 @@ export const updateCategory = createServerFn({ method: "POST" })
     .validator(updateCategorySchema)
     .handler(async ({ context: { session }, data }) => {
         const user = session.user;
+        const MAX_RETRIES = 3;
 
-        return await prisma.$transaction(async (tx) => {
-            const before = await tx.category.findUnique({
-                where: { id: data.id },
-            });
-            if (!before) {
-                throw new Error(`Category with id ${data.id} not found`);
-            }
+        for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+            try {
+                return await prisma.$transaction(
+                    async (tx) => {
+                        const before = await tx.category.findUnique({
+                            where: { id: data.id },
+                        });
+                        if (!before) {
+                            throw new Error(
+                                `Category with id ${data.id} not found`
+                            );
+                        }
 
-            if (
-                data.parentId &&
-                (await wouldCreateCycle(tx, data.id, data.parentId))
-            ) {
-                throw new Error(
-                    "Can't set a category's parent to itself or one of its own subcategories."
+                        if (
+                            data.parentId &&
+                            (await wouldCreateCycle(tx, data.id, data.parentId))
+                        ) {
+                            throw new Error(
+                                "Can't set a category's parent to itself or one of its own subcategories."
+                            );
+                        }
+
+                        const category = await tx.category.update({
+                            where: { id: data.id },
+                            data: {
+                                name: data.name,
+                                code: data.code,
+                                description: data.description,
+                                parentId: data.parentId,
+                            },
+                        });
+
+                        await tx.auditLog.create({
+                            data: {
+                                action: "UPDATE",
+                                userId: user.id,
+                                entityId: category.id,
+                                entityType: "CATEGORY",
+                                before: {
+                                    name: before.name,
+                                    code: before.code,
+                                    parentId: before.parentId,
+                                },
+                                after: {
+                                    name: category.name,
+                                    code: category.code,
+                                    parentId: category.parentId,
+                                },
+                            },
+                        });
+
+                        return category;
+                    },
+                    { isolationLevel: "Serializable" }
+                );
+            } catch (error) {
+                if (
+                    attempt === MAX_RETRIES ||
+                    !(error instanceof Prisma.PrismaClientKnownRequestError) ||
+                    error.code !== "P2034"
+                ) {
+                    throw error;
+                }
+
+                await new Promise((resolve) =>
+                    setTimeout(resolve, 100 * attempt)
                 );
             }
-
-            const category = await tx.category.update({
-                where: { id: data.id },
-                data: {
-                    name: data.name,
-                    code: data.code,
-                    description: data.description,
-                    parentId: data.parentId,
-                },
-            });
-
-            await tx.auditLog.create({
-                data: {
-                    action: "UPDATE",
-                    userId: user.id,
-                    entityId: category.id,
-                    entityType: "CATEGORY",
-                    before: {
-                        name: before.name,
-                        code: before.code,
-                        parentId: before.parentId,
-                    },
-                    after: {
-                        name: category.name,
-                        code: category.code,
-                        parentId: category.parentId,
-                    },
-                },
-            });
-
-            return category;
-        });
+        }
     });
 
 export const deleteCategory = createServerFn({ method: "POST" })
