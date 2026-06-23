@@ -15,7 +15,7 @@ export const serverEnv = createEnv({
         SMTP_PORT: z.coerce.number(),
         SMTP_USER: z.string(),
         SMTP_PASS: z.string(),
-        SMTP_FROM: z.string(),
+        SMTP_FROM: z.string().min(1),
     },
     runtimeEnv: process.env,
     emptyStringAsUndefined: true,
