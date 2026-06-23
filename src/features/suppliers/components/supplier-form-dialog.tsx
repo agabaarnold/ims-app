@@ -13,11 +13,7 @@ import {
 import { FieldGroup } from "#/components/ui/field";
 import { useAppForm } from "#/hooks/use-form";
 import { createSupplier, updateSupplier } from "../functions";
-import {
-    type CreateSupplierInput,
-    createSupplierSchema,
-    updateSupplierSchema,
-} from "../schema";
+import { type CreateSupplierInput, createSupplierSchema } from "../schema";
 
 interface SupplierWithCounts {
     address: string | null;
@@ -123,7 +119,7 @@ function SupplierForm({
             }
         },
         validators: {
-            onDynamic: isEditing ? updateSupplierSchema : createSupplierSchema,
+            onDynamic: createSupplierSchema,
         },
         validationLogic: revalidateLogic({
             mode: "submit",
