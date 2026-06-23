@@ -110,7 +110,9 @@ export default function ActiveSessionsCard() {
                                 <TableHead>Device</TableHead>
                                 <TableHead>IP address</TableHead>
                                 <TableHead>Last active</TableHead>
-                                <TableHead className="w-0" />
+                                <TableHead className="w-0">
+                                    <span className="sr-only">Actions</span>
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
 
