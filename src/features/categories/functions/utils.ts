@@ -64,11 +64,20 @@ export function getDescendantIds(
     }
 
     const result = new Set<string>();
+    const visiting = new Set<string>();
+
     function visit(id: string) {
+        if (visiting.has(id)) {
+            return;
+        }
+        visiting.add(id);
+
         for (const child of byParent.get(id) ?? []) {
             result.add(child.id);
             visit(child.id);
         }
+
+        visiting.delete(id);
     }
     visit(rootId);
     return result;
