@@ -14,7 +14,7 @@ function EmailChangeEmail({
 }: EmailChangeEmailProps) {
     return (
         <EmailLayout
-            footerNote="If you did not create an account, you can ignore this message."
+            footerNote="If you did not request this email change, you can ignore this message."
             previewText="Confirm the change of your email address"
             title="Invenease email change"
         >
@@ -34,7 +34,7 @@ function EmailChangeEmail({
                         className="rounded-xl bg-slate-900 px-6 py-3 text-center font-semibold text-sm text-white"
                         href={confirmationUrl}
                     >
-                        Reset password
+                        Confirm email change
                     </Button>
                 </Section>
 
