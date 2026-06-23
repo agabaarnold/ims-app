@@ -29,26 +29,24 @@ export default function EmailChangeCard({
     const form = useAppForm({
         defaultValues,
         onSubmit: async ({ value }) => {
-            try {
-                const { error } = await authClient.changeEmail({
-                    newEmail: value.newEmail,
-                    callbackURL: window.location.pathname,
-                });
-                if (error) {
-                    toast.error(error.message || "Failed to change email");
-                }
-                setPendingEmail(value.newEmail);
-                toast.success(
-                    "Check your new email inbox to confirm the change"
-                );
-                form.reset();
-            } catch (error) {
-                toast.error(
-                    error instanceof Error
-                        ? error.message
-                        : "Failed to change email"
-                );
-            }
+            await authClient.changeEmail({
+                newEmail: value.newEmail,
+                callbackURL: window.location.pathname,
+                fetchOptions: {
+                    onError: ({ error }) => {
+                        toast.error(error.message || "Failed to change email");
+                    },
+                    onResponse: () => {
+                        setPendingEmail(value.newEmail);
+                    },
+                    onSuccess: () => {
+                        toast.success(
+                            "Check your new email inbox to confirm the change"
+                        );
+                        form.reset();
+                    },
+                },
+            });
         },
         validators: { onDynamic: changeEmailSchema },
         validationLogic: revalidateLogic({
