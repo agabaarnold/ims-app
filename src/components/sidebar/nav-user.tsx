@@ -1,4 +1,8 @@
-import { IconCaretUpDown, IconLogout2 } from "@tabler/icons-react";
+import {
+    IconCaretUpDown,
+    IconLogout2,
+    IconUserEdit,
+} from "@tabler/icons-react";
 import { useNavigate, useRouteContext } from "@tanstack/react-router";
 import { toast } from "react-hot-toast";
 import { useIsMobile } from "#/hooks/use-mobile";
@@ -58,6 +62,16 @@ function NavUser() {
                                     <UserAvatar user={user} />
                                 </div>
                             </DropdownMenuLabel>
+
+                            <DropdownMenuSeparator />
+
+                            <DropdownMenuGroup>
+                                <DropdownMenuItem
+                                    onClick={() => navigate({ to: "/profile" })}
+                                >
+                                    <IconUserEdit /> Profile
+                                </DropdownMenuItem>
+                            </DropdownMenuGroup>
 
                             <DropdownMenuSeparator />
 

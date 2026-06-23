@@ -60,3 +60,99 @@ export const archiveProductMiddleware = createMiddleware().server(
         return next();
     }
 );
+
+export const createCategoryMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { category: ["create"] } },
+        });
+        if (!hasPermission.success) {
+            throw redirect({ to: "/forbidden" });
+        }
+
+        return next();
+    }
+);
+
+export const updateCategoryMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { category: ["update"] } },
+        });
+        if (!hasPermission.success) {
+            throw redirect({ to: "/forbidden", replace: true });
+        }
+
+        return next();
+    }
+);
+
+export const deleteCategoryMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { category: ["delete"] } },
+        });
+        if (!hasPermission.success) {
+            throw new Error("You do not have permission to delete categories");
+        }
+
+        return next();
+    }
+);
+
+export const createSupplierMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { supplier: ["create"] } },
+        });
+        if (!hasPermission.success) {
+            throw redirect({ to: "/forbidden" });
+        }
+
+        return next();
+    }
+);
+
+export const updateSupplierMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { supplier: ["update"] } },
+        });
+        if (!hasPermission.success) {
+            throw redirect({ to: "/forbidden", replace: true });
+        }
+
+        return next();
+    }
+);
+
+export const deleteSupplierMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { supplier: ["delete"] } },
+        });
+        if (!hasPermission.success) {
+            throw new Error("You do not have permission to delete suppliers");
+        }
+
+        return next();
+    }
+);

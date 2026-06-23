@@ -51,6 +51,7 @@ const managerRole = ac.newRole({
 const staffRole = ac.newRole({
     product: ["read"],
     category: ["read"],
+    supplier: ["read"],
     inventory: ["read", "adjust"],
     order: ["create", "read"],
     report: ["read"],

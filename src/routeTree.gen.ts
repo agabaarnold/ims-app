@@ -18,7 +18,10 @@ import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
+import { Route as AppSuppliersIndexRouteImport } from './routes/_app/suppliers/index'
+import { Route as AppProfileIndexRouteImport } from './routes/_app/profile/index'
 import { Route as AppProductsIndexRouteImport } from './routes/_app/products/index'
+import { Route as AppCategoriesIndexRouteImport } from './routes/_app/categories/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AppProductsNewRouteImport } from './routes/_app/products/new'
 import { Route as AppProductsProductIdIndexRouteImport } from './routes/_app/products/$productId/index'
@@ -67,9 +70,24 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const AppSuppliersIndexRoute = AppSuppliersIndexRouteImport.update({
+  id: '/suppliers/',
+  path: '/suppliers/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppProfileIndexRoute = AppProfileIndexRouteImport.update({
+  id: '/profile/',
+  path: '/profile/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppProductsIndexRoute = AppProductsIndexRouteImport.update({
   id: '/products/',
   path: '/products/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppCategoriesIndexRoute = AppCategoriesIndexRouteImport.update({
+  id: '/categories/',
+  path: '/categories/',
   getParentRoute: () => AppRouteRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
@@ -105,7 +123,10 @@ export interface FileRoutesByFullPath {
   '/sign-up': typeof AuthSignUpRoute
   '/products/new': typeof AppProductsNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/categories/': typeof AppCategoriesIndexRoute
   '/products/': typeof AppProductsIndexRoute
+  '/profile/': typeof AppProfileIndexRoute
+  '/suppliers/': typeof AppSuppliersIndexRoute
   '/products/$productId/edit': typeof AppProductsProductIdEditRoute
   '/products/$productId/': typeof AppProductsProductIdIndexRoute
 }
@@ -119,7 +140,10 @@ export interface FileRoutesByTo {
   '/sign-up': typeof AuthSignUpRoute
   '/products/new': typeof AppProductsNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/categories': typeof AppCategoriesIndexRoute
   '/products': typeof AppProductsIndexRoute
+  '/profile': typeof AppProfileIndexRoute
+  '/suppliers': typeof AppSuppliersIndexRoute
   '/products/$productId/edit': typeof AppProductsProductIdEditRoute
   '/products/$productId': typeof AppProductsProductIdIndexRoute
 }
@@ -136,7 +160,10 @@ export interface FileRoutesById {
   '/_app/': typeof AppIndexRoute
   '/_app/products/new': typeof AppProductsNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/_app/categories/': typeof AppCategoriesIndexRoute
   '/_app/products/': typeof AppProductsIndexRoute
+  '/_app/profile/': typeof AppProfileIndexRoute
+  '/_app/suppliers/': typeof AppSuppliersIndexRoute
   '/_app/products/$productId/edit': typeof AppProductsProductIdEditRoute
   '/_app/products/$productId/': typeof AppProductsProductIdIndexRoute
 }
@@ -152,7 +179,10 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/products/new'
     | '/api/auth/$'
+    | '/categories/'
     | '/products/'
+    | '/profile/'
+    | '/suppliers/'
     | '/products/$productId/edit'
     | '/products/$productId/'
   fileRoutesByTo: FileRoutesByTo
@@ -166,7 +196,10 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/products/new'
     | '/api/auth/$'
+    | '/categories'
     | '/products'
+    | '/profile'
+    | '/suppliers'
     | '/products/$productId/edit'
     | '/products/$productId'
   id:
@@ -182,7 +215,10 @@ export interface FileRouteTypes {
     | '/_app/'
     | '/_app/products/new'
     | '/api/auth/$'
+    | '/_app/categories/'
     | '/_app/products/'
+    | '/_app/profile/'
+    | '/_app/suppliers/'
     | '/_app/products/$productId/edit'
     | '/_app/products/$productId/'
   fileRoutesById: FileRoutesById
@@ -260,11 +296,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/_app/suppliers/': {
+      id: '/_app/suppliers/'
+      path: '/suppliers'
+      fullPath: '/suppliers/'
+      preLoaderRoute: typeof AppSuppliersIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/profile/': {
+      id: '/_app/profile/'
+      path: '/profile'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof AppProfileIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/_app/products/': {
       id: '/_app/products/'
       path: '/products'
       fullPath: '/products/'
       preLoaderRoute: typeof AppProductsIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/categories/': {
+      id: '/_app/categories/'
+      path: '/categories'
+      fullPath: '/categories/'
+      preLoaderRoute: typeof AppCategoriesIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/api/auth/$': {
@@ -301,7 +358,10 @@ declare module '@tanstack/react-router' {
 interface AppRouteRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
   AppProductsNewRoute: typeof AppProductsNewRoute
+  AppCategoriesIndexRoute: typeof AppCategoriesIndexRoute
   AppProductsIndexRoute: typeof AppProductsIndexRoute
+  AppProfileIndexRoute: typeof AppProfileIndexRoute
+  AppSuppliersIndexRoute: typeof AppSuppliersIndexRoute
   AppProductsProductIdEditRoute: typeof AppProductsProductIdEditRoute
   AppProductsProductIdIndexRoute: typeof AppProductsProductIdIndexRoute
 }
@@ -309,7 +369,10 @@ interface AppRouteRouteChildren {
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppIndexRoute: AppIndexRoute,
   AppProductsNewRoute: AppProductsNewRoute,
+  AppCategoriesIndexRoute: AppCategoriesIndexRoute,
   AppProductsIndexRoute: AppProductsIndexRoute,
+  AppProfileIndexRoute: AppProfileIndexRoute,
+  AppSuppliersIndexRoute: AppSuppliersIndexRoute,
   AppProductsProductIdEditRoute: AppProductsProductIdEditRoute,
   AppProductsProductIdIndexRoute: AppProductsProductIdIndexRoute,
 }
