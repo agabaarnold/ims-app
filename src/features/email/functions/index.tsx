@@ -1,6 +1,7 @@
 import { createTransport } from "nodemailer";
 import { render } from "react-email";
 import { serverEnv } from "#/env/server";
+import EmailChangeEmail from "../components/email-change-email";
 import EmailVerificationEmail from "../components/email-verification-email";
 import PasswordResetEmail from "../components/password-reset-email";
 
@@ -18,6 +19,13 @@ type AuthEmailPayload =
           name?: string | null;
           url: string;
           expiresInMinutes?: number;
+      }
+    | {
+          kind: "email-change";
+          to: string;
+          name?: string | null;
+          url: string;
+          newEmail: string;
       };
 
 const transporter = createTransport({
@@ -34,7 +42,9 @@ const transporter = createTransport({
 });
 
 function getFromAddress() {
-    return serverEnv.SMTP_FROM?.trim() || `"Invenease" <no-reply@invenease.com>`;
+    return (
+        serverEnv.SMTP_FROM?.trim() || `"Invenease" <no-reply@invenease.com>`
+    );
 }
 
 export async function sendAuthEmail(payload: AuthEmailPayload) {
@@ -65,25 +75,49 @@ export async function sendAuthEmail(payload: AuthEmailPayload) {
 
         return;
     }
+    if (payload.kind === "email-verification") {
+        const html = await render(
+            <EmailVerificationEmail
+                expiresInMinutes={payload?.expiresInMinutes ?? 60}
+                name={payload.name ?? undefined}
+                verificationUrl={payload.url}
+            />
+        );
+
+        await transporter.sendMail({
+            from,
+            html,
+            subject: "InvenEase email verification",
+            text: [
+                `Hi ${payload.name ?? "there"},`,
+                "",
+                `Verify your email here: ${payload.url}`,
+                "",
+                `This link expires in ${payload?.expiresInMinutes ?? 60} minutes.`,
+            ].join("\n"),
+            to: payload.to,
+        });
+
+        return;
+    }
 
     const html = await render(
-        <EmailVerificationEmail
-            expiresInMinutes={payload.expiresInMinutes ?? 60}
+        <EmailChangeEmail
+            confirmationUrl={payload.url}
             name={payload.name ?? undefined}
-            verificationUrl={payload.url}
+            newEmail={payload.newEmail}
         />
     );
 
     await transporter.sendMail({
         from,
         html,
-        subject: "InvenEase email verification",
+        subject: "Approve InvenEase account email change",
         text: [
             `Hi ${payload.name ?? "there"},`,
             "",
-            `Verify your email here: ${payload.url}`,
+            `Click the link to approve the change to ${payload.newEmail}: ${payload.url}`,
             "",
-            `This link expires in ${payload.expiresInMinutes ?? 60} minutes.`,
         ].join("\n"),
         to: payload.to,
     });
