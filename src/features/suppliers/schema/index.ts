@@ -31,9 +31,11 @@ export type UpdateSupplierInput = z.infer<typeof updateSupplierSchema>;
 export const deleteSupplierSchema = z.object({ id: z.cuid2() });
 export type DeleteSupplierInput = z.infer<typeof deleteSupplierSchema>;
 
+const MAX_PAGE_SIZE = 100;
+
 export const getSuppliersSchema = z.object({
     page: z.number().int().min(1),
-    pageSize: z.number().int().min(1),
+    pageSize: z.number().int().min(MAX_PAGE_SIZE),
     search: z.string().default(""),
 });
 export type GetSuppliersInput = z.infer<typeof getSuppliersSchema>;
