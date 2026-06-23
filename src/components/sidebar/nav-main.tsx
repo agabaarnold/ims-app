@@ -52,6 +52,7 @@ function NavMain() {
                                     <span>{item.title}</span>
                                 </Link>
                             }
+                            tooltip={item.title}
                         />
                     </SidebarMenuItem>
                 ))}

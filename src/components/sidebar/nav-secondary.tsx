@@ -34,6 +34,7 @@ function NavSecondary() {
                                     </Link>
                                 }
                                 size="sm"
+                                tooltip={item.title}
                             />
                         </SidebarMenuItem>
                     ))}
