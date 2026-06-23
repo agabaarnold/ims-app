@@ -7,7 +7,7 @@ export const suppliersQueryOptions = (
     pageSize: number
 ) =>
     queryOptions({
-        queryKey: ["suppliers", page, search],
+        queryKey: ["suppliers", page, search, pageSize],
         queryFn: () => getSuppliers({ data: { page, pageSize, search } }),
         placeholderData: keepPreviousData,
     });
