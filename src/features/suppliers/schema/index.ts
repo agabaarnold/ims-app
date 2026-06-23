@@ -35,7 +35,7 @@ const MAX_PAGE_SIZE = 100;
 
 export const getSuppliersSchema = z.object({
     page: z.number().int().min(1),
-    pageSize: z.number().int().min(MAX_PAGE_SIZE),
+    pageSize: z.number().int().min(1).max(MAX_PAGE_SIZE),
     search: z.string().default(""),
 });
 export type GetSuppliersInput = z.infer<typeof getSuppliersSchema>;
