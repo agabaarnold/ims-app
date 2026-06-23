@@ -4,7 +4,7 @@ const isBlank = (value: string | null | undefined) =>
     value === null || value === undefined || value.trim() === "";
 
 export const createSupplierSchema = z.object({
-    name: z.string().min(1, "Name is required"),
+    name: z.string().trim().min(1, "Name is required"),
     contactName: z.string().optional().nullable(),
     email: z
         .string()
