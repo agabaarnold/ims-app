@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/style/noNestedTernary: For simplicity */
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import { Badge } from "#/components/ui/badge";
@@ -23,7 +24,11 @@ export default function ActiveSessionsCard() {
     const queryClient = useQueryClient();
     const { data: current } = authClient.useSession();
 
-    const { data: sessions, isLoading } = useQuery({
+    const {
+        data: sessions,
+        isLoading,
+        isError,
+    } = useQuery({
         queryKey: ["auth", "sessions"],
         queryFn: async () => {
             const { data } = await authClient.listSessions({
@@ -90,11 +95,15 @@ export default function ActiveSessionsCard() {
             </CardHeader>
 
             <CardContent>
-                {isLoading || !sessions ? (
+                {isLoading ? (
                     <p className="py-4 text-center text-muted-foreground text-sm">
                         Loading sessions…
                     </p>
-                ) : (
+                ) : isError ? (
+                    <p className="py-4 text-center text-muted-foreground text-sm">
+                        Failed to load sessions.
+                    </p>
+                ) : sessions?.length ? (
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -154,6 +163,10 @@ export default function ActiveSessionsCard() {
                             })}
                         </TableBody>
                     </Table>
+                ) : (
+                    <p className="py-4 text-center text-muted-foreground text-sm">
+                        No active sessions.
+                    </p>
                 )}
             </CardContent>
         </Card>
