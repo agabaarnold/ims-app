@@ -1,6 +1,6 @@
 import { IconAlertHexagon, IconArrowLeft, IconHome } from "@tabler/icons-react";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { Button } from "#/components/ui/button";
+import { Button, buttonVariants } from "#/components/ui/button";
 
 export const Route = createFileRoute("/unauthorized")({
     component: UnauthorizedPage,
@@ -31,15 +31,13 @@ function UnauthorizedPage() {
                         </div>
 
                         <div className="flex flex-wrap gap-3">
-                            <Button
-                                render={
-                                    <Link to="/">
-                                        <IconHome className="mr-2 size-4" />
-                                        Go to dashboard
-                                    </Link>
-                                }
-                                size="lg"
-                            />
+                            <Link
+                                className={buttonVariants({ size: "lg" })}
+                                to="/"
+                            >
+                                <IconHome className="mr-2 size-4" />
+                                Go to dashboard
+                            </Link>
 
                             <Button
                                 onClick={() => {
