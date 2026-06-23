@@ -14,7 +14,11 @@ export const createCategorySchema = z.object({
             "Code may only contain letters, numbers, hyphens, and underscores"
         ),
     description: z.string().optional().nullable(),
-    parentId: z.string().optional().nullable(),
+    parentId: z.preprocess(
+        (value) =>
+            typeof value === "string" && value.trim() === "" ? null : value,
+        z.cuid2().nullable().optional()
+    ),
 });
 export type CreateCategoryInput = z.infer<typeof createCategorySchema>;
 
