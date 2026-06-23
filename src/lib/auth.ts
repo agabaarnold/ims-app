@@ -70,7 +70,12 @@ export const auth = betterAuth({
         freshAge: 60 * 60 * 24 * 30, // 30 days
     },
     plugins: [
-        admin({ ac, roles, defaultRole: "staff", adminRoles: ["admin"] }),
+        admin({
+            ac,
+            roles,
+            defaultRole: "staff",
+            adminRoles: ["superAdmin", "admin"],
+        }),
         lastLoginMethod(),
         tanstackStartCookies(),
     ],
