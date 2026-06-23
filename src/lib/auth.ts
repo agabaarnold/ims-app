@@ -60,11 +60,14 @@ export const auth = betterAuth({
                     to: user.email,
                     url,
                     name: user.name ?? null,
-                    newEmail
+                    newEmail,
                 });
             },
         },
         deleteUser: { enabled: true },
+    },
+    session: {
+        freshAge: 60 * 60 * 24 * 30, // 30 days
     },
     plugins: [
         admin({ ac, roles, defaultRole: "staff", adminRoles: ["admin"] }),
