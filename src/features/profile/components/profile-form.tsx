@@ -1,4 +1,5 @@
 import { revalidateLogic } from "@tanstack/react-form";
+import { useNavigate } from "@tanstack/react-router";
 import { toast } from "react-hot-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "#/components/ui/avatar";
 import {
@@ -19,6 +20,7 @@ interface ProfileFormProps {
 }
 
 export default function ProfileForm({ user }: ProfileFormProps) {
+    const navigate = useNavigate();
     const defaultValues: UpdateProfileInput = {
         name: user.name ?? user.role,
         image: user.image ?? "",
@@ -34,7 +36,10 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                 });
                 if (error) {
                     toast.error(error.message || "Failed to update profile");
+                    return;
                 }
+
+                navigate({ to: "." });
                 toast.success("Profile updated");
             } catch (error) {
                 toast.error(
