@@ -13,6 +13,7 @@ import { FieldGroup } from "#/components/ui/field";
 import { useAppForm } from "#/hooks/use-form";
 import type { User } from "#/lib/auth";
 import { authClient } from "#/lib/auth-client";
+import { getInitials } from "#/lib/utils";
 import { type UpdateProfileInput, updateProfileSchema } from "../schema";
 
 interface ProfileFormProps {
@@ -29,21 +30,21 @@ export default function ProfileForm({ user }: ProfileFormProps) {
     const form = useAppForm({
         defaultValues,
         onSubmit: async ({ value }) => {
-                await authClient.updateUser({
-                    name: value.name,
-                    image: value.image?.trim() || null,
-                    fetchOptions: {
-                        onError: ({ error }) => {
-                            toast.error(
-                                error.message || "Failed to update profile"
-                            );
-                        },
-                        onSuccess: () => {
-                            navigate({ to: "." });
-                            toast.success("Profile updated");
-                        }
+            await authClient.updateUser({
+                name: value.name,
+                image: value.image?.trim() || null,
+                fetchOptions: {
+                    onError: ({ error }) => {
+                        toast.error(
+                            error.message || "Failed to update profile"
+                        );
                     },
-                });
+                    onSuccess: () => {
+                        navigate({ to: "." });
+                        toast.success("Profile updated");
+                    },
+                },
+            });
         },
         validators: { onDynamic: updateProfileSchema },
         validationLogic: revalidateLogic({
@@ -51,6 +52,8 @@ export default function ProfileForm({ user }: ProfileFormProps) {
             modeAfterSubmission: "blur",
         }),
     });
+
+    const initials = getInitials(user.name);
 
     return (
         <Card>
@@ -76,9 +79,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
                             {(image) => (
                                 <Avatar className="size-16">
                                     <AvatarImage src={image || undefined} />
-                                    <AvatarFallback>
-                                        {user.name.slice(0, 2).toUpperCase()}
-                                    </AvatarFallback>
+                                    <AvatarFallback>{initials}</AvatarFallback>
                                 </Avatar>
                             )}
                         </form.Subscribe>
