@@ -18,8 +18,8 @@ import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
-import { Route as AppProfileRouteImport } from './routes/_app/profile'
 import { Route as AppSuppliersIndexRouteImport } from './routes/_app/suppliers/index'
+import { Route as AppProfileIndexRouteImport } from './routes/_app/profile/index'
 import { Route as AppProductsIndexRouteImport } from './routes/_app/products/index'
 import { Route as AppCategoriesIndexRouteImport } from './routes/_app/categories/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
@@ -70,14 +70,14 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => AuthRouteRoute,
 } as any)
-const AppProfileRoute = AppProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => AppRouteRoute,
-} as any)
 const AppSuppliersIndexRoute = AppSuppliersIndexRouteImport.update({
   id: '/suppliers/',
   path: '/suppliers/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppProfileIndexRoute = AppProfileIndexRouteImport.update({
+  id: '/profile/',
+  path: '/profile/',
   getParentRoute: () => AppRouteRoute,
 } as any)
 const AppProductsIndexRoute = AppProductsIndexRouteImport.update({
@@ -117,7 +117,6 @@ export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/forbidden': typeof ForbiddenRoute
   '/unauthorized': typeof UnauthorizedRoute
-  '/profile': typeof AppProfileRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/sign-in': typeof AuthSignInRoute
@@ -126,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/categories/': typeof AppCategoriesIndexRoute
   '/products/': typeof AppProductsIndexRoute
+  '/profile/': typeof AppProfileIndexRoute
   '/suppliers/': typeof AppSuppliersIndexRoute
   '/products/$productId/edit': typeof AppProductsProductIdEditRoute
   '/products/$productId/': typeof AppProductsProductIdIndexRoute
@@ -134,7 +134,6 @@ export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
   '/forbidden': typeof ForbiddenRoute
   '/unauthorized': typeof UnauthorizedRoute
-  '/profile': typeof AppProfileRoute
   '/forgot-password': typeof AuthForgotPasswordRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/sign-in': typeof AuthSignInRoute
@@ -143,6 +142,7 @@ export interface FileRoutesByTo {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/categories': typeof AppCategoriesIndexRoute
   '/products': typeof AppProductsIndexRoute
+  '/profile': typeof AppProfileIndexRoute
   '/suppliers': typeof AppSuppliersIndexRoute
   '/products/$productId/edit': typeof AppProductsProductIdEditRoute
   '/products/$productId': typeof AppProductsProductIdIndexRoute
@@ -153,7 +153,6 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteRouteWithChildren
   '/forbidden': typeof ForbiddenRoute
   '/unauthorized': typeof UnauthorizedRoute
-  '/_app/profile': typeof AppProfileRoute
   '/_auth/forgot-password': typeof AuthForgotPasswordRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/_auth/sign-in': typeof AuthSignInRoute
@@ -163,6 +162,7 @@ export interface FileRoutesById {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_app/categories/': typeof AppCategoriesIndexRoute
   '/_app/products/': typeof AppProductsIndexRoute
+  '/_app/profile/': typeof AppProfileIndexRoute
   '/_app/suppliers/': typeof AppSuppliersIndexRoute
   '/_app/products/$productId/edit': typeof AppProductsProductIdEditRoute
   '/_app/products/$productId/': typeof AppProductsProductIdIndexRoute
@@ -173,7 +173,6 @@ export interface FileRouteTypes {
     | '/'
     | '/forbidden'
     | '/unauthorized'
-    | '/profile'
     | '/forgot-password'
     | '/reset-password'
     | '/sign-in'
@@ -182,6 +181,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/categories/'
     | '/products/'
+    | '/profile/'
     | '/suppliers/'
     | '/products/$productId/edit'
     | '/products/$productId/'
@@ -190,7 +190,6 @@ export interface FileRouteTypes {
     | '/'
     | '/forbidden'
     | '/unauthorized'
-    | '/profile'
     | '/forgot-password'
     | '/reset-password'
     | '/sign-in'
@@ -199,6 +198,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/categories'
     | '/products'
+    | '/profile'
     | '/suppliers'
     | '/products/$productId/edit'
     | '/products/$productId'
@@ -208,7 +208,6 @@ export interface FileRouteTypes {
     | '/_auth'
     | '/forbidden'
     | '/unauthorized'
-    | '/_app/profile'
     | '/_auth/forgot-password'
     | '/_auth/reset-password'
     | '/_auth/sign-in'
@@ -218,6 +217,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/_app/categories/'
     | '/_app/products/'
+    | '/_app/profile/'
     | '/_app/suppliers/'
     | '/_app/products/$productId/edit'
     | '/_app/products/$productId/'
@@ -296,18 +296,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRouteRoute
     }
-    '/_app/profile': {
-      id: '/_app/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof AppProfileRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
     '/_app/suppliers/': {
       id: '/_app/suppliers/'
       path: '/suppliers'
       fullPath: '/suppliers/'
       preLoaderRoute: typeof AppSuppliersIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/profile/': {
+      id: '/_app/profile/'
+      path: '/profile'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof AppProfileIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/_app/products/': {
@@ -356,22 +356,22 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteRouteChildren {
-  AppProfileRoute: typeof AppProfileRoute
   AppIndexRoute: typeof AppIndexRoute
   AppProductsNewRoute: typeof AppProductsNewRoute
   AppCategoriesIndexRoute: typeof AppCategoriesIndexRoute
   AppProductsIndexRoute: typeof AppProductsIndexRoute
+  AppProfileIndexRoute: typeof AppProfileIndexRoute
   AppSuppliersIndexRoute: typeof AppSuppliersIndexRoute
   AppProductsProductIdEditRoute: typeof AppProductsProductIdEditRoute
   AppProductsProductIdIndexRoute: typeof AppProductsProductIdIndexRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
-  AppProfileRoute: AppProfileRoute,
   AppIndexRoute: AppIndexRoute,
   AppProductsNewRoute: AppProductsNewRoute,
   AppCategoriesIndexRoute: AppCategoriesIndexRoute,
   AppProductsIndexRoute: AppProductsIndexRoute,
+  AppProfileIndexRoute: AppProfileIndexRoute,
   AppSuppliersIndexRoute: AppSuppliersIndexRoute,
   AppProductsProductIdEditRoute: AppProductsProductIdEditRoute,
   AppProductsProductIdIndexRoute: AppProductsProductIdIndexRoute,
