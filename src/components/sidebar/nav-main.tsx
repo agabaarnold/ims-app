@@ -15,7 +15,7 @@ import {
     SidebarMenuItem,
 } from "../ui/sidebar";
 
-interface NavItems {
+export interface NavItems {
     icon: TablerIcon;
     title: string;
     url: LinkOptions["to"];
