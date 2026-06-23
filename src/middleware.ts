@@ -102,7 +102,7 @@ export const deleteCategoryMiddleware = createMiddleware().server(
             body: { permissions: { category: ["delete"] } },
         });
         if (!hasPermission.success) {
-            throw new Error("You do not have permission to archive products");
+            throw new Error("You do not have permission to delete categories");
         }
 
         return next();
@@ -150,7 +150,7 @@ export const deleteSupplierMiddleware = createMiddleware().server(
             body: { permissions: { supplier: ["delete"] } },
         });
         if (!hasPermission.success) {
-            throw new Error("You do not have permission to archive products");
+            throw new Error("You do not have permission to delete suppliers");
         }
 
         return next();
