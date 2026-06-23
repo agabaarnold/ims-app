@@ -19,6 +19,7 @@ import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as AppProfileRouteImport } from './routes/_app/profile'
+import { Route as AppSuppliersIndexRouteImport } from './routes/_app/suppliers/index'
 import { Route as AppProductsIndexRouteImport } from './routes/_app/products/index'
 import { Route as AppCategoriesIndexRouteImport } from './routes/_app/categories/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
@@ -74,6 +75,11 @@ const AppProfileRoute = AppProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppSuppliersIndexRoute = AppSuppliersIndexRouteImport.update({
+  id: '/suppliers/',
+  path: '/suppliers/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppProductsIndexRoute = AppProductsIndexRouteImport.update({
   id: '/products/',
   path: '/products/',
@@ -120,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/categories/': typeof AppCategoriesIndexRoute
   '/products/': typeof AppProductsIndexRoute
+  '/suppliers/': typeof AppSuppliersIndexRoute
   '/products/$productId/edit': typeof AppProductsProductIdEditRoute
   '/products/$productId/': typeof AppProductsProductIdIndexRoute
 }
@@ -136,6 +143,7 @@ export interface FileRoutesByTo {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/categories': typeof AppCategoriesIndexRoute
   '/products': typeof AppProductsIndexRoute
+  '/suppliers': typeof AppSuppliersIndexRoute
   '/products/$productId/edit': typeof AppProductsProductIdEditRoute
   '/products/$productId': typeof AppProductsProductIdIndexRoute
 }
@@ -155,6 +163,7 @@ export interface FileRoutesById {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_app/categories/': typeof AppCategoriesIndexRoute
   '/_app/products/': typeof AppProductsIndexRoute
+  '/_app/suppliers/': typeof AppSuppliersIndexRoute
   '/_app/products/$productId/edit': typeof AppProductsProductIdEditRoute
   '/_app/products/$productId/': typeof AppProductsProductIdIndexRoute
 }
@@ -173,6 +182,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/categories/'
     | '/products/'
+    | '/suppliers/'
     | '/products/$productId/edit'
     | '/products/$productId/'
   fileRoutesByTo: FileRoutesByTo
@@ -189,6 +199,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/categories'
     | '/products'
+    | '/suppliers'
     | '/products/$productId/edit'
     | '/products/$productId'
   id:
@@ -207,6 +218,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/_app/categories/'
     | '/_app/products/'
+    | '/_app/suppliers/'
     | '/_app/products/$productId/edit'
     | '/_app/products/$productId/'
   fileRoutesById: FileRoutesById
@@ -291,6 +303,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProfileRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/suppliers/': {
+      id: '/_app/suppliers/'
+      path: '/suppliers'
+      fullPath: '/suppliers/'
+      preLoaderRoute: typeof AppSuppliersIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/_app/products/': {
       id: '/_app/products/'
       path: '/products'
@@ -342,6 +361,7 @@ interface AppRouteRouteChildren {
   AppProductsNewRoute: typeof AppProductsNewRoute
   AppCategoriesIndexRoute: typeof AppCategoriesIndexRoute
   AppProductsIndexRoute: typeof AppProductsIndexRoute
+  AppSuppliersIndexRoute: typeof AppSuppliersIndexRoute
   AppProductsProductIdEditRoute: typeof AppProductsProductIdEditRoute
   AppProductsProductIdIndexRoute: typeof AppProductsProductIdIndexRoute
 }
@@ -352,6 +372,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppProductsNewRoute: AppProductsNewRoute,
   AppCategoriesIndexRoute: AppCategoriesIndexRoute,
   AppProductsIndexRoute: AppProductsIndexRoute,
+  AppSuppliersIndexRoute: AppSuppliersIndexRoute,
   AppProductsProductIdEditRoute: AppProductsProductIdEditRoute,
   AppProductsProductIdIndexRoute: AppProductsProductIdIndexRoute,
 }
