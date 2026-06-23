@@ -29,25 +29,21 @@ export default function ProfileForm({ user }: ProfileFormProps) {
     const form = useAppForm({
         defaultValues,
         onSubmit: async ({ value }) => {
-            try {
-                const { error } = await authClient.updateUser({
+                await authClient.updateUser({
                     name: value.name,
                     image: value.image?.trim() || null,
+                    fetchOptions: {
+                        onError: ({ error }) => {
+                            toast.error(
+                                error.message || "Failed to update profile"
+                            );
+                        },
+                        onSuccess: () => {
+                            navigate({ to: "." });
+                            toast.success("Profile updated");
+                        }
+                    },
                 });
-                if (error) {
-                    toast.error(error.message || "Failed to update profile");
-                    return;
-                }
-
-                navigate({ to: "." });
-                toast.success("Profile updated");
-            } catch (error) {
-                toast.error(
-                    error instanceof Error
-                        ? error.message
-                        : "Failed to update profile"
-                );
-            }
         },
         validators: { onDynamic: updateProfileSchema },
         validationLogic: revalidateLogic({
