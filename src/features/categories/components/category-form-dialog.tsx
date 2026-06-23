@@ -124,7 +124,9 @@ function CategoryForm({
             }
         },
         validators: {
-            onDynamic: isEditing ? updateCategorySchema : createCategorySchema,
+            onDynamic: isEditing
+                ? updateCategorySchema.omit({ id: true })
+                : createCategorySchema,
         },
         validationLogic: revalidateLogic({
             mode: "submit",
