@@ -22,7 +22,7 @@ interface ProfileFormProps {
 export default function ProfileForm({ user }: ProfileFormProps) {
     const navigate = useNavigate();
     const defaultValues: UpdateProfileInput = {
-        name: user.name ?? user.role,
+        name: user.name,
         image: user.image ?? "",
     };
 
