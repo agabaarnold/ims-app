@@ -34,7 +34,7 @@ const transporter = createTransport({
 });
 
 function getFromAddress() {
-    return serverEnv.SMTP_FROM ?? `"Invenease" <no-reply@invenease.com>`;
+    return serverEnv.SMTP_FROM?.trim() || `"Invenease" <no-reply@invenease.com>`;
 }
 
 export async function sendAuthEmail(payload: AuthEmailPayload) {
