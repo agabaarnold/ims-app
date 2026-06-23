@@ -50,7 +50,22 @@ export const auth = betterAuth({
             prompt: "select_account",
         },
     },
-    user: { deleteUser: { enabled: true } },
+    user: {
+        changeEmail: {
+            enabled: true,
+            updateEmailWithoutVerification: true,
+            sendChangeEmailConfirmation: async ({ newEmail, url, user }) => {
+                void sendAuthEmail({
+                    kind: "email-change",
+                    to: user.email,
+                    url,
+                    name: user.name ?? null,
+                    newEmail
+                });
+            },
+        },
+        deleteUser: { enabled: true },
+    },
     plugins: [
         admin({ ac, roles, defaultRole: "staff", adminRoles: ["admin"] }),
         lastLoginMethod(),
