@@ -143,6 +143,7 @@ export default function SuppliersTable({
                                 <TableCell>
                                     <div className="flex justify-end gap-1">
                                         <Button
+                                            aria-label={`Edit supplier ${supplier.name}`}
                                             onClick={() => openEdit(supplier)}
                                             size="icon"
                                             variant="ghost"
@@ -150,6 +151,7 @@ export default function SuppliersTable({
                                             <IconPencil className="size-4" />
                                         </Button>
                                         <Button
+                                            aria-label={`Delete supplier ${supplier.name}`}
                                             disabled={
                                                 supplier._count.products > 0 ||
                                                 supplier._count.purchaseOrders >
