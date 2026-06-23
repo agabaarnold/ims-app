@@ -34,12 +34,11 @@ export default function EmailChangeCard({
                 callbackURL: window.location.pathname,
                 fetchOptions: {
                     onError: ({ error }) => {
+                        setPendingEmail(null);
                         toast.error(error.message || "Failed to change email");
                     },
-                    onResponse: () => {
-                        setPendingEmail(value.newEmail);
-                    },
                     onSuccess: () => {
+                        setPendingEmail(value.newEmail);
                         toast.success(
                             "Check your new email inbox to confirm the change"
                         );
