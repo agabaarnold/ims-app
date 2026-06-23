@@ -123,6 +123,7 @@ export default function CategoriesTable({ categories }: CategoriesTableProps) {
                             <TableCell>
                                 <div className="flex justify-end gap-1">
                                     <Button
+                                        aria-label={`Edit category ${category.name}`}
                                         onClick={() => openEdit(category)}
                                         size="icon"
                                         variant="ghost"
@@ -130,6 +131,7 @@ export default function CategoriesTable({ categories }: CategoriesTableProps) {
                                         <IconPencil className="size-4" />
                                     </Button>
                                     <Button
+                                        aria-label={`Delete category ${category.name}`}
                                         disabled={
                                             category._count.children > 0 ||
                                             category._count.products > 0
