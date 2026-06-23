@@ -60,3 +60,51 @@ export const archiveProductMiddleware = createMiddleware().server(
         return next();
     }
 );
+
+export const createCategoryMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { category: ["create"] } },
+        });
+        if (!hasPermission.success) {
+            throw redirect({ to: "/forbidden" });
+        }
+
+        return next();
+    }
+);
+
+export const updateCategoryMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { category: ["update"] } },
+        });
+        if (!hasPermission.success) {
+            throw redirect({ to: "/forbidden", replace: true });
+        }
+
+        return next();
+    }
+);
+
+export const deleteCategoryMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { category: ["delete"] } },
+        });
+        if (!hasPermission.success) {
+            throw new Error("You do not have permission to archive products");
+        }
+
+        return next();
+    }
+);
