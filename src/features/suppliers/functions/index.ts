@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import type { SupplierWhereInput } from "#/generated/prisma/models";
 import { prisma } from "#/lib/db";
 import {
     authMiddleware,
@@ -20,6 +21,15 @@ export const getSuppliers = createServerFn({ method: "GET" })
         const { page, pageSize, search } = data;
         const skip = (page - 1) * pageSize;
 
+        const where: SupplierWhereInput = {
+            OR: [
+                { name: { contains: search, mode: "insensitive" } },
+                { contactName: { contains: search, mode: "insensitive" } },
+                { email: { contains: search, mode: "insensitive" } },
+                { phone: { contains: search, mode: "insensitive" } },
+            ],
+        };
+
         const [suppliers, total] = await prisma.$transaction([
             prisma.supplier.findMany({
                 include: {
@@ -30,21 +40,9 @@ export const getSuppliers = createServerFn({ method: "GET" })
                 orderBy: { name: "asc" },
                 skip,
                 take: pageSize,
-                where: {
-                    OR: [
-                        { name: { contains: search, mode: "insensitive" } },
-                        {
-                            contactName: {
-                                contains: search,
-                                mode: "insensitive",
-                            },
-                        },
-                        { email: { contains: search, mode: "insensitive" } },
-                        { phone: { contains: search, mode: "insensitive" } },
-                    ],
-                },
+                where,
             }),
-            prisma.supplier.count(),
+            prisma.supplier.count({ where }),
         ]);
 
         return {
