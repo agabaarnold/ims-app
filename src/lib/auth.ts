@@ -50,12 +50,36 @@ export const auth = betterAuth({
             prompt: "select_account",
         },
     },
-    user: { deleteUser: { enabled: true } },
+    user: {
+        changeEmail: {
+            enabled: true,
+            updateEmailWithoutVerification: true,
+            sendChangeEmailConfirmation: async ({ newEmail, url, user }) => {
+                void sendAuthEmail({
+                    kind: "email-change",
+                    to: user.email,
+                    url,
+                    name: user.name ?? null,
+                    newEmail,
+                });
+            },
+        },
+        deleteUser: { enabled: true },
+    },
+    session: {
+        freshAge: 60 * 60 * 24 * 30, // 30 days
+    },
     plugins: [
-        admin({ ac, roles, defaultRole: "staff", adminRoles: ["admin"] }),
+        admin({
+            ac,
+            roles,
+            defaultRole: "staff",
+            adminRoles: ["superAdmin", "admin"],
+        }),
         lastLoginMethod(),
         tanstackStartCookies(),
     ],
 });
 
 export type Session = typeof auth.$Infer.Session;
+export type User = typeof auth.$Infer.Session.user;

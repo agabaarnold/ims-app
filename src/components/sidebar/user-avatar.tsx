@@ -1,9 +1,9 @@
-import type { UserWithRole } from "better-auth/plugins";
+import type { User } from "#/lib/auth";
 import { getInitials } from "#/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface UserAvatarProps {
-    user: UserWithRole;
+    user: User;
 }
 
 function UserAvatar({ user }: UserAvatarProps) {
