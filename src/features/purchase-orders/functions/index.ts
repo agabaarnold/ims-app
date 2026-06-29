@@ -253,6 +253,7 @@ export const receivePurchaseOrder = createServerFn({ method: "POST" })
     .handler(async ({ context: { session }, data }) => {
         const user = session.user;
 
+        // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Ignore
         return await prisma.$transaction(async (tx) => {
             const po = await tx.purchaseOrder.findUnique({
                 where: { id: data.id },
@@ -269,33 +270,44 @@ export const receivePurchaseOrder = createServerFn({ method: "POST" })
 
             const itemsById = new Map(po.items.map((item) => [item.id, item]));
 
-            // Validate every line before writing anything — avoid partial receipts
-            // on a request that was going to fail halfway through anyway.
+            // Aggregate duplicate line entries so each item is validated
+            // against its total requested quantity, not per individual row.
+            const aggregated = new Map<string, number>();
             for (const line of data.lines) {
-                const item = itemsById.get(line.purchaseOrderItemId);
+                if (line.quantity <= 0) {
+                    continue;
+                }
+                aggregated.set(
+                    line.purchaseOrderItemId,
+                    (aggregated.get(line.purchaseOrderItemId) ?? 0) +
+                        line.quantity
+                );
+            }
+
+            // Validate every aggregated line before writing anything — avoid
+            // partial receipts on a request that was going to fail halfway through.
+            for (const [purchaseOrderItemId, quantity] of aggregated) {
+                const item = itemsById.get(purchaseOrderItemId);
                 if (!item) {
                     throw new Error(
                         "One of the line items doesn't belong to this purchase order."
                     );
                 }
                 const remaining = item.orderedQty - item.receivedQty;
-                if (line.quantity > remaining) {
+                if (quantity > remaining) {
                     throw new Error(
-                        `Can't receive ${line.quantity} units — only ${remaining} remaining on this line.`
+                        `Can't receive ${quantity} units — only ${remaining} remaining on this line.`
                     );
                 }
             }
 
-            for (const line of data.lines) {
-                if (line.quantity <= 0) {
-                    continue;
-                }
+            for (const [purchaseOrderItemId, quantity] of aggregated) {
                 // biome-ignore lint/style/noNonNullAssertion: Ignore
-                const item = itemsById.get(line.purchaseOrderItemId)!;
+                const item = itemsById.get(purchaseOrderItemId)!;
 
                 await tx.purchaseOrderItem.update({
                     where: { id: item.id },
-                    data: { receivedQty: { increment: line.quantity } },
+                    data: { receivedQty: { increment: quantity } },
                 });
 
                 await tx.inventoryItem.upsert({
@@ -308,9 +320,9 @@ export const receivePurchaseOrder = createServerFn({ method: "POST" })
                     create: {
                         productId: item.productId,
                         warehouseId: data.warehouseId,
-                        quantity: line.quantity,
+                        quantity,
                     },
-                    update: { quantity: { increment: line.quantity } },
+                    update: { quantity: { increment: quantity } },
                 });
 
                 await tx.stockMovement.create({
@@ -318,7 +330,7 @@ export const receivePurchaseOrder = createServerFn({ method: "POST" })
                         productId: item.productId,
                         warehouseId: data.warehouseId,
                         type: "RECEIVE",
-                        quantity: line.quantity,
+                        quantity,
                         reference: po.poNumber,
                         createdById: user.id,
                     },
