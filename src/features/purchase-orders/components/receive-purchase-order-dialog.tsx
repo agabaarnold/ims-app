@@ -100,10 +100,19 @@ function ReceiveForm({
         defaultValues,
         onSubmit: async ({ value }) => {
             try {
+                const lines = value.lines.filter((line) => line.quantity > 0);
+                if (lines.length === 0) {
+                    toast.error(
+                        "At least one line must have a quantity greater than 0"
+                    );
+
+                    return;
+                }
+
                 await receivePurchaseOrder({
                     data: {
                         ...value,
-                        lines: value.lines.filter((line) => line.quantity > 0),
+                        lines,
                     },
                 });
                 toast.success("Stock received");
