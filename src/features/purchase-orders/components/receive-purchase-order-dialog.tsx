@@ -119,6 +119,9 @@ function ReceiveForm({
                 await queryClient.invalidateQueries({
                     queryKey: ["purchase-orders", purchaseOrderId],
                 });
+                await queryClient.invalidateQueries({
+                    queryKey: ["purchase-orders"],
+                }); 
                 onDone();
             } catch (error) {
                 toast.error(
