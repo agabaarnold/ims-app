@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import type { PurchaseOrderWhereInput } from "#/generated/prisma/models";
 import { prisma } from "#/lib/db";
 import { authMiddleware } from "#/middleware";
 import {
@@ -22,6 +23,21 @@ export const getPurchaseOrders = createServerFn({ method: "GET" })
     .handler(async ({ data }) => {
         const { page, pageSize, search, status } = data;
         const skip = (page - 1) * pageSize;
+        const where: PurchaseOrderWhereInput = {
+            AND: [
+                status ? { status } : {},
+                {
+                    OR: [
+                        { poNumber: { contains: search, mode: "insensitive" } },
+                        {
+                            supplier: {
+                                name: { contains: search, mode: "insensitive" },
+                            },
+                        },
+                    ],
+                },
+            ],
+        };
 
         const [purchaseOrders, total] = await prisma.$transaction([
             prisma.purchaseOrder.findMany({
@@ -32,31 +48,9 @@ export const getPurchaseOrders = createServerFn({ method: "GET" })
                 orderBy: { createdAt: "desc" },
                 skip,
                 take: pageSize,
-                where: {
-                    AND: [
-                        status ? { status } : {},
-                        {
-                            OR: [
-                                {
-                                    poNumber: {
-                                        contains: search,
-                                        mode: "insensitive",
-                                    },
-                                },
-                                {
-                                    supplier: {
-                                        name: {
-                                            contains: search,
-                                            mode: "insensitive",
-                                        },
-                                    },
-                                },
-                            ],
-                        },
-                    ],
-                },
+                where,
             }),
-            prisma.purchaseOrder.count(),
+            prisma.purchaseOrder.count({ where }),
         ]);
 
         return {
