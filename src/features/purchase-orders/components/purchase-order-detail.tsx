@@ -32,7 +32,7 @@ interface PurchaseOrderDetailProps {
         poNumber: string;
         status: string;
         totalAmount: number;
-        expectedDate: string | null;
+        expectedDate: Date | null;
         note: string | null;
         supplier: { id: string; name: string };
         createdBy: { id: string; name: string };
