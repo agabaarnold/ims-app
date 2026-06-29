@@ -55,10 +55,14 @@ export default function PurchaseOrderDetail({
     const [receiveOpen, setReceiveOpen] = useState(false);
     const [cancelOpen, setCancelOpen] = useState(false);
 
-    const invalidate = () =>
+    const invalidate = () => {
         queryClient.invalidateQueries({
             queryKey: ["purchase-orders", purchaseOrder.id],
         });
+        queryClient.invalidateQueries({
+            queryKey: ["purchase-orders"],
+        });
+    };
 
     const handleSend = async () => {
         try {
