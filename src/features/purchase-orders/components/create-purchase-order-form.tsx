@@ -101,6 +101,7 @@ export default function CreatePurchaseOrderForm({
                                 {(field) => (
                                     <field.FormInput
                                         label="Expected date"
+                                        placeholder=""
                                         type="date"
                                     />
                                 )}
