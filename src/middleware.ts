@@ -156,3 +156,51 @@ export const deleteSupplierMiddleware = createMiddleware().server(
         return next();
     }
 );
+
+export const createWarehouseMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { warehouse: ["create"] } },
+        });
+        if (!hasPermission.success) {
+            throw redirect({ to: "/forbidden" });
+        }
+
+        return next();
+    }
+);
+
+export const updateWarehouseMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { warehouse: ["update"] } },
+        });
+        if (!hasPermission.success) {
+            throw redirect({ to: "/forbidden", replace: true });
+        }
+
+        return next();
+    }
+);
+
+export const deleteWarehouseMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { warehouse: ["delete"] } },
+        });
+        if (!hasPermission.success) {
+            throw new Error("You do not have permission to delete warehouses");
+        }
+
+        return next();
+    }
+);
