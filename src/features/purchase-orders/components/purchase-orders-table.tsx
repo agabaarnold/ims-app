@@ -66,6 +66,7 @@ export default function PurchaseOrdersTable({
             <div className="flex items-center justify-between gap-4">
                 <div className="flex gap-2">
                     <Input
+                        aria-label="Search purchase orders"
                         className="max-w-sm"
                         onChange={(e) => onSearchChange(e.target.value)}
                         placeholder="Search by PO number or supplier…"
@@ -73,11 +74,15 @@ export default function PurchaseOrdersTable({
                     />
                     <Select
                         onValueChange={(value) =>
-                            onStatusChange(value === "ALL" ? undefined : value)
+                            // biome-ignore lint/style/noNonNullAssertion: Ignore
+                            onStatusChange(value === "ALL" ? undefined : value!)
                         }
                         value={status ?? "ALL"}
                     >
-                        <SelectTrigger className="w-40">
+                        <SelectTrigger
+                            aria-label="Filter by status"
+                            className="w-40"
+                        >
                             <SelectValue placeholder="All statuses" />
                         </SelectTrigger>
                         <SelectContent>
