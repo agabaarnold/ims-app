@@ -1,13 +1,16 @@
 import { createServerFn } from "@tanstack/react-start";
 import { prisma } from "#/lib/db";
-import { authMiddleware } from "#/middleware";
+import {
+    authMiddleware,
+    createWarehouseMiddleware,
+    deleteWarehouseMiddleware,
+    updateWarehouseMiddleware,
+} from "#/middleware";
 import {
     createWarehouseSchema,
     deleteWarehouseSchema,
     updateWarehouseSchema,
 } from "../schema";
-
-// TODO: Add the necessary middleware to cut out users who don't have permissions
 
 export const getWarehouses = createServerFn({ method: "GET" })
     .middleware([authMiddleware])
@@ -29,7 +32,7 @@ export const getWarehouses = createServerFn({ method: "GET" })
     );
 
 export const createWarehouse = createServerFn({ method: "POST" })
-    .middleware([authMiddleware])
+    .middleware([authMiddleware, createWarehouseMiddleware])
     .validator(createWarehouseSchema)
     .handler(async ({ context: { session }, data }) => {
         const user = session.user;
@@ -55,7 +58,7 @@ export const createWarehouse = createServerFn({ method: "POST" })
     });
 
 export const updateWarehouse = createServerFn({ method: "POST" })
-    .middleware([authMiddleware])
+    .middleware([authMiddleware, updateWarehouseMiddleware])
     .validator(updateWarehouseSchema)
     .handler(async ({ context: { session }, data }) => {
         const user = session.user;
@@ -92,7 +95,7 @@ export const updateWarehouse = createServerFn({ method: "POST" })
     });
 
 export const deleteWarehouse = createServerFn({ method: "POST" })
-    .middleware([authMiddleware])
+    .middleware([authMiddleware, deleteWarehouseMiddleware])
     .validator(deleteWarehouseSchema)
     .handler(async ({ context: { session }, data }) => {
         const user = session.user;
