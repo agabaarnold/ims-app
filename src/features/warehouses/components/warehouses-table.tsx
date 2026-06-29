@@ -130,6 +130,7 @@ export default function WarehousesTable({ warehouses }: WarehousesTableProps) {
                                 <TableCell>
                                     <div className="flex justify-end gap-1">
                                         <Button
+                                            aria-label={`Edit warehouse ${warehouse.name}`}
                                             onClick={() => openEdit(warehouse)}
                                             size="icon"
                                             variant="ghost"
@@ -137,6 +138,7 @@ export default function WarehousesTable({ warehouses }: WarehousesTableProps) {
                                             <IconPencil className="size-4" />
                                         </Button>
                                         <Button
+                                            aria-label={`Delete warehouse ${warehouse.name}`}
                                             disabled={isInUse(warehouse)}
                                             onClick={() =>
                                                 setDeletingWarehouse(warehouse)
