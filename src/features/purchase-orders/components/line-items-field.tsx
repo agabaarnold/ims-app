@@ -9,6 +9,7 @@ import {
     TableRow,
 } from "#/components/ui/table";
 import type { AppFormApi } from "#/hooks/use-form";
+import { formatCurrency } from "#/lib/utils";
 import type { CreatePurchaseOrderInput } from "../schema";
 
 interface ProductOption {
@@ -49,20 +50,16 @@ export default function LineItemsField({
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {field.state.value.map(
-                                (_, index) => (
-                                    <LineItemRow
-                                        form={form}
-                                        index={index}
-                                        // biome-ignore lint/suspicious/noArrayIndexKey: For simplicity
-                                        key={index}
-                                        onRemove={() =>
-                                            field.removeValue(index)
-                                        }
-                                        products={products}
-                                    />
-                                )
-                            )}
+                            {field.state.value.map((_, index) => (
+                                <LineItemRow
+                                    form={form}
+                                    index={index}
+                                    // biome-ignore lint/suspicious/noArrayIndexKey: For simplicity
+                                    key={index}
+                                    onRemove={() => field.removeValue(index)}
+                                    products={products}
+                                />
+                            ))}
                         </TableBody>
                     </Table>
 
@@ -146,18 +143,14 @@ function LineItemRow({
                 </form.AppField>
             </TableCell>
             <TableCell className="text-right align-middle">
-                <form.Subscribe
+                <form.Subscribe<[number, number]>
                     selector={(state) => [
                         state.values.items[index]?.orderedQty,
                         state.values.items[index]?.unitCost,
                     ]}
                 >
                     {([qty, cost]: [number, number]) =>
-                        new Intl.NumberFormat("en-UG", {
-                            style: "currency",
-                            currency: "UGX",
-                            maximumFractionDigits: 0,
-                        }).format((qty || 0) * (cost || 0))
+                        formatCurrency((qty || 0) * (cost || 0))
                     }
                 </form.Subscribe>
             </TableCell>
