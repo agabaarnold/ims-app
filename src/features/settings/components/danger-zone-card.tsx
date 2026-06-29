@@ -100,7 +100,10 @@ function DeleteAccountForm({ onCancel }: { onCancel: () => void }) {
             <FieldGroup>
                 <form.AppField name="password">
                     {(field) => (
-                        <field.FormPassword label="Password" placeholder="Enter your password" />
+                        <field.FormPassword
+                            label="Password"
+                            placeholder="Enter your password"
+                        />
                     )}
                 </form.AppField>
 
@@ -108,7 +111,7 @@ function DeleteAccountForm({ onCancel }: { onCancel: () => void }) {
                     <Button onClick={onCancel} type="button" variant="outline">
                         Cancel
                     </Button>
-                    
+
                     <form.AppForm>
                         <form.SubmitButton
                             label="Permanently delete account"

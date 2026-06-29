@@ -185,7 +185,7 @@ export function ProductTable<PData, PValue>({
                         selected.
                     </div>
                 )}
-                
+
                 <TablePagination
                     onPageChange={handlePageChange}
                     page={page}

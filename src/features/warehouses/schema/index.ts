@@ -1,8 +1,13 @@
 import { z } from "zod";
 
 export const createWarehouseSchema = z.object({
-    name: z.string().min(1, "Name is required"),
-    location: z.string().optional().nullable(),
+    name: z.string().trim().min(1, "Name is required"),
+    location: z
+        .string()
+        .trim()
+        .optional()
+        .nullable()
+        .transform((val) => (val === undefined ? undefined : val || null)),
 });
 export type CreateWarehouseInput = z.infer<typeof createWarehouseSchema>;
 

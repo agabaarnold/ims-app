@@ -13,10 +13,7 @@ import {
 import { FieldGroup } from "#/components/ui/field";
 import { useAppForm } from "#/hooks/use-form";
 import { createWarehouse, updateWarehouse } from "../functions";
-import {
-    type CreateWarehouseInput,
-    createWarehouseSchema,
-} from "../schema";
+import { type CreateWarehouseInput, createWarehouseSchema } from "../schema";
 
 interface Warehouse {
     id: string;
@@ -44,7 +41,7 @@ export default function WarehouseFormDialog({
                     <DialogTitle>
                         {isEditing ? "Edit warehouse" : "New warehouse"}
                     </DialogTitle>
-                    
+
                     <DialogDescription>
                         {isEditing
                             ? "Update this warehouse's details."

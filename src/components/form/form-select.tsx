@@ -25,7 +25,7 @@ function FormSelect<T>({
     getOptionLabel,
 }: FormSelectProps<T>) {
     const field = useFieldContext<string>();
-    const errorMessage = field.state.meta.errors
+    const errorMessage = field.state.meta.errors;
 
     return (
         <Field>

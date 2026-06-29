@@ -1,9 +1,9 @@
 import { useNavigate } from "@tanstack/react-router";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
 import type { getProductDetails } from "../functions";
+import ProductAuditLogTab from "./product-auditlog-tab";
 import ProductMovementsTab from "./product-movements-tab";
 import StockLevelsTable from "./stock-levels-tab";
-import ProductAuditLogTab from "./product-auditlog-tab";
 
 interface ProductTabsSchema {
     product: Awaited<ReturnType<typeof getProductDetails>>;
