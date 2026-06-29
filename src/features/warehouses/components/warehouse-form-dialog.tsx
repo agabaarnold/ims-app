@@ -16,7 +16,6 @@ import { createWarehouse, updateWarehouse } from "../functions";
 import {
     type CreateWarehouseInput,
     createWarehouseSchema,
-    updateWarehouseSchema,
 } from "../schema";
 
 interface Warehouse {
@@ -112,9 +111,7 @@ function WarehouseForm({
             }
         },
         validators: {
-            onDynamic: isEditing
-                ? updateWarehouseSchema
-                : createWarehouseSchema,
+            onDynamic: createWarehouseSchema,
         },
         validationLogic: revalidateLogic({
             mode: "submit",
