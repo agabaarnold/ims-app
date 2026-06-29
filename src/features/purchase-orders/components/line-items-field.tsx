@@ -8,6 +8,8 @@ import {
     TableHeader,
     TableRow,
 } from "#/components/ui/table";
+import type { AppFormApi } from "#/hooks/use-form";
+import type { CreatePurchaseOrderInput } from "../schema";
 
 interface ProductOption {
     id: string;
@@ -20,7 +22,7 @@ interface ProductOption {
 // useAppForm hook exports for its form instance, which I haven't seen. If
 // use-form.ts exports something like AppFormApi<T>, swap that in here.
 interface LineItemsFieldProps {
-    form: any;
+    form: AppFormApi<CreatePurchaseOrderInput>;
     products: ProductOption[];
 }
 
@@ -48,10 +50,11 @@ export default function LineItemsField({
                         </TableHeader>
                         <TableBody>
                             {field.state.value.map(
-                                (_: unknown, index: number) => (
+                                (_, index) => (
                                     <LineItemRow
                                         form={form}
                                         index={index}
+                                        // biome-ignore lint/suspicious/noArrayIndexKey: For simplicity
                                         key={index}
                                         onRemove={() =>
                                             field.removeValue(index)
@@ -96,7 +99,7 @@ function LineItemRow({
     products,
     onRemove,
 }: {
-    form: any;
+    form: AppFormApi<CreatePurchaseOrderInput>;
     index: number;
     products: ProductOption[];
     onRemove: () => void;
@@ -105,7 +108,7 @@ function LineItemRow({
         <TableRow>
             <TableCell>
                 <form.AppField name={`items[${index}].productId`}>
-                    {(field: any) => (
+                    {(field) => (
                         <field.FormSelect
                             getOptionLabel={(p: ProductOption) =>
                                 `${p.name} (${p.sku})`
@@ -120,7 +123,7 @@ function LineItemRow({
             </TableCell>
             <TableCell>
                 <form.AppField name={`items[${index}].orderedQty`}>
-                    {(field: any) => (
+                    {(field) => (
                         <field.FormNumberInput
                             label=""
                             min="1"
@@ -132,7 +135,7 @@ function LineItemRow({
             </TableCell>
             <TableCell>
                 <form.AppField name={`items[${index}].unitCost`}>
-                    {(field: any) => (
+                    {(field) => (
                         <field.FormNumberInput
                             label=""
                             min="0"
@@ -144,7 +147,7 @@ function LineItemRow({
             </TableCell>
             <TableCell className="text-right align-middle">
                 <form.Subscribe
-                    selector={(state: any) => [
+                    selector={(state) => [
                         state.values.items[index]?.orderedQty,
                         state.values.items[index]?.unitCost,
                     ]}
