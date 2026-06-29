@@ -26,7 +26,7 @@ export const createPurchaseOrderServerSchema = createPurchaseOrderSchema.extend(
     {
         expectedDate: z.preprocess(
             (val) => (val === "" || val == null ? undefined : val),
-            z.coerce.date().optional()
+            z.date().optional()
         ),
     }
 );
