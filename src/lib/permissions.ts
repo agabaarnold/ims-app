@@ -10,6 +10,7 @@ const statement = {
     order: ["create", "read", "update", "approve", "cancel"],
     purchaseOrder: ["create", "read", "update", "approve", "cancel"],
     report: ["read", "export"],
+    warehouse: ["create", "read", "update", "delete"],
 } as const;
 
 export const ac = createAccessControl(statement);
@@ -23,6 +24,7 @@ const superAdminRole = ac.newRole({
     order: ["create", "read", "update", "approve", "cancel"],
     purchaseOrder: ["create", "read", "update", "approve", "cancel"],
     report: ["read", "export"],
+    warehouse: ["create", "read", "update", "delete"],
     user: [...adminAc.statements.user, "impersonate-admins"],
 });
 
@@ -35,6 +37,7 @@ const adminRole = ac.newRole({
     order: ["create", "read", "update", "approve", "cancel"],
     purchaseOrder: ["create", "read", "update", "approve", "cancel"],
     report: ["read", "export"],
+    warehouse: ["create", "read", "update", "delete"],
 });
 
 const managerRole = ac.newRole({
@@ -45,6 +48,7 @@ const managerRole = ac.newRole({
     order: ["create", "read", "update", "approve", "cancel"],
     purchaseOrder: ["create", "read", "update", "approve"],
     report: ["read", "export"],
+    warehouse: ["create", "read", "update"],
     user: ["list"],
 });
 
@@ -55,6 +59,7 @@ const staffRole = ac.newRole({
     inventory: ["read", "adjust"],
     order: ["create", "read"],
     report: ["read"],
+    warehouse: ["read"],
 });
 
 export const roles = {

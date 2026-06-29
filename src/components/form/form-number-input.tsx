@@ -6,6 +6,7 @@ import { Input } from "../ui/input";
 
 interface FormNumberInputProps {
     label: string;
+    max?: string;
     min?: string;
     placeholder: string;
     step?: string;
@@ -14,6 +15,7 @@ interface FormNumberInputProps {
 export default function FormNumberInput({
     label,
     placeholder,
+    max,
     min = "0",
     step = "0.01",
 }: FormNumberInputProps) {
@@ -26,6 +28,7 @@ export default function FormNumberInput({
             <Input
                 aria-invalid={isInvalid}
                 id={field.name}
+                max={max}
                 min={min}
                 name={field.name}
                 onBlur={(e) => {
@@ -35,9 +38,8 @@ export default function FormNumberInput({
                             ? 0
                             : Number.isNaN(parsed)
                               ? 0
-                              : parsed
-                                
-                                ;
+                              : parsed;
+
                     field.handleChange(nextValue);
                     field.handleBlur();
                 }}

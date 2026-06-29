@@ -54,7 +54,7 @@ export default function EditProductForm({
             try {
                 const normalizeSupplierId = value.supplierId?.trim() || null;
                 const imageUrl = value.imageUrl?.trim() || null;
-                
+
                 await updateProduct({
                     data: {
                         ...value,

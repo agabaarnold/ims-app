@@ -50,7 +50,7 @@ export default function StockLevelsTable({
                         <TableCell className="text-right">
                             {item.reservedQuantity}
                         </TableCell>
-                        
+
                         <TableCell className="text-right">
                             {item.quantity - item.reservedQuantity}
                         </TableCell>

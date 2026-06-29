@@ -18,13 +18,17 @@ import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
+import { Route as AppWarehousesIndexRouteImport } from './routes/_app/warehouses/index'
 import { Route as AppSuppliersIndexRouteImport } from './routes/_app/suppliers/index'
 import { Route as AppSettingsIndexRouteImport } from './routes/_app/settings/index'
+import { Route as AppPurchaseOrdersIndexRouteImport } from './routes/_app/purchase-orders/index'
 import { Route as AppProfileIndexRouteImport } from './routes/_app/profile/index'
 import { Route as AppProductsIndexRouteImport } from './routes/_app/products/index'
 import { Route as AppCategoriesIndexRouteImport } from './routes/_app/categories/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as AppPurchaseOrdersNewRouteImport } from './routes/_app/purchase-orders/new'
 import { Route as AppProductsNewRouteImport } from './routes/_app/products/new'
+import { Route as AppPurchaseOrdersPoIdIndexRouteImport } from './routes/_app/purchase-orders/$poId/index'
 import { Route as AppProductsProductIdIndexRouteImport } from './routes/_app/products/$productId/index'
 import { Route as AppProductsProductIdEditRouteImport } from './routes/_app/products/$productId/edit'
 
@@ -71,6 +75,11 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const AppWarehousesIndexRoute = AppWarehousesIndexRouteImport.update({
+  id: '/warehouses/',
+  path: '/warehouses/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppSuppliersIndexRoute = AppSuppliersIndexRouteImport.update({
   id: '/suppliers/',
   path: '/suppliers/',
@@ -79,6 +88,11 @@ const AppSuppliersIndexRoute = AppSuppliersIndexRouteImport.update({
 const AppSettingsIndexRoute = AppSettingsIndexRouteImport.update({
   id: '/settings/',
   path: '/settings/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppPurchaseOrdersIndexRoute = AppPurchaseOrdersIndexRouteImport.update({
+  id: '/purchase-orders/',
+  path: '/purchase-orders/',
   getParentRoute: () => AppRouteRoute,
 } as any)
 const AppProfileIndexRoute = AppProfileIndexRouteImport.update({
@@ -101,11 +115,22 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppPurchaseOrdersNewRoute = AppPurchaseOrdersNewRouteImport.update({
+  id: '/purchase-orders/new',
+  path: '/purchase-orders/new',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppProductsNewRoute = AppProductsNewRouteImport.update({
   id: '/products/new',
   path: '/products/new',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppPurchaseOrdersPoIdIndexRoute =
+  AppPurchaseOrdersPoIdIndexRouteImport.update({
+    id: '/purchase-orders/$poId/',
+    path: '/purchase-orders/$poId/',
+    getParentRoute: () => AppRouteRoute,
+  } as any)
 const AppProductsProductIdIndexRoute =
   AppProductsProductIdIndexRouteImport.update({
     id: '/products/$productId/',
@@ -128,14 +153,18 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
   '/products/new': typeof AppProductsNewRoute
+  '/purchase-orders/new': typeof AppPurchaseOrdersNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/categories/': typeof AppCategoriesIndexRoute
   '/products/': typeof AppProductsIndexRoute
   '/profile/': typeof AppProfileIndexRoute
+  '/purchase-orders/': typeof AppPurchaseOrdersIndexRoute
   '/settings/': typeof AppSettingsIndexRoute
   '/suppliers/': typeof AppSuppliersIndexRoute
+  '/warehouses/': typeof AppWarehousesIndexRoute
   '/products/$productId/edit': typeof AppProductsProductIdEditRoute
   '/products/$productId/': typeof AppProductsProductIdIndexRoute
+  '/purchase-orders/$poId/': typeof AppPurchaseOrdersPoIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
@@ -146,14 +175,18 @@ export interface FileRoutesByTo {
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
   '/products/new': typeof AppProductsNewRoute
+  '/purchase-orders/new': typeof AppPurchaseOrdersNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/categories': typeof AppCategoriesIndexRoute
   '/products': typeof AppProductsIndexRoute
   '/profile': typeof AppProfileIndexRoute
+  '/purchase-orders': typeof AppPurchaseOrdersIndexRoute
   '/settings': typeof AppSettingsIndexRoute
   '/suppliers': typeof AppSuppliersIndexRoute
+  '/warehouses': typeof AppWarehousesIndexRoute
   '/products/$productId/edit': typeof AppProductsProductIdEditRoute
   '/products/$productId': typeof AppProductsProductIdIndexRoute
+  '/purchase-orders/$poId': typeof AppPurchaseOrdersPoIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -167,14 +200,18 @@ export interface FileRoutesById {
   '/_auth/sign-up': typeof AuthSignUpRoute
   '/_app/': typeof AppIndexRoute
   '/_app/products/new': typeof AppProductsNewRoute
+  '/_app/purchase-orders/new': typeof AppPurchaseOrdersNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_app/categories/': typeof AppCategoriesIndexRoute
   '/_app/products/': typeof AppProductsIndexRoute
   '/_app/profile/': typeof AppProfileIndexRoute
+  '/_app/purchase-orders/': typeof AppPurchaseOrdersIndexRoute
   '/_app/settings/': typeof AppSettingsIndexRoute
   '/_app/suppliers/': typeof AppSuppliersIndexRoute
+  '/_app/warehouses/': typeof AppWarehousesIndexRoute
   '/_app/products/$productId/edit': typeof AppProductsProductIdEditRoute
   '/_app/products/$productId/': typeof AppProductsProductIdIndexRoute
+  '/_app/purchase-orders/$poId/': typeof AppPurchaseOrdersPoIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -187,14 +224,18 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/products/new'
+    | '/purchase-orders/new'
     | '/api/auth/$'
     | '/categories/'
     | '/products/'
     | '/profile/'
+    | '/purchase-orders/'
     | '/settings/'
     | '/suppliers/'
+    | '/warehouses/'
     | '/products/$productId/edit'
     | '/products/$productId/'
+    | '/purchase-orders/$poId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -205,14 +246,18 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/products/new'
+    | '/purchase-orders/new'
     | '/api/auth/$'
     | '/categories'
     | '/products'
     | '/profile'
+    | '/purchase-orders'
     | '/settings'
     | '/suppliers'
+    | '/warehouses'
     | '/products/$productId/edit'
     | '/products/$productId'
+    | '/purchase-orders/$poId'
   id:
     | '__root__'
     | '/_app'
@@ -225,14 +270,18 @@ export interface FileRouteTypes {
     | '/_auth/sign-up'
     | '/_app/'
     | '/_app/products/new'
+    | '/_app/purchase-orders/new'
     | '/api/auth/$'
     | '/_app/categories/'
     | '/_app/products/'
     | '/_app/profile/'
+    | '/_app/purchase-orders/'
     | '/_app/settings/'
     | '/_app/suppliers/'
+    | '/_app/warehouses/'
     | '/_app/products/$productId/edit'
     | '/_app/products/$productId/'
+    | '/_app/purchase-orders/$poId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -308,6 +357,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/_app/warehouses/': {
+      id: '/_app/warehouses/'
+      path: '/warehouses'
+      fullPath: '/warehouses/'
+      preLoaderRoute: typeof AppWarehousesIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/_app/suppliers/': {
       id: '/_app/suppliers/'
       path: '/suppliers'
@@ -320,6 +376,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings/'
       preLoaderRoute: typeof AppSettingsIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/purchase-orders/': {
+      id: '/_app/purchase-orders/'
+      path: '/purchase-orders'
+      fullPath: '/purchase-orders/'
+      preLoaderRoute: typeof AppPurchaseOrdersIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/_app/profile/': {
@@ -350,11 +413,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/purchase-orders/new': {
+      id: '/_app/purchase-orders/new'
+      path: '/purchase-orders/new'
+      fullPath: '/purchase-orders/new'
+      preLoaderRoute: typeof AppPurchaseOrdersNewRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/_app/products/new': {
       id: '/_app/products/new'
       path: '/products/new'
       fullPath: '/products/new'
       preLoaderRoute: typeof AppProductsNewRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/purchase-orders/$poId/': {
+      id: '/_app/purchase-orders/$poId/'
+      path: '/purchase-orders/$poId'
+      fullPath: '/purchase-orders/$poId/'
+      preLoaderRoute: typeof AppPurchaseOrdersPoIdIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/_app/products/$productId/': {
@@ -377,25 +454,33 @@ declare module '@tanstack/react-router' {
 interface AppRouteRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
   AppProductsNewRoute: typeof AppProductsNewRoute
+  AppPurchaseOrdersNewRoute: typeof AppPurchaseOrdersNewRoute
   AppCategoriesIndexRoute: typeof AppCategoriesIndexRoute
   AppProductsIndexRoute: typeof AppProductsIndexRoute
   AppProfileIndexRoute: typeof AppProfileIndexRoute
+  AppPurchaseOrdersIndexRoute: typeof AppPurchaseOrdersIndexRoute
   AppSettingsIndexRoute: typeof AppSettingsIndexRoute
   AppSuppliersIndexRoute: typeof AppSuppliersIndexRoute
+  AppWarehousesIndexRoute: typeof AppWarehousesIndexRoute
   AppProductsProductIdEditRoute: typeof AppProductsProductIdEditRoute
   AppProductsProductIdIndexRoute: typeof AppProductsProductIdIndexRoute
+  AppPurchaseOrdersPoIdIndexRoute: typeof AppPurchaseOrdersPoIdIndexRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppIndexRoute: AppIndexRoute,
   AppProductsNewRoute: AppProductsNewRoute,
+  AppPurchaseOrdersNewRoute: AppPurchaseOrdersNewRoute,
   AppCategoriesIndexRoute: AppCategoriesIndexRoute,
   AppProductsIndexRoute: AppProductsIndexRoute,
   AppProfileIndexRoute: AppProfileIndexRoute,
+  AppPurchaseOrdersIndexRoute: AppPurchaseOrdersIndexRoute,
   AppSettingsIndexRoute: AppSettingsIndexRoute,
   AppSuppliersIndexRoute: AppSuppliersIndexRoute,
+  AppWarehousesIndexRoute: AppWarehousesIndexRoute,
   AppProductsProductIdEditRoute: AppProductsProductIdEditRoute,
   AppProductsProductIdIndexRoute: AppProductsProductIdIndexRoute,
+  AppPurchaseOrdersPoIdIndexRoute: AppPurchaseOrdersPoIdIndexRoute,
 }
 
 const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
