@@ -262,7 +262,7 @@ export const receivePurchaseOrder = createServerFn({ method: "POST" })
             if (!po) {
                 throw new Error(`Purchase order with id ${data.id} not found`);
             }
-            if (po.status === "CANCELLED" || po.status === "RECEIVED") {
+            if (po.status !== "SENT" && po.status !== "PARTIAL") {
                 throw new Error(
                     `Can't receive against a purchase order that is ${po.status.toLowerCase()}.`
                 );
