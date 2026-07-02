@@ -14,10 +14,15 @@ export const createStockTransferSchema = z
             .array(stockTransferItemSchema)
             .min(1, "Add at least one line item"),
     })
-    .refine((data) => data.fromWarehouseId !== data.toWarehouseId, {
-        message: "Source and destination warehouses must be different",
-        path: ["toWarehouseId"],
-    });
+    .refine(
+        (data) =>
+            new Set(data.items.map((item) => item.productId)).size ===
+            data.items.length,
+        {
+            message: "Each product can only appear once per transfer",
+            path: ["items"],
+        }
+    );
 export type CreateStockTransferInput = z.infer<
     typeof createStockTransferSchema
 >;
