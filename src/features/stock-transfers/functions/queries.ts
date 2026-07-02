@@ -23,7 +23,28 @@ export const stockTransferQueryOptions = (id: string) =>
         queryFn: () => getStockTransfer({ data: { id } }),
     });
 
-export const stockTransferFormDataQueryOptions = queryOptions({
-    queryKey: ["stock-transfers", "form-data"],
-    queryFn: () => getStockTransferFormData(),
-});
+export const stockTransferFormDataQueryOptions = ({
+    q,
+    page = 1,
+    pageSize = 50,
+    productIds,
+}: {
+    q?: string;
+    page?: number;
+    pageSize?: number;
+    productIds?: string[];
+} = {}) =>
+    queryOptions({
+        queryKey: [
+            "stock-transfers",
+            "form-data",
+            q ?? null,
+            page,
+            pageSize,
+            productIds ?? null,
+        ],
+        queryFn: () =>
+            getStockTransferFormData({
+                data: { q, page, pageSize, productIds },
+            }),
+    });

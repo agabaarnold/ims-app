@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import type { Prisma } from "#/generated/prisma/client";
 import { prisma } from "#/lib/db";
 import {
     authMiddleware,
@@ -80,15 +81,61 @@ export const getStockTransfer = createServerFn({ method: "GET" })
 
 export const getStockTransferFormData = createServerFn({ method: "GET" })
     .middleware([authMiddleware])
-    .handler(async () => {
-        const [warehouses, products] = await prisma.$transaction([
+    .handler(async ({ data }) => {
+        // Accept optional query params to avoid returning every product
+        // - `q`: search term for name/sku
+        // - `page`/`pageSize`: pagination for product list
+        // - `productIds`: explicit list of product ids to load (e.g. currently-selected lines)
+        const {
+            q,
+            page = 1,
+            pageSize = 50,
+            productIds,
+        } = (data ?? {}) as {
+            q?: string;
+            page?: number;
+            pageSize?: number;
+            productIds?: string[];
+        };
+
+        const skip = Math.max(0, (page - 1) * pageSize);
+
+        const productWhere: Prisma.ProductWhereInput =
+            productIds && productIds.length > 0
+                ? { id: { in: productIds } }
+                : {
+                      isActive: true,
+                      ...(q
+                          ? {
+                                OR: [
+                                    {
+                                        name: {
+                                            contains: q,
+                                            mode: "insensitive",
+                                        },
+                                    },
+                                    {
+                                        sku: {
+                                            contains: q,
+                                            mode: "insensitive",
+                                        },
+                                    },
+                                ],
+                            }
+                          : {}),
+                  };
+
+        const [warehouses, products, total] = await prisma.$transaction([
             prisma.warehouse.findMany({
                 orderBy: { name: "asc" },
                 select: { id: true, name: true },
             }),
             prisma.product.findMany({
-                where: { isActive: true },
+                where: productWhere,
                 orderBy: { name: "asc" },
+                skip: productIds && productIds.length > 0 ? undefined : skip,
+                take:
+                    productIds && productIds.length > 0 ? undefined : pageSize,
                 select: {
                     id: true,
                     name: true,
@@ -105,9 +152,20 @@ export const getStockTransferFormData = createServerFn({ method: "GET" })
                     },
                 },
             }),
+            prisma.product.count({ where: productWhere }),
         ]);
 
-        return { warehouses, products };
+        return {
+            warehouses,
+            products,
+            meta: {
+                total,
+                page,
+                pageSize,
+                // If productIds were requested we return them all regardless
+                // of pagination; caller can distinguish by checking productIds
+            },
+        };
     });
 
 export const createStockTransfer = createServerFn({ method: "POST" })
