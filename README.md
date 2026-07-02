@@ -1,245 +1,150 @@
-Welcome to your new TanStack Start app! 
+# InvenEase — Inventory Management System
 
-# Getting Started
+A full-featured inventory management web application built with [TanStack Start](https://tanstack.com/start). Manage products, stock levels, suppliers, warehouses, purchase orders, sales orders, and stock transfers across multiple locations with role-based access control.
 
-To run this application:
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| **Framework** | TanStack Start (React 19, SSR) |
+| **Routing** | TanStack Router (file-based) |
+| **Styling** | Tailwind CSS v4 + shadcn/ui |
+| **Database** | PostgreSQL via Prisma |
+| **Auth** | Better Auth (email/password, GitHub, Google OAuth) |
+| **Email** | React Email + nodemailer |
+| **Validation** | Zod v4 + T3 Env |
+| **Forms** | TanStack React Form |
+| **Tooling** | Biome / Ultracite, Vitest, Vite 8 |
+
+## Features
+
+- **Authentication** — email/password with email verification, GitHub & Google OAuth, password reset
+- **Role-Based Access Control** — 4 roles (superAdmin, admin, manager, staff) with granular CRUD permissions per domain
+- **Product Management** — CRUD with auto-generated SKUs, search, pagination, hierarchical categories
+- **Category Management** — Hierarchical categories (parent/child) with CRUD
+- **Supplier Management** — Full supplier profiles with contact details
+- **Warehouse Management** — Multi-warehouse support
+- **Inventory Tracking** — Stock levels per product per warehouse with reserved quantities
+- **Stock Movements** — Complete audit trail for all stock changes (receive, sell, adjust, transfer)
+- **Stock Transfers** — Transfer stock between warehouses (PENDING → COMPLETED workflow)
+- **Purchase Orders** — Full lifecycle (DRAFT → SENT → PARTIAL → RECEIVED → CANCELLED)
+- **Sales Orders** — Order lifecycle (PENDING → CONFIRMED → PICKING → SHIPPED → DELIVERED → CANCELLED)
+- **Audit Logging** — Comprehensive audit trail tracking all entity changes
+- **Email Notifications** — Password reset, email verification, email change via React Email templates
+- **User Profile & Settings** — Edit profile, change password, manage sessions, delete account
+- **Dark Mode** — Theme toggle with class-based dark mode
+
+## Getting Started
 
 ```bash
+# Install dependencies
 bun install
-bun --bun run dev
+
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your database URL, Better Auth secret, SMTP, and OAuth credentials
+
+# Generate Prisma client and push schema
+bun run db:generate
+bun run db:push
+
+# Start dev server
+bun run dev
 ```
 
-# Building For Production
+The app runs at `http://localhost:3000`.
 
-To build this application for production:
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `DATABASE_URL` | PostgreSQL connection string |
+| `BETTER_AUTH_URL` | Application URL (e.g. `http://localhost:3000`) |
+| `BETTER_AUTH_SECRET` | Better Auth secret key |
+| `SMTP_HOST` | SMTP server hostname |
+| `SMTP_PORT` | SMTP server port |
+| `SMTP_USER` | SMTP username |
+| `SMTP_PASS` | SMTP password |
+| `SMTP_FROM` | From address for emails |
+| `GITHUB_CLIENT_ID` | GitHub OAuth client ID |
+| `GITHUB_CLIENT_SECRET` | GitHub OAuth client secret |
+| `GOOGLE_CLIENT_ID` | Google OAuth client ID |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret |
+
+## Database
+
+Uses **Prisma** with **PostgreSQL**. The schema is defined in `prisma/schema.prisma` with 18 models (User, Session, Account, Category, Supplier, Product, Warehouse, InventoryItem, StockMovement, StockTransfer, StockTransferItem, Customer, Order, OrderItem, PurchaseOrder, PurchaseOrderItem, AuditLog, Verification).
 
 ```bash
-bun --bun run build
+bun run db:generate   # Generate Prisma client
+bun run db:push       # Push schema to database
+bun run db:migrate    # Create a new migration
+bun run db:studio     # Open Prisma Studio
+bun run db:seed       # Seed the database
 ```
 
-## Testing
+## Role-Based Access Control
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+Four roles with granular permissions across all domains:
+
+| Resource | superAdmin | admin | manager | staff |
+|----------|-----------|-------|---------|-------|
+| Product | CRUD | CRUD | CRU | R |
+| Category | CRUD | CRUD | CRU | R |
+| Supplier | CRUD | CRUD | CRU | R |
+| Inventory | read, adjust, transfer | read, adjust, transfer | read, adjust, transfer | read, adjust |
+| Order | CRUD + approve, cancel | CRUD + approve, cancel | CRUD + approve, cancel | create, read |
+| Purchase Order | CRUD + approve, cancel | CRUD + approve, cancel | create, read, update | — |
+| Warehouse | CRUD | CRUD | CRU | R |
+| User | full control | full except impersonate-admins | list | — |
+
+Permissions are defined in `src/lib/permissions.ts`. Auth guards and middleware are in `src/middleware.ts`.
+
+## Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `dev` | Start dev server on port 3000 |
+| `build` | Build for production |
+| `preview` | Preview production build |
+| `test` | Run tests with Vitest |
+| `check` | Lint & format check with Ultracite/Biome |
+| `fix` | Auto-fix lint & formatting issues |
+| `doctor` | Run React Doctor analysis |
+| `generate-routes` | Regenerate TanStack Router route tree |
+| `db:*` | Prisma database commands |
+
+## Project Structure
+
+```
+src/
+├── components/       # Reusable UI components (shadcn/ui + custom)
+│   ├── ui/           # ~40 base UI components
+│   └── shared/       # App-wide components (header, sidebar, etc.)
+├── features/         # Domain-driven feature modules
+│   ├── auth/         # Auth forms, schema, server functions
+│   ├── categories/   # Categories CRUD
+│   ├── email/        # React Email templates
+│   ├── products/     # Products CRUD
+│   ├── profile/      # Profile editing
+│   ├── purchase-orders/
+│   ├── settings/     # Password, sessions, danger zone
+│   ├── stock-transfers/
+│   ├── suppliers/    # Suppliers CRUD
+│   └── warehouses/   # Warehouses CRUD
+├── hooks/            # Custom React hooks
+├── integrations/     # App-level providers/context
+├── lib/              # Core libraries (auth, auth-client, permissions)
+├── routes/           # File-based TanStack Router routes
+│   ├── _auth/        # Sign-in, sign-up, forgot/reset password
+│   └── _app/         # Dashboard, products, categories, etc.
+└── middleware.ts     # Auth & permission middleware
+```
+
+## Deployment
+
+Deployed on **Vercel**. The `vercel.json` config uses the Nitro preset:
 
 ```bash
-bun --bun run test
+bun run build
 ```
-
-## Styling
-
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
-
-### Removing Tailwind CSS
-
-If you prefer not to use Tailwind CSS:
-
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Uninstall the packages: `bun install @tailwindcss/vite tailwindcss -D`
-
-
-## T3Env
-
-- You can use T3Env to add type safety to your environment variables.
-- Add Environment variables to the `src/env.mjs` file.
-- Use the environment variables in your code.
-
-### Usage
-
-```ts
-import { env } from "#/env";
-
-console.log(env.VITE_APP_TITLE);
-```
-
-
-
-
-
-## Setting up Better Auth
-
-1. Generate and set the `BETTER_AUTH_SECRET` environment variable in your `.env.local`:
-
-   ```bash
-   bunx --bun @better-auth/cli secret
-   ```
-
-2. Visit the [Better Auth documentation](https://www.better-auth.com) to unlock the full potential of authentication in your app.
-
-### Adding a Database (Optional)
-
-Better Auth can work in stateless mode, but to persist user data, add a database:
-
-```typescript
-// src/lib/auth.ts
-import { betterAuth } from "better-auth";
-import { Pool } from "pg";
-
-export const auth = betterAuth({
-  database: new Pool({
-    connectionString: process.env.DATABASE_URL,
-  }),
-  // ... rest of config
-});
-```
-
-Then run migrations:
-
-```bash
-bunx --bun @better-auth/cli migrate
-```
-
-
-
-## Routing
-
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
-
-### Adding A Route
-
-To add a new route to your application just add a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from "@tanstack/react-router";
-```
-
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
-```
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Server Functions
-
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
-
-```tsx
-import { createServerFn } from '@tanstack/react-start'
-
-const getServerTime = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  return new Date().toISOString()
-})
-
-// Use in a component
-function MyComponent() {
-  const [time, setTime] = useState('')
-  
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-  
-  return <div>Server time: {time}</div>
-}
-```
-
-## API Routes
-
-You can create API routes by using the `server` property in your route definitions:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
-
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
-```
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
-})
-
-function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
-}
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
-
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
