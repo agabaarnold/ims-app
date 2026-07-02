@@ -307,9 +307,15 @@ export const completeStockTransfer = createServerFn({ method: "POST" })
                 });
             }
 
-            const completed = await tx.stockTransfer.update({
-                where: { id: transfer.id },
+            const { count } = await tx.stockTransfer.updateMany({
+                where: { id: transfer.id, status: "PENDING" },
                 data: { status: "COMPLETED", completedAt: new Date() },
+            });
+            if (count === 0) {
+                throw new Error("Transfer is no longer pending.");
+            }
+            const completed = await tx.stockTransfer.findUniqueOrThrow({
+                where: { id: transfer.id },
             });
 
             await tx.auditLog.create({
