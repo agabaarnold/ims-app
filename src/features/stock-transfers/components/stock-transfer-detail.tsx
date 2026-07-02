@@ -37,7 +37,7 @@ interface StockTransferDetailProps {
     transfer: {
         id: string;
         status: string;
-        createdAt: string;
+        createdAt: Date;
         completedAt: Date | null;
         fromWarehouse: { id: string; name: string };
         toWarehouse: { id: string; name: string };
