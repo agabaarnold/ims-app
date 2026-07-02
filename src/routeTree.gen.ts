@@ -20,14 +20,17 @@ import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-pass
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as AppWarehousesIndexRouteImport } from './routes/_app/warehouses/index'
 import { Route as AppSuppliersIndexRouteImport } from './routes/_app/suppliers/index'
+import { Route as AppStockTransfersIndexRouteImport } from './routes/_app/stock-transfers/index'
 import { Route as AppSettingsIndexRouteImport } from './routes/_app/settings/index'
 import { Route as AppPurchaseOrdersIndexRouteImport } from './routes/_app/purchase-orders/index'
 import { Route as AppProfileIndexRouteImport } from './routes/_app/profile/index'
 import { Route as AppProductsIndexRouteImport } from './routes/_app/products/index'
 import { Route as AppCategoriesIndexRouteImport } from './routes/_app/categories/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as AppStockTransfersNewRouteImport } from './routes/_app/stock-transfers/new'
 import { Route as AppPurchaseOrdersNewRouteImport } from './routes/_app/purchase-orders/new'
 import { Route as AppProductsNewRouteImport } from './routes/_app/products/new'
+import { Route as AppStockTransfersTransferIdIndexRouteImport } from './routes/_app/stock-transfers/$transferId/index'
 import { Route as AppPurchaseOrdersPoIdIndexRouteImport } from './routes/_app/purchase-orders/$poId/index'
 import { Route as AppProductsProductIdIndexRouteImport } from './routes/_app/products/$productId/index'
 import { Route as AppProductsProductIdEditRouteImport } from './routes/_app/products/$productId/edit'
@@ -85,6 +88,11 @@ const AppSuppliersIndexRoute = AppSuppliersIndexRouteImport.update({
   path: '/suppliers/',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppStockTransfersIndexRoute = AppStockTransfersIndexRouteImport.update({
+  id: '/stock-transfers/',
+  path: '/stock-transfers/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppSettingsIndexRoute = AppSettingsIndexRouteImport.update({
   id: '/settings/',
   path: '/settings/',
@@ -115,6 +123,11 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppStockTransfersNewRoute = AppStockTransfersNewRouteImport.update({
+  id: '/stock-transfers/new',
+  path: '/stock-transfers/new',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppPurchaseOrdersNewRoute = AppPurchaseOrdersNewRouteImport.update({
   id: '/purchase-orders/new',
   path: '/purchase-orders/new',
@@ -125,6 +138,12 @@ const AppProductsNewRoute = AppProductsNewRouteImport.update({
   path: '/products/new',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppStockTransfersTransferIdIndexRoute =
+  AppStockTransfersTransferIdIndexRouteImport.update({
+    id: '/stock-transfers/$transferId/',
+    path: '/stock-transfers/$transferId/',
+    getParentRoute: () => AppRouteRoute,
+  } as any)
 const AppPurchaseOrdersPoIdIndexRoute =
   AppPurchaseOrdersPoIdIndexRouteImport.update({
     id: '/purchase-orders/$poId/',
@@ -154,17 +173,20 @@ export interface FileRoutesByFullPath {
   '/sign-up': typeof AuthSignUpRoute
   '/products/new': typeof AppProductsNewRoute
   '/purchase-orders/new': typeof AppPurchaseOrdersNewRoute
+  '/stock-transfers/new': typeof AppStockTransfersNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/categories/': typeof AppCategoriesIndexRoute
   '/products/': typeof AppProductsIndexRoute
   '/profile/': typeof AppProfileIndexRoute
   '/purchase-orders/': typeof AppPurchaseOrdersIndexRoute
   '/settings/': typeof AppSettingsIndexRoute
+  '/stock-transfers/': typeof AppStockTransfersIndexRoute
   '/suppliers/': typeof AppSuppliersIndexRoute
   '/warehouses/': typeof AppWarehousesIndexRoute
   '/products/$productId/edit': typeof AppProductsProductIdEditRoute
   '/products/$productId/': typeof AppProductsProductIdIndexRoute
   '/purchase-orders/$poId/': typeof AppPurchaseOrdersPoIdIndexRoute
+  '/stock-transfers/$transferId/': typeof AppStockTransfersTransferIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
@@ -176,17 +198,20 @@ export interface FileRoutesByTo {
   '/sign-up': typeof AuthSignUpRoute
   '/products/new': typeof AppProductsNewRoute
   '/purchase-orders/new': typeof AppPurchaseOrdersNewRoute
+  '/stock-transfers/new': typeof AppStockTransfersNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/categories': typeof AppCategoriesIndexRoute
   '/products': typeof AppProductsIndexRoute
   '/profile': typeof AppProfileIndexRoute
   '/purchase-orders': typeof AppPurchaseOrdersIndexRoute
   '/settings': typeof AppSettingsIndexRoute
+  '/stock-transfers': typeof AppStockTransfersIndexRoute
   '/suppliers': typeof AppSuppliersIndexRoute
   '/warehouses': typeof AppWarehousesIndexRoute
   '/products/$productId/edit': typeof AppProductsProductIdEditRoute
   '/products/$productId': typeof AppProductsProductIdIndexRoute
   '/purchase-orders/$poId': typeof AppPurchaseOrdersPoIdIndexRoute
+  '/stock-transfers/$transferId': typeof AppStockTransfersTransferIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -201,17 +226,20 @@ export interface FileRoutesById {
   '/_app/': typeof AppIndexRoute
   '/_app/products/new': typeof AppProductsNewRoute
   '/_app/purchase-orders/new': typeof AppPurchaseOrdersNewRoute
+  '/_app/stock-transfers/new': typeof AppStockTransfersNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_app/categories/': typeof AppCategoriesIndexRoute
   '/_app/products/': typeof AppProductsIndexRoute
   '/_app/profile/': typeof AppProfileIndexRoute
   '/_app/purchase-orders/': typeof AppPurchaseOrdersIndexRoute
   '/_app/settings/': typeof AppSettingsIndexRoute
+  '/_app/stock-transfers/': typeof AppStockTransfersIndexRoute
   '/_app/suppliers/': typeof AppSuppliersIndexRoute
   '/_app/warehouses/': typeof AppWarehousesIndexRoute
   '/_app/products/$productId/edit': typeof AppProductsProductIdEditRoute
   '/_app/products/$productId/': typeof AppProductsProductIdIndexRoute
   '/_app/purchase-orders/$poId/': typeof AppPurchaseOrdersPoIdIndexRoute
+  '/_app/stock-transfers/$transferId/': typeof AppStockTransfersTransferIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -225,17 +253,20 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/products/new'
     | '/purchase-orders/new'
+    | '/stock-transfers/new'
     | '/api/auth/$'
     | '/categories/'
     | '/products/'
     | '/profile/'
     | '/purchase-orders/'
     | '/settings/'
+    | '/stock-transfers/'
     | '/suppliers/'
     | '/warehouses/'
     | '/products/$productId/edit'
     | '/products/$productId/'
     | '/purchase-orders/$poId/'
+    | '/stock-transfers/$transferId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -247,17 +278,20 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/products/new'
     | '/purchase-orders/new'
+    | '/stock-transfers/new'
     | '/api/auth/$'
     | '/categories'
     | '/products'
     | '/profile'
     | '/purchase-orders'
     | '/settings'
+    | '/stock-transfers'
     | '/suppliers'
     | '/warehouses'
     | '/products/$productId/edit'
     | '/products/$productId'
     | '/purchase-orders/$poId'
+    | '/stock-transfers/$transferId'
   id:
     | '__root__'
     | '/_app'
@@ -271,17 +305,20 @@ export interface FileRouteTypes {
     | '/_app/'
     | '/_app/products/new'
     | '/_app/purchase-orders/new'
+    | '/_app/stock-transfers/new'
     | '/api/auth/$'
     | '/_app/categories/'
     | '/_app/products/'
     | '/_app/profile/'
     | '/_app/purchase-orders/'
     | '/_app/settings/'
+    | '/_app/stock-transfers/'
     | '/_app/suppliers/'
     | '/_app/warehouses/'
     | '/_app/products/$productId/edit'
     | '/_app/products/$productId/'
     | '/_app/purchase-orders/$poId/'
+    | '/_app/stock-transfers/$transferId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -371,6 +408,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSuppliersIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/stock-transfers/': {
+      id: '/_app/stock-transfers/'
+      path: '/stock-transfers'
+      fullPath: '/stock-transfers/'
+      preLoaderRoute: typeof AppStockTransfersIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/_app/settings/': {
       id: '/_app/settings/'
       path: '/settings'
@@ -413,6 +457,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/stock-transfers/new': {
+      id: '/_app/stock-transfers/new'
+      path: '/stock-transfers/new'
+      fullPath: '/stock-transfers/new'
+      preLoaderRoute: typeof AppStockTransfersNewRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/_app/purchase-orders/new': {
       id: '/_app/purchase-orders/new'
       path: '/purchase-orders/new'
@@ -425,6 +476,13 @@ declare module '@tanstack/react-router' {
       path: '/products/new'
       fullPath: '/products/new'
       preLoaderRoute: typeof AppProductsNewRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/stock-transfers/$transferId/': {
+      id: '/_app/stock-transfers/$transferId/'
+      path: '/stock-transfers/$transferId'
+      fullPath: '/stock-transfers/$transferId/'
+      preLoaderRoute: typeof AppStockTransfersTransferIdIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/_app/purchase-orders/$poId/': {
@@ -455,32 +513,38 @@ interface AppRouteRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
   AppProductsNewRoute: typeof AppProductsNewRoute
   AppPurchaseOrdersNewRoute: typeof AppPurchaseOrdersNewRoute
+  AppStockTransfersNewRoute: typeof AppStockTransfersNewRoute
   AppCategoriesIndexRoute: typeof AppCategoriesIndexRoute
   AppProductsIndexRoute: typeof AppProductsIndexRoute
   AppProfileIndexRoute: typeof AppProfileIndexRoute
   AppPurchaseOrdersIndexRoute: typeof AppPurchaseOrdersIndexRoute
   AppSettingsIndexRoute: typeof AppSettingsIndexRoute
+  AppStockTransfersIndexRoute: typeof AppStockTransfersIndexRoute
   AppSuppliersIndexRoute: typeof AppSuppliersIndexRoute
   AppWarehousesIndexRoute: typeof AppWarehousesIndexRoute
   AppProductsProductIdEditRoute: typeof AppProductsProductIdEditRoute
   AppProductsProductIdIndexRoute: typeof AppProductsProductIdIndexRoute
   AppPurchaseOrdersPoIdIndexRoute: typeof AppPurchaseOrdersPoIdIndexRoute
+  AppStockTransfersTransferIdIndexRoute: typeof AppStockTransfersTransferIdIndexRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppIndexRoute: AppIndexRoute,
   AppProductsNewRoute: AppProductsNewRoute,
   AppPurchaseOrdersNewRoute: AppPurchaseOrdersNewRoute,
+  AppStockTransfersNewRoute: AppStockTransfersNewRoute,
   AppCategoriesIndexRoute: AppCategoriesIndexRoute,
   AppProductsIndexRoute: AppProductsIndexRoute,
   AppProfileIndexRoute: AppProfileIndexRoute,
   AppPurchaseOrdersIndexRoute: AppPurchaseOrdersIndexRoute,
   AppSettingsIndexRoute: AppSettingsIndexRoute,
+  AppStockTransfersIndexRoute: AppStockTransfersIndexRoute,
   AppSuppliersIndexRoute: AppSuppliersIndexRoute,
   AppWarehousesIndexRoute: AppWarehousesIndexRoute,
   AppProductsProductIdEditRoute: AppProductsProductIdEditRoute,
   AppProductsProductIdIndexRoute: AppProductsProductIdIndexRoute,
   AppPurchaseOrdersPoIdIndexRoute: AppPurchaseOrdersPoIdIndexRoute,
+  AppStockTransfersTransferIdIndexRoute: AppStockTransfersTransferIdIndexRoute,
 }
 
 const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(

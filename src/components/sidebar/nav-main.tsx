@@ -4,6 +4,7 @@ import {
     IconCategory,
     IconHome,
     IconPackages,
+    IconTransfer,
     type TablerIcon,
 } from "@tabler/icons-react";
 import { Link, type LinkOptions } from "@tanstack/react-router";
@@ -23,10 +24,11 @@ export interface NavItems {
 
 const items: NavItems[] = [
     { title: "Dashboard", url: "/", icon: IconHome },
-    { title: "Products", url: "/products", icon: IconPackages },
-    { title: "Warehouses", url: "/warehouses", icon: IconBuildingWarehouse },
     { title: "Categories", url: "/categories", icon: IconCategory },
+    { title: "Products", url: "/products", icon: IconPackages },
     { title: "Suppliers", url: "/suppliers", icon: IconBasketPlus },
+    { title: "Transfers", url: "/stock-transfers", icon: IconTransfer },
+    { title: "Warehouses", url: "/warehouses", icon: IconBuildingWarehouse },
 ];
 
 function NavMain() {
