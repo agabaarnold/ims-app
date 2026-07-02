@@ -179,6 +179,7 @@ function TransferLineItemRow({
             </TableCell>
             <TableCell>
                 <Button
+                    aria-label="Remove item"
                     onClick={onRemove}
                     size="icon"
                     type="button"
