@@ -5,9 +5,8 @@ export const createWarehouseSchema = z.object({
     location: z
         .string()
         .trim()
-        .optional()
         .nullable()
-        .transform((val) => (val === undefined ? undefined : val || null)),
+        .transform((val) => val || null),
 });
 export type CreateWarehouseInput = z.infer<typeof createWarehouseSchema>;
 
