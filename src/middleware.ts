@@ -204,3 +204,51 @@ export const deleteWarehouseMiddleware = createMiddleware().server(
         return next();
     }
 );
+
+export const createStockTransferMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { inventory: ["transfer"] } },
+        });
+        if (!hasPermission.success) {
+            throw redirect({ to: "/forbidden" });
+        }
+
+        return next();
+    }
+);
+
+export const completeStockTransferMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { inventory: ["transfer"] } },
+        });
+        if (!hasPermission.success) {
+            throw redirect({ to: "/forbidden" });
+        }
+
+        return next();
+    }
+);
+
+export const cancelStockTransferMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { inventory: ["transfer"] } },
+        });
+        if (!hasPermission.success) {
+            throw redirect({ to: "/forbidden" });
+        }
+
+        return next();
+    }
+);

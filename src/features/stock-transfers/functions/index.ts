@@ -1,6 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
 import { prisma } from "#/lib/db";
-import { authMiddleware } from "#/middleware";
+import {
+    authMiddleware,
+    cancelStockTransferMiddleware,
+    completeStockTransferMiddleware,
+    createStockTransferMiddleware,
+} from "#/middleware";
 import {
     cancelStockTransferSchema,
     completeStockTransferSchema,
@@ -8,8 +13,6 @@ import {
     getStockTransferSchema,
     getStockTransfersSchema,
 } from "../schema";
-
-// TODO: Add missing permission middleware like we did on other features (e.g. products, warehouses, etc.) once we have a permissions system in place
 
 export const getStockTransfers = createServerFn({ method: "GET" })
     .middleware([authMiddleware])
@@ -108,7 +111,7 @@ export const getStockTransferFormData = createServerFn({ method: "GET" })
     });
 
 export const createStockTransfer = createServerFn({ method: "POST" })
-    .middleware([authMiddleware])
+    .middleware([authMiddleware, createStockTransferMiddleware])
     .validator(createStockTransferSchema)
     .handler(async ({ context: { session }, data }) => {
         const user = session.user;
@@ -147,7 +150,7 @@ export const createStockTransfer = createServerFn({ method: "POST" })
     });
 
 export const completeStockTransfer = createServerFn({ method: "POST" })
-    .middleware([authMiddleware])
+    .middleware([authMiddleware, completeStockTransferMiddleware])
     .validator(completeStockTransferSchema)
     .handler(async ({ context: { session }, data }) => {
         const user = session.user;
@@ -267,7 +270,7 @@ export const completeStockTransfer = createServerFn({ method: "POST" })
     });
 
 export const cancelStockTransfer = createServerFn({ method: "POST" })
-    .middleware([authMiddleware])
+    .middleware([authMiddleware, cancelStockTransferMiddleware])
     .validator(cancelStockTransferSchema)
     .handler(async ({ context: { session }, data }) => {
         const user = session.user;
