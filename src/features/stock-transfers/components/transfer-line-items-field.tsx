@@ -141,16 +141,28 @@ function TransferLineItemRow({
                         if (!(productId && fromWarehouseId)) {
                             return "—";
                         }
+
                         const product = products.find(
                             (p) => p.id === productId
                         );
                         if (!product) {
                             return "—";
                         }
-                        const available = getAvailableQty(
-                            product,
-                            fromWarehouseId
+
+                        const usedElsewhere = form.state.values.items.reduce(
+                            (sum, item, i) =>
+                                i !== index && item.productId === productId
+                                    ? sum + (item.quantity || 0)
+                                    : sum,
+                            0
                         );
+
+                        const available = Math.max(
+                            0,
+                            getAvailableQty(product, fromWarehouseId) -
+                                usedElsewhere
+                        );
+
                         return (
                             <span
                                 className={
