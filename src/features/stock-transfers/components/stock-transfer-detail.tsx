@@ -59,14 +59,14 @@ export default function StockTransferDetail({
 
     const invalidate = () =>
         queryClient.invalidateQueries({
-            queryKey: ["stock-transfers", transfer.id],
+            queryKey: ["stock-transfers"],
         });
 
     const handleComplete = async () => {
         try {
             await completeStockTransfer({ data: { id: transfer.id } });
             toast.success("Transfer completed — stock moved");
-            invalidate();
+            await invalidate();
         } catch (error) {
             toast.error(
                 error instanceof Error
@@ -82,7 +82,7 @@ export default function StockTransferDetail({
         try {
             await cancelStockTransfer({ data: { id: transfer.id } });
             toast.success("Transfer cancelled");
-            invalidate();
+            await invalidate();
         } catch (error) {
             toast.error(
                 error instanceof Error
