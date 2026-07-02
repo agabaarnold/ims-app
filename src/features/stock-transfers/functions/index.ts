@@ -285,10 +285,14 @@ export const cancelStockTransfer = createServerFn({ method: "POST" })
                 );
             }
 
-            const cancelled = await tx.stockTransfer.update({
-                where: { id: data.id },
+            const { count } = await tx.stockTransfer.updateMany({
+                where: { id: data.id, status: "PENDING" },
                 data: { status: "CANCELLED" },
             });
+            if (count === 0) {
+                throw new Error("Transfer is no longer pending.");
+            }
+            const cancelled = { ...transfer, status: "CANCELLED" as const };
 
             await tx.auditLog.create({
                 data: {
