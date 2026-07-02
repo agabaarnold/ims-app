@@ -24,7 +24,7 @@ export type CreateStockTransferInput = z.infer<
 
 export const getStockTransfersSchema = z.object({
     page: z.number().int().min(1),
-    pageSize: z.number().int().min(1),
+    pageSize: z.number().int().min(1).max(100),
     status: z.enum(["PENDING", "COMPLETED", "CANCELLED"]).optional(),
 });
 export type GetStockTransfersInput = z.infer<typeof getStockTransfersSchema>;
