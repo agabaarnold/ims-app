@@ -157,7 +157,7 @@ function OrderLineItemRow({
                                 `${p.name} (${p.sku})`
                             }
                             getOptionValue={(p: ProductOption) => p.id}
-                            label=""
+                            label="Product"
                             options={products}
                             placeholder="Select product"
                         />
@@ -168,7 +168,7 @@ function OrderLineItemRow({
                 <form.AppField name={`items[${index}].quantity`}>
                     {(field) => (
                         <field.FormNumberInput
-                            label=""
+                            label="Quantity"
                             min="1"
                             placeholder=""
                             step="1"
@@ -180,7 +180,7 @@ function OrderLineItemRow({
                 <form.AppField name={`items[${index}].unitPrice`}>
                     {(field) => (
                         <field.FormNumberInput
-                            label=""
+                            label="Unit price"
                             min="0"
                             placeholder=""
                             step="0.01"
@@ -192,7 +192,7 @@ function OrderLineItemRow({
                 <form.AppField name={`items[${index}].discount`}>
                     {(field) => (
                         <field.FormNumberInput
-                            label=""
+                            label="Discount"
                             max="100"
                             min="0"
                             placeholder=""
