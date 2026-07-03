@@ -28,7 +28,7 @@ export type DeleteCustomerInput = z.infer<typeof deleteCustomerSchema>;
 
 export const getCustomersSchema = z.object({
     page: z.number().int().min(1),
-    pageSize: z.number().int().min(1),
+    pageSize: z.number().int().min(1).max(100),
     search: z.string().default(""),
 });
 export type GetCustomersInput = z.infer<typeof getCustomersSchema>;
