@@ -114,11 +114,13 @@ function OrdersPage() {
 
             <div className="flex gap-3">
                 <Input
+                    aria-label="Search orders"
                     className="max-w-sm"
                     onChange={(e) => setSearchInput(e.target.value)}
                     placeholder="Search by order number or customer…"
                     value={searchInput}
                 />
+
                 <Select
                     onValueChange={(value) =>
                         navigate({
@@ -134,9 +136,13 @@ function OrdersPage() {
                     }
                     value={search.status ?? "ALL"}
                 >
-                    <SelectTrigger className="w-44">
+                    <SelectTrigger
+                        aria-label="Filter orders by status"
+                        className="w-44"
+                    >
                         <SelectValue placeholder="All statuses" />
                     </SelectTrigger>
+                    
                     <SelectContent>
                         <SelectItem value="ALL">All statuses</SelectItem>
                         {ORDER_STATUSES.map((s) => (
