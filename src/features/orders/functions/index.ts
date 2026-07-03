@@ -327,7 +327,7 @@ export const confirmOrder = createServerFn({ method: "POST" })
                 throw new Error("Only pending orders can be confirmed.");
             }
 
-            // Validate all stock before writing anything
+            // Atomically check and decrement stock — prevents write skew from concurrent confirmations
             for (const item of order.items) {
                 const inventory = await tx.inventoryItem.findUnique({
                     where: {
@@ -336,33 +336,34 @@ export const confirmOrder = createServerFn({ method: "POST" })
                             warehouseId: data.warehouseId,
                         },
                     },
+                    select: { quantity: true, reservedQuantity: true },
                 });
-                const available = inventory
-                    ? inventory.quantity - inventory.reservedQuantity
-                    : 0;
-                if (item.quantity > available) {
+
+                const threshold =
+                    item.quantity + (inventory?.reservedQuantity ?? 0);
+
+                const result = await tx.inventoryItem.updateMany({
+                    where: {
+                        productId: item.productId,
+                        warehouseId: data.warehouseId,
+                        quantity: { gte: threshold },
+                    },
+                    data: { quantity: { decrement: item.quantity } },
+                });
+
+                if (result.count === 0) {
                     const product = await tx.product.findUnique({
                         where: { id: item.productId },
                         select: { name: true },
                     });
+                    const available = inventory
+                        ? inventory.quantity - inventory.reservedQuantity
+                        : 0;
                     throw new Error(
                         `Insufficient stock for "${product?.name ?? item.productId}": ` +
                             `${available} available, ${item.quantity} needed.`
                     );
                 }
-            }
-
-            // All checks passed — write inventory changes
-            for (const item of order.items) {
-                await tx.inventoryItem.update({
-                    where: {
-                        productId_warehouseId: {
-                            productId: item.productId,
-                            warehouseId: data.warehouseId,
-                        },
-                    },
-                    data: { quantity: { decrement: item.quantity } },
-                });
 
                 await tx.stockMovement.create({
                     data: {
