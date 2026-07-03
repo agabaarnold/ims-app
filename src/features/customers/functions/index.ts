@@ -1,14 +1,17 @@
 import { createServerFn } from "@tanstack/react-start";
 import { prisma } from "#/lib/db";
-import { authMiddleware } from "#/middleware";
+import {
+    authMiddleware,
+    createCustomerMiddleware,
+    deleteCustomerMiddleware,
+    updateCustomerMiddleware,
+} from "#/middleware";
 import {
     createCustomerSchema,
     deleteCustomerSchema,
     getCustomersSchema,
     updateCustomerSchema,
 } from "../schema";
-
-// TODO: Add missing permission middleware like we did for other features. For now, we are just checking if the user is logged in.
 
 export const getCustomers = createServerFn({ method: "GET" })
     .middleware([authMiddleware])
@@ -63,7 +66,7 @@ export const getCustomers = createServerFn({ method: "GET" })
     });
 
 export const createCustomer = createServerFn({ method: "POST" })
-    .middleware([authMiddleware])
+    .middleware([authMiddleware, createCustomerMiddleware])
     .validator(createCustomerSchema)
     .handler(
         async ({ context: { session }, data }) =>
@@ -88,7 +91,7 @@ export const createCustomer = createServerFn({ method: "POST" })
     );
 
 export const updateCustomer = createServerFn({ method: "POST" })
-    .middleware([authMiddleware])
+    .middleware([authMiddleware, updateCustomerMiddleware])
     .validator(updateCustomerSchema)
     .handler(
         async ({ context: { session }, data }) =>
@@ -134,7 +137,7 @@ export const updateCustomer = createServerFn({ method: "POST" })
     );
 
 export const deleteCustomer = createServerFn({ method: "POST" })
-    .middleware([authMiddleware])
+    .middleware([authMiddleware, deleteCustomerMiddleware])
     .validator(deleteCustomerSchema)
     .handler(
         async ({ context: { session }, data }) =>
