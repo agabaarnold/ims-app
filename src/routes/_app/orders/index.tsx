@@ -1,5 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { Badge } from "#/components/ui/badge";
 import { Button, buttonVariants } from "#/components/ui/button";
@@ -21,6 +22,7 @@ import {
 } from "#/components/ui/table";
 import { ordersQueryOptions } from "#/features/orders/functions/queries";
 import { ORDER_STATUSES } from "#/features/orders/schema";
+import { useDebounce } from "#/hooks/use-debounce";
 
 const PAGE_SIZE = 10;
 
@@ -64,6 +66,25 @@ function OrdersPage() {
     const search = Route.useSearch();
     const navigate = Route.useNavigate();
 
+    const [searchInput, setSearchInput] = useState(search.search);
+
+    const debouncedSearch = useDebounce(searchInput, 500);
+
+    useEffect(() => {
+        setSearchInput(search.search);
+    }, [search.search]);
+
+    useEffect(() => {
+        navigate({
+            search: (prev) => ({
+                ...prev,
+                search: debouncedSearch,
+                page: 1,
+            }),
+            replace: true,
+        });
+    }, [debouncedSearch, navigate]);
+
     const { data } = useSuspenseQuery(
         ordersQueryOptions({
             page: search.page,
@@ -94,17 +115,9 @@ function OrdersPage() {
             <div className="flex gap-3">
                 <Input
                     className="max-w-sm"
-                    onChange={(e) =>
-                        navigate({
-                            search: (prev) => ({
-                                ...prev,
-                                search: e.target.value,
-                                page: 1,
-                            }),
-                        })
-                    }
+                    onChange={(e) => setSearchInput(e.target.value)}
                     placeholder="Search by order number or customer…"
-                    value={search.search}
+                    value={searchInput}
                 />
                 <Select
                     onValueChange={(value) =>
