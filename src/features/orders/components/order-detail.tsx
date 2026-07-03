@@ -67,6 +67,8 @@ export default function OrderDetail({ order, warehouses }: OrderDetailProps) {
     const queryClient = useQueryClient();
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [cancelOpen, setCancelOpen] = useState(false);
+    const [isAdvancing, setIsAdvancing] = useState(false);
+    const [isCancelling, setIsCancelling] = useState(false);
 
     const status = order.status as OrderStatus;
     const nextStatus = NEXT_STATUS[status];
@@ -77,6 +79,8 @@ export default function OrderDetail({ order, warehouses }: OrderDetailProps) {
         queryClient.invalidateQueries({ queryKey: ["orders", order.id] });
 
     const handleAdvance = async () => {
+        setIsAdvancing(true);
+
         try {
             await advanceOrderStatus({ data: { id: order.id } });
             toast.success(`Order moved to ${nextStatus}`);
@@ -87,10 +91,14 @@ export default function OrderDetail({ order, warehouses }: OrderDetailProps) {
                     ? error.message
                     : "Failed to update status"
             );
+        } finally {
+            setIsAdvancing(false);
         }
     };
 
     const handleCancel = async () => {
+        setIsCancelling(true);
+
         try {
             await cancelOrder({ data: { id: order.id } });
             toast.success("Order cancelled");
@@ -101,6 +109,7 @@ export default function OrderDetail({ order, warehouses }: OrderDetailProps) {
             );
         } finally {
             setCancelOpen(false);
+            setIsCancelling(false);
         }
     };
 
@@ -130,13 +139,20 @@ export default function OrderDetail({ order, warehouses }: OrderDetailProps) {
                             Confirm order
                         </Button>
                     )}
+                    
                     {advanceLabel && nextStatus && (
-                        <Button onClick={handleAdvance} variant="outline">
+                        <Button
+                            disabled={isAdvancing}
+                            onClick={handleAdvance}
+                            variant="outline"
+                        >
                             {advanceLabel}
                         </Button>
                     )}
+
                     {canCancel && (
                         <Button
+                            disabled={isCancelling}
                             onClick={() => setCancelOpen(true)}
                             variant="outline"
                         >
