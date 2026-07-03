@@ -1,6 +1,6 @@
 import { IconPencil, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { type Dispatch, type SetStateAction, useState } from "react";
 import { toast } from "react-hot-toast";
 import {
     AlertDialog,
@@ -37,16 +37,16 @@ interface Customer {
 interface CustomersTableProps {
     customers: Customer[];
     onPageChange: (p: number) => void;
-    onSearchChange: (s: string) => void;
     page: number;
     pageCount: number;
     search: string;
+    setSearchInput: Dispatch<SetStateAction<string>>;
 }
 
 export default function CustomersTable({
     customers,
     search,
-    onSearchChange,
+    setSearchInput,
     page,
     pageCount,
     onPageChange,
@@ -88,7 +88,7 @@ export default function CustomersTable({
                 <Input
                     aria-label="Search customers"
                     className="max-w-sm"
-                    onChange={(e) => onSearchChange(e.target.value)}
+                    onChange={(e) => setSearchInput(e.target.value)}
                     placeholder="Search customers…"
                     value={search}
                 />
