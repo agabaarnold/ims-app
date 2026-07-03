@@ -5,12 +5,12 @@ import { orderFormDataQueryOptions } from "#/features/orders/functions/queries";
 
 export const Route = createFileRoute("/_app/orders/new")({
     loader: ({ context: { queryClient } }) =>
-        queryClient.ensureQueryData(orderFormDataQueryOptions),
+        queryClient.ensureQueryData(orderFormDataQueryOptions()),
     component: NewOrderPage,
 });
 
 function NewOrderPage() {
-    const { data } = useSuspenseQuery(orderFormDataQueryOptions);
+    const { data } = useSuspenseQuery(orderFormDataQueryOptions());
 
     return (
         <div className="mx-auto w-full max-w-5xl p-4 md:p-6">

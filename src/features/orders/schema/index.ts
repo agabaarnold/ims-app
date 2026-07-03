@@ -65,4 +65,11 @@ export const getOrdersSchema = z.object({
 });
 export type GetOrdersInput = z.infer<typeof getOrdersSchema>;
 
+export const getOrderFormDataSchema = z.object({
+    page: z.number().int().min(1).default(1),
+    pageSize: z.number().int().min(1).max(100).default(100),
+    search: z.string().default(""),
+});
+export type GetOrderFormDataInput = z.infer<typeof getOrderFormDataSchema>;
+
 export const getOrderSchema = z.object({ id: z.cuid2() });

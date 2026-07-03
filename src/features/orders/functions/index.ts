@@ -16,6 +16,7 @@ import {
     cancelOrderSchema,
     confirmOrderSchema,
     createOrderSchema,
+    getOrderFormDataSchema,
     getOrderSchema,
     getOrdersSchema,
     INVENTORY_TOUCHED_STATUSES,
@@ -30,14 +31,92 @@ function generateOrderNumber(): string {
 
 export const getOrderFormData = createServerFn({ method: "GET" })
     .middleware([authMiddleware])
-    .handler(async () => {
+    .validator(getOrderFormDataSchema)
+    .handler(async ({ data }) => {
+        const { page, pageSize, search } = data;
+        const skip = (page - 1) * pageSize;
+        const customerWhere = search
+            ? {
+                  OR: [
+                      {
+                          name: {
+                              contains: search,
+                              mode: "insensitive" as const,
+                          },
+                      },
+                      {
+                          email: {
+                              contains: search,
+                              mode: "insensitive" as const,
+                          },
+                      },
+                      {
+                          phone: {
+                              contains: search,
+                              mode: "insensitive" as const,
+                          },
+                      },
+                  ],
+              }
+            : {};
+        const productWhere = search
+            ? {
+                  OR: [
+                      {
+                          name: {
+                              contains: search,
+                              mode: "insensitive" as const,
+                          },
+                      },
+                      {
+                          sku: {
+                              contains: search,
+                              mode: "insensitive" as const,
+                          },
+                      },
+                      {
+                          unit: {
+                              contains: search,
+                              mode: "insensitive" as const,
+                          },
+                      },
+                  ],
+              }
+            : {};
+        const warehouseWhere = search
+            ? {
+                  OR: [
+                      {
+                          name: {
+                              contains: search,
+                              mode: "insensitive" as const,
+                          },
+                      },
+                      {
+                          location: {
+                              contains: search,
+                              mode: "insensitive" as const,
+                          },
+                      },
+                  ],
+              }
+            : {};
+
         const [customers, products, warehouses] = await prisma.$transaction([
             prisma.customer.findMany({
+                skip,
+                take: pageSize,
                 orderBy: { name: "asc" },
+                where: customerWhere,
                 select: { id: true, name: true },
             }),
             prisma.product.findMany({
-                where: { isActive: true },
+                skip,
+                take: pageSize,
+                where: {
+                    ...productWhere,
+                    isActive: true,
+                },
                 orderBy: { name: "asc" },
                 select: {
                     id: true,
@@ -48,7 +127,10 @@ export const getOrderFormData = createServerFn({ method: "GET" })
                 },
             }),
             prisma.warehouse.findMany({
+                skip,
+                take: pageSize,
                 orderBy: { name: "asc" },
+                where: warehouseWhere,
                 select: { id: true, name: true },
             }),
         ]);

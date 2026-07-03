@@ -21,7 +21,16 @@ export const orderQueryOptions = (id: string) =>
         queryFn: () => getOrder({ data: { id } }),
     });
 
-export const orderFormDataQueryOptions = queryOptions({
-    queryKey: ["orders", "form-data"],
-    queryFn: () => getOrderFormData(),
-});
+const DEFAULT_ORDER_FORM_DATA_PARAMS = {
+    page: 1,
+    pageSize: 100,
+    search: "",
+} as const;
+
+export const orderFormDataQueryOptions = (
+    params = DEFAULT_ORDER_FORM_DATA_PARAMS
+) =>
+    queryOptions({
+        queryKey: ["orders", "form-data", params.page, params.pageSize, params.search],
+        queryFn: () => getOrderFormData({ data: params }),
+    });
