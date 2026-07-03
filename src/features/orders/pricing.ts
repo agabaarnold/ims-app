@@ -1,7 +1,15 @@
+import { Decimal } from "@prisma/client/runtime/client";
+
+type DecimalValue = Decimal | number | string;
+
 export function computeLineTotal(
     quantity: number,
-    unitPrice: number,
-    discount: number
-): number {
-    return quantity * unitPrice * (1 - discount / 100);
+    unitPrice: DecimalValue,
+    discount: DecimalValue
+): Decimal {
+    const discountMultiplier = new Decimal(1).minus(
+        new Decimal(discount).div(100)
+    );
+
+    return new Decimal(unitPrice).times(quantity).times(discountMultiplier);
 }

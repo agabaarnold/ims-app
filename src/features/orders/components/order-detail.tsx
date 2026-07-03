@@ -241,7 +241,7 @@ export default function OrderDetail({ order, warehouses }: OrderDetailProps) {
                                                 : "—"}
                                         </TableCell>
                                         <TableCell className="text-right font-medium">
-                                            {fmt.format(total)}
+                                            {fmt.format(total.toNumber())}
                                         </TableCell>
                                     </TableRow>
                                 );

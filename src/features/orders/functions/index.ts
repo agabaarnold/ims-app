@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { Decimal } from "@prisma/client/runtime/client";
 import { createServerFn } from "@tanstack/react-start";
 import { prisma } from "#/lib/db";
 import { authMiddleware } from "#/middleware";
@@ -162,9 +163,14 @@ export const createOrder = createServerFn({ method: "POST" })
         const user = session.user;
         const totalAmount = data.items.reduce(
             (sum, item) =>
-                sum +
-                computeLineTotal(item.quantity, item.unitPrice, item.discount),
-            0
+                sum.plus(
+                    computeLineTotal(
+                        item.quantity,
+                        item.unitPrice,
+                        item.discount
+                    )
+                ),
+            new Decimal(0)
         );
 
         return await prisma.$transaction(async (tx) => {
@@ -179,8 +185,8 @@ export const createOrder = createServerFn({ method: "POST" })
                         create: data.items.map((item) => ({
                             productId: item.productId,
                             quantity: item.quantity,
-                            unitPrice: item.unitPrice,
-                            discount: item.discount,
+                            unitPrice: new Decimal(item.unitPrice),
+                            discount: new Decimal(item.discount),
                         })),
                     },
                 },
@@ -195,7 +201,7 @@ export const createOrder = createServerFn({ method: "POST" })
                     after: {
                         orderNumber: order.orderNumber,
                         customerId: data.customerId,
-                        totalAmount,
+                        totalAmount: totalAmount.toString(),
                         itemCount: data.items.length,
                     },
                 },
