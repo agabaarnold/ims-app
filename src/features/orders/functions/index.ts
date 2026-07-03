@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { createServerFn } from "@tanstack/react-start";
 import { prisma } from "#/lib/db";
 import { authMiddleware } from "#/middleware";
@@ -16,8 +17,8 @@ import {
 
 function generateOrderNumber(): string {
     const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-    const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
-    return `ORD-${date}-${rand}`;
+    const suffix = randomUUID().replaceAll("-", "").slice(0, 16).toUpperCase();
+    return `ORD-${date}-${suffix}`;
 }
 
 // TODO: Add the missing permission middleware like we did for products, and warehouses. For now, any authenticated user can create/confirm/cancel orders.
