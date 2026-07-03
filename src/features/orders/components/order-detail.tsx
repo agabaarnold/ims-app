@@ -22,7 +22,7 @@ import {
     TableHeader,
     TableRow,
 } from "#/components/ui/table";
-import { advanceOrderStatus, cancelOrder } from "../functions";
+import { advanceOrderStatus, cancelOrder, type getOrder } from "../functions";
 import { CANCELLABLE_STATUSES, NEXT_STATUS, type OrderStatus } from "../schema";
 import ConfirmOrderDialog from "./confirm-order-dialog";
 
@@ -56,23 +56,7 @@ const ADVANCE_LABEL: Partial<Record<OrderStatus, string>> = {
     SHIPPED: "Mark as delivered",
 };
 
-interface Order {
-    createdAt: Date;
-    createdBy: { id: string; name: string };
-    customer: { id: string; name: string; email: string | null };
-    id: string;
-    items: {
-        id: string;
-        quantity: number;
-        unitPrice: number;
-        discount: number;
-        product: { id: string; name: string; sku: string; unit: string };
-    }[];
-    note: string | null;
-    orderNumber: string;
-    status: string;
-    totalAmount: number;
-}
+type Order = Awaited<ReturnType<typeof getOrder>>;
 
 interface OrderDetailProps {
     order: Order;
@@ -166,12 +150,16 @@ export default function OrderDetail({ order, warehouses }: OrderDetailProps) {
                 <CardHeader>
                     <CardTitle>Overview</CardTitle>
                 </CardHeader>
+
                 <CardContent>
                     <dl className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                        <Field label="Customer" value={order.customer.name} />
+                        <Field
+                            label="Customer"
+                            value={order.customer?.name ?? "—"}
+                        />
                         <Field
                             label="Customer email"
-                            value={order.customer.email ?? "—"}
+                            value={order.customer?.email ?? "—"}
                         />
                         <Field
                             label="Order total"
