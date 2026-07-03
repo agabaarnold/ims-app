@@ -86,11 +86,13 @@ export default function CustomersTable({
         <div className="space-y-4">
             <div className="flex items-center justify-between gap-4">
                 <Input
+                    aria-label="Search customers"
                     className="max-w-sm"
                     onChange={(e) => onSearchChange(e.target.value)}
                     placeholder="Search customers…"
                     value={search}
                 />
+
                 <Button onClick={openCreate}>
                     <IconPlus className="size-4" />
                     New customer
