@@ -53,6 +53,13 @@ export const Route = createFileRoute("/_app/orders/")({
     component: OrdersPage,
 });
 
+const fmt = new Intl.NumberFormat("en-UG", {
+    style: "currency",
+    currency: "UGX",
+    maximumFractionDigits: 0,
+});
+const dateFmt = new Intl.DateTimeFormat("en-UG", { dateStyle: "medium" });
+
 function OrdersPage() {
     const search = Route.useSearch();
     const navigate = Route.useNavigate();
@@ -65,13 +72,6 @@ function OrdersPage() {
             status: search.status,
         })
     );
-
-    const fmt = new Intl.NumberFormat("en-UG", {
-        style: "currency",
-        currency: "UGX",
-        maximumFractionDigits: 0,
-    });
-    const dateFmt = new Intl.DateTimeFormat("en-UG", { dateStyle: "medium" });
 
     return (
         <div className="mx-auto w-full max-w-6xl space-y-6 p-4 md:p-6">
