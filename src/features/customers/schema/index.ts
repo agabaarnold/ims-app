@@ -1,5 +1,17 @@
 import { z } from "zod";
 
+export interface Customer {
+    address: string | null;
+    email: string | null;
+    id: string;
+    name: string;
+    phone: string | null;
+}
+
+export interface CustomerWithOrderCount extends Customer {
+    _count: { orders: number };
+}
+
 const isBlank = (v: string | null | undefined) =>
     v === null || v === undefined || v.trim() === "";
 

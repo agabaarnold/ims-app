@@ -15,17 +15,10 @@ import { useAppForm } from "#/hooks/use-form";
 import { createCustomer, updateCustomer } from "../functions";
 import {
     type CreateCustomerInput,
+    type Customer,
     createCustomerSchema,
     updateCustomerSchema,
 } from "../schema";
-
-interface Customer {
-    address: string | null;
-    email: string | null;
-    id: string;
-    name: string;
-    phone: string | null;
-}
 
 interface CustomerFormDialogProps {
     customer?: Customer;

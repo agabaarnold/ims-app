@@ -23,19 +23,11 @@ import {
     TableRow,
 } from "#/components/ui/table";
 import { deleteCustomer } from "../functions";
+import type { CustomerWithOrderCount } from "../schema";
 import CustomerFormDialog from "./customer-form-dialog";
 
-interface Customer {
-    _count: { orders: number };
-    address: string | null;
-    email: string | null;
-    id: string;
-    name: string;
-    phone: string | null;
-}
-
 interface CustomersTableProps {
-    customers: Customer[];
+    customers: CustomerWithOrderCount[];
     onPageChange: (p: number) => void;
     page: number;
     pageCount: number;
@@ -53,14 +45,18 @@ export default function CustomersTable({
 }: CustomersTableProps) {
     const queryClient = useQueryClient();
     const [formOpen, setFormOpen] = useState(false);
-    const [editing, setEditing] = useState<Customer | undefined>();
-    const [deleting, setDeleting] = useState<Customer | undefined>();
+    const [editing, setEditing] = useState<
+        CustomerWithOrderCount | undefined
+    >();
+    const [deleting, setDeleting] = useState<
+        CustomerWithOrderCount | undefined
+    >();
 
     const openCreate = () => {
         setEditing(undefined);
         setFormOpen(true);
     };
-    const openEdit = (c: Customer) => {
+    const openEdit = (c: CustomerWithOrderCount) => {
         setEditing(c);
         setFormOpen(true);
     };
