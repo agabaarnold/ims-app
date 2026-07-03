@@ -25,6 +25,7 @@ import { Route as AppSettingsIndexRouteImport } from './routes/_app/settings/ind
 import { Route as AppPurchaseOrdersIndexRouteImport } from './routes/_app/purchase-orders/index'
 import { Route as AppProfileIndexRouteImport } from './routes/_app/profile/index'
 import { Route as AppProductsIndexRouteImport } from './routes/_app/products/index'
+import { Route as AppCustomersIndexRouteImport } from './routes/_app/customers/index'
 import { Route as AppCategoriesIndexRouteImport } from './routes/_app/categories/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AppStockTransfersNewRouteImport } from './routes/_app/stock-transfers/new'
@@ -113,6 +114,11 @@ const AppProductsIndexRoute = AppProductsIndexRouteImport.update({
   path: '/products/',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppCustomersIndexRoute = AppCustomersIndexRouteImport.update({
+  id: '/customers/',
+  path: '/customers/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppCategoriesIndexRoute = AppCategoriesIndexRouteImport.update({
   id: '/categories/',
   path: '/categories/',
@@ -176,6 +182,7 @@ export interface FileRoutesByFullPath {
   '/stock-transfers/new': typeof AppStockTransfersNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/categories/': typeof AppCategoriesIndexRoute
+  '/customers/': typeof AppCustomersIndexRoute
   '/products/': typeof AppProductsIndexRoute
   '/profile/': typeof AppProfileIndexRoute
   '/purchase-orders/': typeof AppPurchaseOrdersIndexRoute
@@ -201,6 +208,7 @@ export interface FileRoutesByTo {
   '/stock-transfers/new': typeof AppStockTransfersNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/categories': typeof AppCategoriesIndexRoute
+  '/customers': typeof AppCustomersIndexRoute
   '/products': typeof AppProductsIndexRoute
   '/profile': typeof AppProfileIndexRoute
   '/purchase-orders': typeof AppPurchaseOrdersIndexRoute
@@ -229,6 +237,7 @@ export interface FileRoutesById {
   '/_app/stock-transfers/new': typeof AppStockTransfersNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_app/categories/': typeof AppCategoriesIndexRoute
+  '/_app/customers/': typeof AppCustomersIndexRoute
   '/_app/products/': typeof AppProductsIndexRoute
   '/_app/profile/': typeof AppProfileIndexRoute
   '/_app/purchase-orders/': typeof AppPurchaseOrdersIndexRoute
@@ -256,6 +265,7 @@ export interface FileRouteTypes {
     | '/stock-transfers/new'
     | '/api/auth/$'
     | '/categories/'
+    | '/customers/'
     | '/products/'
     | '/profile/'
     | '/purchase-orders/'
@@ -281,6 +291,7 @@ export interface FileRouteTypes {
     | '/stock-transfers/new'
     | '/api/auth/$'
     | '/categories'
+    | '/customers'
     | '/products'
     | '/profile'
     | '/purchase-orders'
@@ -308,6 +319,7 @@ export interface FileRouteTypes {
     | '/_app/stock-transfers/new'
     | '/api/auth/$'
     | '/_app/categories/'
+    | '/_app/customers/'
     | '/_app/products/'
     | '/_app/profile/'
     | '/_app/purchase-orders/'
@@ -443,6 +455,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProductsIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/customers/': {
+      id: '/_app/customers/'
+      path: '/customers'
+      fullPath: '/customers/'
+      preLoaderRoute: typeof AppCustomersIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/_app/categories/': {
       id: '/_app/categories/'
       path: '/categories'
@@ -515,6 +534,7 @@ interface AppRouteRouteChildren {
   AppPurchaseOrdersNewRoute: typeof AppPurchaseOrdersNewRoute
   AppStockTransfersNewRoute: typeof AppStockTransfersNewRoute
   AppCategoriesIndexRoute: typeof AppCategoriesIndexRoute
+  AppCustomersIndexRoute: typeof AppCustomersIndexRoute
   AppProductsIndexRoute: typeof AppProductsIndexRoute
   AppProfileIndexRoute: typeof AppProfileIndexRoute
   AppPurchaseOrdersIndexRoute: typeof AppPurchaseOrdersIndexRoute
@@ -534,6 +554,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppPurchaseOrdersNewRoute: AppPurchaseOrdersNewRoute,
   AppStockTransfersNewRoute: AppStockTransfersNewRoute,
   AppCategoriesIndexRoute: AppCategoriesIndexRoute,
+  AppCustomersIndexRoute: AppCustomersIndexRoute,
   AppProductsIndexRoute: AppProductsIndexRoute,
   AppProfileIndexRoute: AppProfileIndexRoute,
   AppPurchaseOrdersIndexRoute: AppPurchaseOrdersIndexRoute,
