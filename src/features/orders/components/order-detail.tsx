@@ -23,6 +23,7 @@ import {
     TableRow,
 } from "#/components/ui/table";
 import { advanceOrderStatus, cancelOrder, type getOrder } from "../functions";
+import { computeLineTotal } from "../pricing";
 import { CANCELLABLE_STATUSES, NEXT_STATUS, type OrderStatus } from "../schema";
 import ConfirmOrderDialog from "./confirm-order-dialog";
 
@@ -139,7 +140,7 @@ export default function OrderDetail({ order, warehouses }: OrderDetailProps) {
                             Confirm order
                         </Button>
                     )}
-                    
+
                     {advanceLabel && nextStatus && (
                         <Button
                             disabled={isAdvancing}
@@ -215,10 +216,11 @@ export default function OrderDetail({ order, warehouses }: OrderDetailProps) {
                         </TableHeader>
                         <TableBody>
                             {order.items.map((item) => {
-                                const total =
-                                    item.quantity *
-                                    item.unitPrice *
-                                    (1 - item.discount / 100);
+                                const total = computeLineTotal(
+                                    item.quantity,
+                                    item.unitPrice,
+                                    item.discount
+                                );
                                 return (
                                     <TableRow key={item.id}>
                                         <TableCell>

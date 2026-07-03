@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { prisma } from "#/lib/db";
 import { authMiddleware } from "#/middleware";
+import { computeLineTotal } from "../pricing";
 import {
     advanceOrderStatusSchema,
     CANCELLABLE_STATUSES,
@@ -17,14 +18,6 @@ function generateOrderNumber(): string {
     const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
     const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
     return `ORD-${date}-${rand}`;
-}
-
-function computeLineTotal(
-    qty: number,
-    price: number,
-    discount: number
-): number {
-    return qty * price * (1 - discount / 100);
 }
 
 // TODO: Add the missing permission middleware like we did for products, and warehouses. For now, any authenticated user can create/confirm/cancel orders.
