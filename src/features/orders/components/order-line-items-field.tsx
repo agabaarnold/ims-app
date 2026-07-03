@@ -60,9 +60,10 @@ export default function OrderLineItemsField({
                                     <TableHead className="w-0" />
                                 </TableRow>
                             </TableHeader>
+                            
                             <TableBody>
                                 {itemsField.state.value.map(
-                                    (_: unknown, index: number) => (
+                                    (_, index: number) => (
                                         <OrderLineItemRow
                                             form={form}
                                             index={index}
