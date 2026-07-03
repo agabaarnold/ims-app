@@ -2,7 +2,13 @@ import { randomUUID } from "node:crypto";
 import { Decimal } from "@prisma/client/runtime/client";
 import { createServerFn } from "@tanstack/react-start";
 import { prisma } from "#/lib/db";
-import { authMiddleware } from "#/middleware";
+import {
+    authMiddleware,
+    cancelOrderMiddleware,
+    confirmOrderMiddleware,
+    createOrderMiddleware,
+    updateOrderMiddleware,
+} from "#/middleware";
 import { computeLineTotal } from "../pricing";
 import {
     advanceOrderStatusSchema,
@@ -21,8 +27,6 @@ function generateOrderNumber(): string {
     const suffix = randomUUID().replaceAll("-", "").slice(0, 16).toUpperCase();
     return `ORD-${date}-${suffix}`;
 }
-
-// TODO: Add the missing permission middleware like we did for products, and warehouses. For now, any authenticated user can create/confirm/cancel orders.
 
 export const getOrderFormData = createServerFn({ method: "GET" })
     .middleware([authMiddleware])
@@ -157,7 +161,7 @@ export const getOrder = createServerFn({ method: "GET" })
     });
 
 export const createOrder = createServerFn({ method: "POST" })
-    .middleware([authMiddleware])
+    .middleware([authMiddleware, createOrderMiddleware])
     .validator(createOrderSchema)
     .handler(async ({ context: { session }, data }) => {
         const user = session.user;
@@ -212,7 +216,7 @@ export const createOrder = createServerFn({ method: "POST" })
     });
 
 export const confirmOrder = createServerFn({ method: "POST" })
-    .middleware([authMiddleware])
+    .middleware([authMiddleware, confirmOrderMiddleware])
     .validator(confirmOrderSchema)
     .handler(async ({ context: { session }, data }) => {
         const user = session.user;
@@ -307,7 +311,7 @@ export const confirmOrder = createServerFn({ method: "POST" })
     });
 
 export const advanceOrderStatus = createServerFn({ method: "POST" })
-    .middleware([authMiddleware])
+    .middleware([authMiddleware, updateOrderMiddleware])
     .validator(advanceOrderStatusSchema)
     .handler(async ({ context: { session }, data }) => {
         const user = session.user;
@@ -347,7 +351,7 @@ export const advanceOrderStatus = createServerFn({ method: "POST" })
     });
 
 export const cancelOrder = createServerFn({ method: "POST" })
-    .middleware([authMiddleware])
+    .middleware([authMiddleware, cancelOrderMiddleware])
     .validator(cancelOrderSchema)
     .handler(async ({ context: { session }, data }) => {
         const user = session.user;
