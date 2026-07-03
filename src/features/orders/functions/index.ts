@@ -247,19 +247,36 @@ export const createOrder = createServerFn({ method: "POST" })
     .validator(createOrderSchema)
     .handler(async ({ context: { session }, data }) => {
         const user = session.user;
-        const totalAmount = data.items.reduce(
-            (sum, item) =>
-                sum.plus(
-                    computeLineTotal(
-                        item.quantity,
-                        item.unitPrice,
-                        item.discount
-                    )
-                ),
-            new Decimal(0)
-        );
 
         return await prisma.$transaction(async (tx) => {
+            const products = await Promise.all(
+                data.items.map((item) =>
+                    tx.product.findUniqueOrThrow({
+                        where: { id: item.productId },
+                        select: { id: true, sellingPrice: true },
+                    })
+                )
+            );
+
+            const orderItems = data.items.map((item, i) => ({
+                productId: item.productId,
+                quantity: item.quantity,
+                unitPrice: products[i].sellingPrice,
+                discount: new Decimal(0),
+            }));
+
+            const totalAmount = orderItems.reduce(
+                (sum, item) =>
+                    sum.plus(
+                        computeLineTotal(
+                            item.quantity,
+                            item.unitPrice,
+                            item.discount
+                        )
+                    ),
+                new Decimal(0)
+            );
+
             const order = await tx.order.create({
                 data: {
                     orderNumber: generateOrderNumber(),
@@ -268,12 +285,7 @@ export const createOrder = createServerFn({ method: "POST" })
                     totalAmount,
                     createdById: user.id,
                     items: {
-                        create: data.items.map((item) => ({
-                            productId: item.productId,
-                            quantity: item.quantity,
-                            unitPrice: new Decimal(item.unitPrice),
-                            discount: new Decimal(item.discount),
-                        })),
+                        create: orderItems,
                     },
                 },
             });
