@@ -3,8 +3,10 @@ import {
     IconBuildingWarehouse,
     IconCategory,
     IconHome,
+    IconNotes,
     IconPackages,
     IconTransfer,
+    IconUserDollar,
     type TablerIcon,
 } from "@tabler/icons-react";
 import { Link, type LinkOptions } from "@tanstack/react-router";
@@ -26,6 +28,8 @@ const items: NavItems[] = [
     { title: "Dashboard", url: "/", icon: IconHome },
     { title: "Categories", url: "/categories", icon: IconCategory },
     { title: "Products", url: "/products", icon: IconPackages },
+    { title: "Orders", url: "/orders", icon: IconNotes },
+    { title: "Customers", url: "/customers", icon: IconUserDollar },
     { title: "Suppliers", url: "/suppliers", icon: IconBasketPlus },
     { title: "Transfers", url: "/stock-transfers", icon: IconTransfer },
     { title: "Warehouses", url: "/warehouses", icon: IconBuildingWarehouse },
