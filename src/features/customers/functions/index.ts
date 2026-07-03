@@ -75,7 +75,12 @@ export const createCustomer = createServerFn({ method: "POST" })
                         userId: session.user.id,
                         entityId: customer.id,
                         entityType: "CUSTOMER",
-                        after: { name: customer.name },
+                        aafter: {
+                            name: customer.name,
+                            email: customer.email,
+                            phone: customer.phone,
+                            address: customer.address,
+                        },
                     },
                 });
                 return customer;
@@ -110,8 +115,18 @@ export const updateCustomer = createServerFn({ method: "POST" })
                         userId: session.user.id,
                         entityId: customer.id,
                         entityType: "CUSTOMER",
-                        before: { name: before.name, email: before.email },
-                        after: { name: customer.name, email: customer.email },
+                        before: {
+                            name: before.name,
+                            email: before.email,
+                            phone: before.phone,
+                            address: before.address,
+                        },
+                        after: {
+                            name: customer.name,
+                            email: customer.email,
+                            phone: customer.phone,
+                            address: customer.address,
+                        },
                     },
                 });
                 return customer;
