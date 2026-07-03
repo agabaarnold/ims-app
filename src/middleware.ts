@@ -157,6 +157,118 @@ export const deleteSupplierMiddleware = createMiddleware().server(
     }
 );
 
+export const createOrderMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { order: ["create"] } },
+        });
+        if (!hasPermission.success) {
+            throw redirect({ to: "/forbidden" });
+        }
+
+        return next();
+    }
+);
+
+export const confirmOrderMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { order: ["approve"] } },
+        });
+        if (!hasPermission.success) {
+            throw redirect({ to: "/forbidden" });
+        }
+
+        return next();
+    }
+);
+
+export const updateOrderMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { order: ["update"] } },
+        });
+        if (!hasPermission.success) {
+            throw redirect({ to: "/forbidden", replace: true });
+        }
+
+        return next();
+    }
+);
+
+export const cancelOrderMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { order: ["cancel"] } },
+        });
+        if (!hasPermission.success) {
+            throw new Error("You do not have permission to cancel orders");
+        }
+
+        return next();
+    }
+);
+
+export const createCustomerMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { customer: ["create"] } },
+        });
+        if (!hasPermission.success) {
+            throw redirect({ to: "/forbidden" });
+        }
+
+        return next();
+    }
+);
+
+export const updateCustomerMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { customer: ["update"] } },
+        });
+        if (!hasPermission.success) {
+            throw redirect({ to: "/forbidden", replace: true });
+        }
+
+        return next();
+    }
+);
+
+export const deleteCustomerMiddleware = createMiddleware().server(
+    async ({ next }) => {
+        const headers = getRequestHeaders();
+
+        const hasPermission = await auth.api.userHasPermission({
+            headers,
+            body: { permissions: { customer: ["delete"] } },
+        });
+        if (!hasPermission.success) {
+            throw new Error("You do not have permission to delete customers");
+        }
+
+        return next();
+    }
+);
+
 export const createWarehouseMiddleware = createMiddleware().server(
     async ({ next }) => {
         const headers = getRequestHeaders();
