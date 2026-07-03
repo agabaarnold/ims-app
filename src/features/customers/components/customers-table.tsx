@@ -134,6 +134,7 @@ export default function CustomersTable({
                                 <TableCell>
                                     <div className="flex justify-end gap-1">
                                         <Button
+                                            aria-label={`Edit ${c.name}`}
                                             onClick={() => openEdit(c)}
                                             size="icon"
                                             variant="ghost"
@@ -142,6 +143,7 @@ export default function CustomersTable({
                                         </Button>
 
                                         <Button
+                                            aria-label={`Delete ${c.name}`}
                                             disabled={c._count.orders > 0}
                                             onClick={() => setDeleting(c)}
                                             size="icon"
