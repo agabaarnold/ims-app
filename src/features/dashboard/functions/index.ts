@@ -74,8 +74,7 @@ export const getDashboardData = createServerFn({ method: "GET" })
             }),
         ]);
 
-        // Low stock: products whose total inventory < reorderPoint
-        const lowStockProducts = productsWithInventory
+        const allLowStockProducts = productsWithInventory
             .map((p) => ({
                 id: p.id,
                 name: p.name,
@@ -88,8 +87,9 @@ export const getDashboardData = createServerFn({ method: "GET" })
                 ),
             }))
             .filter((p) => p.totalQuantity < p.reorderPoint)
-            .sort((a, b) => a.totalQuantity - b.totalQuantity) // most critical first
-            .slice(0, 10);
+            .sort((a, b) => a.totalQuantity - b.totalQuantity); // most critical first
+
+        const lowStockProducts = allLowStockProducts.slice(0, 10);
 
         // Daily revenue for last 30 days — initialise every day to 0 so the
         // chart always shows a full 30-day window with no gaps
