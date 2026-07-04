@@ -11,7 +11,7 @@ export const Route = createFileRoute("/_app/orders/$orderId")({
     loader: ({ context: { queryClient }, params: { orderId } }) =>
         Promise.all([
             queryClient.ensureQueryData(orderQueryOptions(orderId)),
-            queryClient.ensureQueryData(orderFormDataQueryOptions),
+            queryClient.ensureQueryData(orderFormDataQueryOptions()),
         ]),
     component: OrderDetailPage,
 });
@@ -19,7 +19,7 @@ export const Route = createFileRoute("/_app/orders/$orderId")({
 function OrderDetailPage() {
     const { orderId } = Route.useParams();
     const { data: order } = useSuspenseQuery(orderQueryOptions(orderId));
-    const { data: formData } = useSuspenseQuery(orderFormDataQueryOptions);
+    const { data: formData } = useSuspenseQuery(orderFormDataQueryOptions());
 
     return (
         <div className="mx-auto w-full max-w-5xl p-4 md:p-6">
