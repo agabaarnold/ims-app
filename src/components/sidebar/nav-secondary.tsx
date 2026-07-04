@@ -1,5 +1,5 @@
 import { IconSettings, IconUsers } from "@tabler/icons-react";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouteContext } from "@tanstack/react-router";
 import {
     SidebarGroup,
     SidebarGroupContent,
@@ -9,17 +9,34 @@ import {
 } from "../ui/sidebar";
 import type { NavItems } from "./nav-main";
 
-const items: NavItems[] = [
-    { title: "Users", url: "/admin/users", icon: IconUsers },
-    { title: "Settings", url: "/settings", icon: IconSettings },
+interface NavItemsSecondary extends NavItems {
+    adminOnly: boolean;
+}
+
+const items: NavItemsSecondary[] = [
+    { title: "Users", url: "/admin/users", icon: IconUsers, adminOnly: true },
+    {
+        title: "Settings",
+        url: "/settings",
+        icon: IconSettings,
+        adminOnly: false,
+    },
 ];
 
 function NavSecondary() {
+    const { session } = useRouteContext({ from: "/_app" });
+    const isAdmin =
+        session.user.role === "admin" || session.user.role === "superAdmin";
+
+    const visibleItems = items.filter(
+        (item) => !item.adminOnly || isAdmin,
+    );
+
     return (
         <SidebarGroup className="mt-auto">
             <SidebarGroupContent>
                 <SidebarMenu className="space-y-1.5">
-                    {items.map((item) => (
+                    {visibleItems.map((item) => (
                         <SidebarMenuItem key={item.title}>
                             <SidebarMenuButton
                                 render={
