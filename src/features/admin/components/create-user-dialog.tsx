@@ -21,7 +21,7 @@ const ROLES = [
     { value: "staff", label: "Staff" },
     { value: "manager", label: "Manager" },
     { value: "admin", label: "Admin" },
-] as const;
+];
 
 const createUserSchema = z.object({
     name: z.string().min(1, "Name is required"),
