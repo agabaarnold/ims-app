@@ -45,7 +45,7 @@ export default function UsersTable() {
     const invalidate = () =>
         queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
 
-    const { data, isLoading } = useQuery({
+    const { data, isLoading, isError } = useQuery({
         queryKey: ["admin", "users", page, debouncedSearch],
         queryFn: async () => {
             const result = await adminClient.listUsers({
@@ -136,6 +136,15 @@ export default function UsersTable() {
                                 colSpan={5}
                             >
                                 Loading users…
+                            </TableCell>
+                        </TableRow>
+                    ) : isError ? (
+                        <TableRow>
+                            <TableCell
+                                className="py-8 text-center text-destructive"
+                                colSpan={5}
+                            >
+                                Failed to load users.
                             </TableCell>
                         </TableRow>
                     ) : data?.users.length ? (
