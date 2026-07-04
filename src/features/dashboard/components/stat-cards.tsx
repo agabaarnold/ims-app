@@ -61,7 +61,7 @@ export default function StatCards({
             description: "Below reorder point",
             alert: totalLowStockItems > 0,
         },
-    ] as const;
+    ];
 
     return (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
