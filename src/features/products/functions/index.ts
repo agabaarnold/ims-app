@@ -237,18 +237,39 @@ export const updateProduct = createServerFn({ method: "POST" })
 export const archiveProduct = createServerFn({ method: "POST" })
     .middleware([authMiddleware, archiveProductMiddleware])
     .validator(archiveProductSchema)
-    .handler(async ({ data }) => {
-        const archivedProduct = await prisma.product.update({
-            where: { id: data.id },
-            data: { isActive: false },
-        });
+    .handler(
+        async ({ context: { session }, data }) =>
+            await prisma.$transaction(async (tx) => {
+                const before = await tx.product.findUnique({
+                    where: { id: data.id },
+                });
+                if (!before) {
+                    throw new Error(`Product with id ${data.id} not found`);
+                }
 
-        return {
-            ...archivedProduct,
-            costPrice: archivedProduct.costPrice.toNumber(),
-            sellingPrice: archivedProduct.sellingPrice.toNumber(),
-        };
-    });
+                const archivedProduct = await tx.product.update({
+                    where: { id: data.id },
+                    data: { isActive: false },
+                });
+
+                await tx.auditLog.create({
+                    data: {
+                        action: "UPDATE",
+                        userId: session.user.id,
+                        entityId: archivedProduct.id,
+                        entityType: "PRODUCT",
+                        before: { isActive: before.isActive },
+                        after: { isActive: archivedProduct.isActive },
+                    },
+                });
+
+                return {
+                    ...archivedProduct,
+                    costPrice: archivedProduct.costPrice.toNumber(),
+                    sellingPrice: archivedProduct.sellingPrice.toNumber(),
+                };
+            })
+    );
 
 export const getProductMovements = createServerFn({ method: "GET" })
     .middleware([authMiddleware])
