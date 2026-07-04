@@ -2,13 +2,18 @@ import { createServerFn } from "@tanstack/react-start";
 import { prisma } from "#/lib/db";
 import { authMiddleware } from "#/middleware";
 
+const OPEN_ORDER_STATUSES = ["PENDING", "CONFIRMED", "PICKING", "SHIPPED"] as const;
+const RECENT_ORDERS_LIMIT = 5;
+const LOW_STOCK_SLICE_LIMIT = 10;
+const REVENUE_DAYS = 30;
+
 export const getDashboardData = createServerFn({ method: "GET" })
     .middleware([authMiddleware])
     .handler(async () => {
         const now = new Date();
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         const thirtyDaysAgo = new Date(now);
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 29);
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - (REVENUE_DAYS - 1));
         thirtyDaysAgo.setHours(0, 0, 0, 0);
 
         const [
@@ -24,7 +29,7 @@ export const getDashboardData = createServerFn({ method: "GET" })
             prisma.order.count({
                 where: {
                     status: {
-                        in: ["PENDING", "CONFIRMED", "PICKING", "SHIPPED"],
+                        in: [...OPEN_ORDER_STATUSES],
                     },
                 },
             }),
@@ -53,7 +58,7 @@ export const getDashboardData = createServerFn({ method: "GET" })
             }),
 
             prisma.order.findMany({
-                take: 5,
+                take: RECENT_ORDERS_LIMIT,
                 orderBy: { createdAt: "desc" },
                 select: {
                     id: true,
@@ -89,12 +94,12 @@ export const getDashboardData = createServerFn({ method: "GET" })
             .filter((p) => p.totalQuantity < p.reorderPoint)
             .sort((a, b) => a.totalQuantity - b.totalQuantity); // most critical first
 
-        const lowStockProducts = allLowStockProducts.slice(0, 10);
+        const lowStockProducts = allLowStockProducts.slice(0, LOW_STOCK_SLICE_LIMIT);
 
         // Daily revenue for last 30 days — initialise every day to 0 so the
         // chart always shows a full 30-day window with no gaps
         const revenueByDate = new Map<string, number>();
-        for (let offset = 0; offset < 30; offset++) {
+        for (let offset = 0; offset < REVENUE_DAYS; offset++) {
             const d = new Date(thirtyDaysAgo);
             d.setDate(d.getDate() + offset);
             revenueByDate.set(d.toISOString().slice(0, 10), 0);
