@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import type { Prisma, Product } from "#/generated/prisma/client";
 import { prisma } from "#/lib/db";
 import { generateSku } from "#/lib/helpers";
 import {
@@ -16,6 +17,49 @@ import {
     getProductsSchema,
     updateProductSchema,
 } from "../schema";
+
+/**
+ * Wraps the common findUnique → check → update → audit-log flow for product
+ * mutations. Returns the updated product so callers can convert Decimal fields.
+ */
+async function withProductAudit(
+    tx: Prisma.TransactionClient,
+    id: string,
+    userId: string,
+    updateData: Prisma.ProductUncheckedUpdateInput,
+    buildSnapshots: (
+        before: Product,
+        product: Product,
+    ) => { before: Prisma.InputJsonValue; after: Prisma.InputJsonValue },
+): Promise<Product> {
+    const before = await tx.product.findUnique({ where: { id } });
+    if (!before) {
+        throw new Error(`Product with id ${id} not found`);
+    }
+
+    const product = await tx.product.update({
+        where: { id },
+        data: updateData,
+    });
+
+    const { before: beforeSnapshot, after: afterSnapshot } = buildSnapshots(
+        before,
+        product
+    );
+
+    await tx.auditLog.create({
+        data: {
+            action: "UPDATE",
+            userId,
+            entityId: product.id,
+            entityType: "PRODUCT",
+            before: beforeSnapshot,
+            after: afterSnapshot,
+        },
+    });
+
+    return product;
+}
 
 export const getProducts = createServerFn({ method: "GET" })
     .middleware([authMiddleware])
@@ -167,16 +211,11 @@ export const updateProduct = createServerFn({ method: "POST" })
         const user = session.user;
 
         return await prisma.$transaction(async (tx) => {
-            const before = await tx.product.findUnique({
-                where: { id: data.id },
-            });
-            if (!before) {
-                throw new Error(`Product with id ${data.id} not found`);
-            }
-
-            const product = await tx.product.update({
-                where: { id: data.id },
-                data: {
+            const product = await withProductAudit(
+                tx,
+                data.id,
+                user.id,
+                {
                     name: data.name,
                     description: data.description,
                     categoryId: data.categoryId,
@@ -189,14 +228,7 @@ export const updateProduct = createServerFn({ method: "POST" })
                     imageUrl: data.imageUrl,
                     isActive: data.isActive,
                 },
-            });
-
-            await tx.auditLog.create({
-                data: {
-                    action: "UPDATE",
-                    userId: user.id,
-                    entityId: product.id,
-                    entityType: "PRODUCT",
+                (before, after) => ({
                     before: {
                         name: before.name,
                         description: before.description,
@@ -211,20 +243,20 @@ export const updateProduct = createServerFn({ method: "POST" })
                         isActive: before.isActive,
                     },
                     after: {
-                        name: product.name,
-                        description: product.description,
-                        categoryId: product.categoryId,
-                        supplierId: product.supplierId,
-                        unit: product.unit,
-                        costPrice: product.costPrice.toNumber(),
-                        sellingPrice: product.sellingPrice.toNumber(),
-                        reorderPoint: product.reorderPoint,
-                        reorderQty: product.reorderQty,
-                        imageUrl: product.imageUrl,
-                        isActive: product.isActive,
+                        name: after.name,
+                        description: after.description,
+                        categoryId: after.categoryId,
+                        supplierId: after.supplierId,
+                        unit: after.unit,
+                        costPrice: after.costPrice.toNumber(),
+                        sellingPrice: after.sellingPrice.toNumber(),
+                        reorderPoint: after.reorderPoint,
+                        reorderQty: after.reorderQty,
+                        imageUrl: after.imageUrl,
+                        isActive: after.isActive,
                     },
-                },
-            });
+                })
+            );
 
             return {
                 ...product,
@@ -237,18 +269,27 @@ export const updateProduct = createServerFn({ method: "POST" })
 export const archiveProduct = createServerFn({ method: "POST" })
     .middleware([authMiddleware, archiveProductMiddleware])
     .validator(archiveProductSchema)
-    .handler(async ({ data }) => {
-        const archivedProduct = await prisma.product.update({
-            where: { id: data.id },
-            data: { isActive: false },
-        });
+    .handler(
+        async ({ context: { session }, data }) =>
+            await prisma.$transaction(async (tx) => {
+                const archivedProduct = await withProductAudit(
+                    tx,
+                    data.id,
+                    session.user.id,
+                    { isActive: false },
+                    (before, product) => ({
+                        before: { isActive: before.isActive },
+                        after: { isActive: product.isActive },
+                    })
+                );
 
-        return {
-            ...archivedProduct,
-            costPrice: archivedProduct.costPrice.toNumber(),
-            sellingPrice: archivedProduct.sellingPrice.toNumber(),
-        };
-    });
+                return {
+                    ...archivedProduct,
+                    costPrice: archivedProduct.costPrice.toNumber(),
+                    sellingPrice: archivedProduct.sellingPrice.toNumber(),
+                };
+            })
+    );
 
 export const getProductMovements = createServerFn({ method: "GET" })
     .middleware([authMiddleware])

@@ -8,6 +8,7 @@ import { defineConfig } from "vite";
 
 const config = defineConfig({
     resolve: { tsconfigPaths: true },
+    ssr: { external: ["@prisma/client"] },
     plugins: [
         devtools(),
         tailwindcss(),

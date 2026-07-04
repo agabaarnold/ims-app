@@ -1,4 +1,4 @@
-import { Decimal } from "@prisma/client/runtime/client";
+import { Decimal } from "@prisma/client/runtime/index-browser";
 
 type DecimalValue = Decimal | number | string;
 
