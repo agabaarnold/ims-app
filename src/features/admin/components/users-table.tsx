@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/style/noNestedTernary: <explanation> */
+/** biome-ignore-all lint/style/noNestedTernary: For simplicity */
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { UserWithRole } from "better-auth/plugins";
 import { useState } from "react";
@@ -21,6 +21,7 @@ import {
     TableHeader,
     TableRow,
 } from "#/components/ui/table";
+import { useDebounce } from "#/hooks/use-debounce";
 import { authClient } from "#/lib/auth-client";
 import BanUserDialog from "./ban-user-dialog";
 import CreateUserDialog from "./create-user-dialog";
@@ -39,17 +40,19 @@ export default function UsersTable() {
     const [banTarget, setBanTarget] = useState<UserWithRole | undefined>();
     const [createOpen, setCreateOpen] = useState(false);
 
+    const debouncedSearch = useDebounce(search, 500);
+
     const invalidate = () =>
         queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
 
     const { data, isLoading } = useQuery({
-        queryKey: ["admin", "users", page, search],
+        queryKey: ["admin", "users", page, debouncedSearch],
         queryFn: async () => {
             const result = await adminClient.listUsers({
                 query: {
                     limit: PAGE_SIZE,
                     offset: (page - 1) * PAGE_SIZE,
-                    searchValue: search || undefined,
+                    searchValue: debouncedSearch || undefined,
                     searchField: "name",
                     searchOperator: "contains",
                     sortBy: "createdAt",
@@ -63,12 +66,12 @@ export default function UsersTable() {
         },
     });
 
-    const handleSetRole = async (
-        userId: string,
-        role: UserWithRole["role"]
-    ) => {
+    const handleSetRole = async (userId: string, role: string) => {
         try {
-            const { error } = await adminClient.setRole({ userId, role });
+            const { error } = await adminClient.setRole({
+                userId,
+                role: role as "admin" | "staff" | "superAdmin" | "manager",
+            });
             if (error) {
                 throw new Error(error.message);
             }
@@ -129,7 +132,7 @@ export default function UsersTable() {
                     {isLoading ? (
                         <TableRow>
                             <TableCell
-                                className="py-8 text-center text-muted-foreground"
+                                className="shimmer py-8 text-center"
                                 colSpan={5}
                             >
                                 Loading users…
@@ -162,17 +165,26 @@ export default function UsersTable() {
                                         ) : (
                                             <Select
                                                 disabled={isSelf}
-                                                onValueChange={(role) =>
-                                                    handleSetRole(user.id, role)
-                                                }
+                                                onValueChange={(role) => {
+                                                    if (role) {
+                                                        handleSetRole(
+                                                            user.id,
+                                                            role
+                                                        );
+                                                    }
+                                                }}
                                                 value={user.role}
                                             >
                                                 <SelectTrigger className="h-7 w-24 text-xs">
                                                     <SelectValue />
                                                 </SelectTrigger>
+
                                                 <SelectContent>
                                                     <SelectItem value="staff">
                                                         Staff
+                                                    </SelectItem>
+                                                    <SelectItem value="manager">
+                                                        Manager
                                                     </SelectItem>
                                                     <SelectItem value="admin">
                                                         Admin
@@ -181,6 +193,7 @@ export default function UsersTable() {
                                             </Select>
                                         )}
                                     </TableCell>
+
                                     <TableCell>
                                         {user.banned ? (
                                             <Badge variant="destructive">
@@ -198,33 +211,28 @@ export default function UsersTable() {
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex justify-end gap-1">
-                                            {!isSelf && (
-                                                user.banned ? (
-                                                        <Button
-                                                            onClick={() =>
-                                                                handleUnban(
-                                                                    user.id
-                                                                )
-                                                            }
-                                                            size="sm"
-                                                            variant="outline"
-                                                        >
-                                                            Unban
-                                                        </Button>
-                                                    ) : (
-                                                        <Button
-                                                            onClick={() =>
-                                                                setBanTarget(
-                                                                    user
-                                                                )
-                                                            }
-                                                            size="sm"
-                                                            variant="outline"
-                                                        >
-                                                            Ban
-                                                        </Button>
-                                                    )
-                                            )}
+                                            {!isSelf &&
+                                                (user.banned ? (
+                                                    <Button
+                                                        onClick={() =>
+                                                            handleUnban(user.id)
+                                                        }
+                                                        size="sm"
+                                                        variant="outline"
+                                                    >
+                                                        Unban
+                                                    </Button>
+                                                ) : (
+                                                    <Button
+                                                        onClick={() =>
+                                                            setBanTarget(user)
+                                                        }
+                                                        size="sm"
+                                                        variant="outline"
+                                                    >
+                                                        Ban
+                                                    </Button>
+                                                ))}
                                         </div>
                                     </TableCell>
                                 </TableRow>
