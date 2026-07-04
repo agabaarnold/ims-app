@@ -106,6 +106,7 @@ export default function UsersTable() {
         <div className="space-y-4">
             <div className="flex items-center justify-between gap-4">
                 <Input
+                    aria-label="Search users by name"
                     className="max-w-sm"
                     onChange={(e) => {
                         setSearch(e.target.value);
