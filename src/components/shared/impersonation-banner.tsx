@@ -30,7 +30,11 @@ export default function ImpersonationBanner() {
     };
 
     return (
-        <div className="flex items-center justify-between gap-4 bg-amber-500 px-4 py-2 font-medium text-amber-950 text-sm">
+        <div
+            aria-live="polite"
+            className="flex items-center justify-between gap-4 bg-amber-500 px-4 py-2 font-medium text-amber-950 text-sm"
+            role="status"
+        >
             <span>
                 You are viewing as{" "}
                 <strong className="font-semibold">{session?.user.name}</strong>{" "}
