@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import AppHeader from "#/components/shared/app-header";
+import ImpersonationBanner from "#/components/shared/impersonation-banner";
 import AppSidebar from "#/components/sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "#/components/ui/sidebar";
 import { getUserSession } from "#/features/auth/functions";
@@ -26,6 +27,8 @@ function AppLayout() {
 
             <SidebarInset>
                 <AppHeader />
+
+                <ImpersonationBanner />
 
                 <main className="flex-1 px-8 py-4">
                     <Outlet />

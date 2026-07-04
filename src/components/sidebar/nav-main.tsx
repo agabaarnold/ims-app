@@ -1,11 +1,12 @@
 import {
-    IconBasketPlus,
     IconBuildingWarehouse,
     IconCategory,
     IconHome,
     IconNotes,
+    IconPackage,
     IconPackages,
     IconTransfer,
+    IconTruckDelivery,
     IconUserDollar,
     type TablerIcon,
 } from "@tabler/icons-react";
@@ -26,11 +27,12 @@ export interface NavItems {
 
 const items: NavItems[] = [
     { title: "Dashboard", url: "/", icon: IconHome },
-    { title: "Categories", url: "/categories", icon: IconCategory },
     { title: "Products", url: "/products", icon: IconPackages },
-    { title: "Orders", url: "/orders", icon: IconNotes },
+    { title: "Categories", url: "/categories", icon: IconCategory },
+    { title: "Suppliers", url: "/suppliers", icon: IconTruckDelivery },
     { title: "Customers", url: "/customers", icon: IconUserDollar },
-    { title: "Suppliers", url: "/suppliers", icon: IconBasketPlus },
+    { title: "Purchase orders", url: "/purchase-orders", icon: IconPackage },
+    { title: "Orders", url: "/orders", icon: IconNotes },
     { title: "Transfers", url: "/stock-transfers", icon: IconTransfer },
     { title: "Warehouses", url: "/warehouses", icon: IconBuildingWarehouse },
 ];

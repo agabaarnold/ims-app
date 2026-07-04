@@ -30,10 +30,91 @@ const adminClient = authClient.admin;
 
 const PAGE_SIZE = 10;
 
+// Role levels — higher number = more privileged
+const ROLE_LEVEL: Record<string, number> = {
+    staff: 0,
+    manager: 1,
+    admin: 2,
+    superAdmin: 3,
+};
+
+/** Returns true if `actorRole` is allowed to impersonate `targetRole`. */
+function canImpersonate(
+    actorRole: string,
+    targetRole: string | null | undefined,
+    isCurrentlyImpersonating: boolean
+): boolean {
+    if (isCurrentlyImpersonating) {
+        return false; // no chaining
+    }
+
+    if (!targetRole) {
+        return false; // can't impersonate a user with no role
+    }
+
+    const actorLevel = ROLE_LEVEL[actorRole] ?? -1;
+    const targetLevel = ROLE_LEVEL[targetRole] ?? -1;
+    if (actorLevel <= 0) {
+        return false; // staff can't impersonate
+    }
+
+    if (targetRole === "superAdmin") {
+        return false; // no one impersonates superAdmins
+    }
+    if (actorRole === "superAdmin") {
+        return true; // superAdmin can impersonate admin or staff
+    }
+
+    // admin can only impersonate strictly lower roles
+    return targetLevel < actorLevel;
+}
+
+/** Returns true if `actorRole` is allowed to change `targetRole` via the dropdown. */
+function canManageRole(
+    actorRole: string,
+    targetRole: string | null | undefined
+): boolean {
+    if (!targetRole) {
+        return false; // can't manage a user with no role
+    }
+
+    const actorLevel = ROLE_LEVEL[actorRole] ?? -1;
+    const targetLevel = ROLE_LEVEL[targetRole] ?? -1;
+    // Can only manage users with strictly lower privilege level
+    return actorLevel > targetLevel;
+}
+
+/** Returns the roles an actor with `actorRole` is allowed to assign. */
+function assignableRoles(
+    actorRole: string
+): { value: string; label: string }[] {
+    if (actorRole === "superAdmin") {
+        return [
+            { value: "staff", label: "Staff" },
+            { value: "manager", label: "Manager" },
+            { value: "admin", label: "Admin" },
+            { value: "superAdmin", label: "Super admin" },
+        ];
+    }
+
+    if (actorRole === "admin") {
+        // Admin can set staff or manager — they can't promote to admin or higher
+        return [
+            { value: "staff", label: "Staff" },
+            { value: "manager", label: "Manager" },
+        ];
+    }
+
+    return [];
+}
+
 export default function UsersTable() {
     const queryClient = useQueryClient();
-    const { data: session } = authClient.useSession();
-    const currentUserId = session?.user.id;
+    const { data: session, refetch: refetchSession } = authClient.useSession();
+
+    const currentUserId = session?.user.id ?? "";
+    const currentUserRole = session?.user.role ?? "staff";
+    const isCurrentlyImpersonating = !!session?.session?.impersonatedBy;
 
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState("");
@@ -100,6 +181,21 @@ export default function UsersTable() {
         }
     };
 
+    const handleImpersonate = async (userId: string, userName: string) => {
+        try {
+            const { error } = await adminClient.impersonateUser({ userId });
+            if (error) {
+                throw new Error(error.message);
+            }
+            await refetchSession();
+            toast.success(`Now viewing as ${userName}`);
+        } catch (error) {
+            toast.error(
+                error instanceof Error ? error.message : "Failed to impersonate"
+            );
+        }
+    };
+
     const pageCount = data ? Math.ceil(data.total / PAGE_SIZE) : 1;
 
     return (
@@ -151,6 +247,17 @@ export default function UsersTable() {
                     ) : data?.users.length ? (
                         data.users.map((user) => {
                             const isSelf = user.id === currentUserId;
+                            const manageable =
+                                !isSelf &&
+                                canManageRole(currentUserRole, user.role);
+                            const impersonatable = canImpersonate(
+                                currentUserRole,
+                                user.role,
+                                isCurrentlyImpersonating
+                            );
+                            const roleOptions =
+                                assignableRoles(currentUserRole);
+
                             return (
                                 <TableRow key={user.id}>
                                     <TableCell className="font-medium">
@@ -168,13 +275,9 @@ export default function UsersTable() {
                                     <TableCell>{user.email}</TableCell>
 
                                     <TableCell>
-                                        {isSelf ? (
-                                            <Badge variant="outline">
-                                                {user.role}
-                                            </Badge>
-                                        ) : (
+                                        {manageable &&
+                                        roleOptions.length > 0 ? (
                                             <Select
-                                                disabled={isSelf}
                                                 onValueChange={(role) => {
                                                     if (role) {
                                                         handleSetRole(
@@ -185,32 +288,50 @@ export default function UsersTable() {
                                                 }}
                                                 value={user.role}
                                             >
-                                                <SelectTrigger className="h-7 w-24 text-xs">
+                                                <SelectTrigger className="h-7 w-32 text-xs">
                                                     <SelectValue />
                                                 </SelectTrigger>
 
                                                 <SelectContent>
-                                                    <SelectItem value="staff">
-                                                        Staff
-                                                    </SelectItem>
-                                                    <SelectItem value="manager">
-                                                        Manager
-                                                    </SelectItem>
-                                                    <SelectItem value="admin">
-                                                        Admin
-                                                    </SelectItem>
+                                                    {roleOptions.map((r) => (
+                                                        <SelectItem
+                                                            key={r.value}
+                                                            value={r.value}
+                                                        >
+                                                            {r.label}
+                                                        </SelectItem>
+                                                    ))}
                                                 </SelectContent>
                                             </Select>
+                                        ) : (
+                                            <Badge variant="outline">
+                                                {user.role}
+                                            </Badge>
                                         )}
                                     </TableCell>
 
                                     <TableCell>
                                         <StatusBadge user={user} />
                                     </TableCell>
-                                    
+
                                     <TableCell>
                                         <div className="flex justify-end gap-1">
-                                            {!isSelf &&
+                                            {impersonatable && !isSelf && (
+                                                <Button
+                                                    onClick={() =>
+                                                        handleImpersonate(
+                                                            user.id,
+                                                            user.name
+                                                        )
+                                                    }
+                                                    size="sm"
+                                                    variant="outline"
+                                                >
+                                                    Impersonate
+                                                </Button>
+                                            )}
+
+                                            {manageable &&
                                                 (user.banned ? (
                                                     <Button
                                                         onClick={() =>
@@ -300,8 +421,10 @@ function StatusBadge({ user }: { user: UserWithRole }) {
     if (user.banned) {
         return <Badge variant="destructive">Banned</Badge>;
     }
+
     if (user.emailVerified) {
         return <Badge variant="default">Active</Badge>;
     }
+
     return <Badge variant="outline">Unverified</Badge>;
 }

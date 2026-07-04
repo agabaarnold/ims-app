@@ -1,6 +1,7 @@
 import {
     IconCaretUpDown,
     IconLogout2,
+    IconSettings,
     IconUserEdit,
 } from "@tabler/icons-react";
 import { useNavigate, useRouteContext } from "@tanstack/react-router";
@@ -70,6 +71,14 @@ function NavUser() {
                                     onClick={() => navigate({ to: "/profile" })}
                                 >
                                     <IconUserEdit /> Profile
+                                </DropdownMenuItem>
+                            </DropdownMenuGroup>
+
+                            <DropdownMenuGroup>
+                                <DropdownMenuItem
+                                    onClick={() => navigate({ to: "/settings" })}
+                                >
+                                    <IconSettings /> Settings
                                 </DropdownMenuItem>
                             </DropdownMenuGroup>
 

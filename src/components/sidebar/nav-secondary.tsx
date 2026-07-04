@@ -1,4 +1,4 @@
-import { IconSettings, IconUsers } from "@tabler/icons-react";
+import { IconSettings, IconUser, IconUsers } from "@tabler/icons-react";
 import { Link, useRouteContext } from "@tanstack/react-router";
 import {
     SidebarGroup,
@@ -15,6 +15,7 @@ interface NavItemsSecondary extends NavItems {
 
 const items: NavItemsSecondary[] = [
     { title: "Users", url: "/admin/users", icon: IconUsers, adminOnly: true },
+    { title: "Profile", url: "/profile", icon: IconUser, adminOnly: false },
     {
         title: "Settings",
         url: "/settings",
@@ -28,9 +29,7 @@ function NavSecondary() {
     const isAdmin =
         session.user.role === "admin" || session.user.role === "superAdmin";
 
-    const visibleItems = items.filter(
-        (item) => !item.adminOnly || isAdmin,
-    );
+    const visibleItems = items.filter((item) => !item.adminOnly || isAdmin);
 
     return (
         <SidebarGroup className="mt-auto">
