@@ -11,6 +11,7 @@ import {
     DialogTitle,
 } from "#/components/ui/dialog";
 import { FieldGroup } from "#/components/ui/field";
+import { passwordSchema } from "#/features/auth/schema";
 import { useAppForm } from "#/hooks/use-form";
 import { authClient } from "#/lib/auth-client";
 
@@ -25,7 +26,7 @@ const ROLES = [
 const createUserSchema = z.object({
     name: z.string().min(1, "Name is required"),
     email: z.email("Enter a valid email address"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
+    password: passwordSchema,
     role: z.enum(["staff", "manager", "admin"]),
 });
 type CreateUserInput = z.infer<typeof createUserSchema>;
@@ -155,10 +156,9 @@ function CreateUserForm({
 
                 <form.AppField name="password">
                     {(field) => (
-                        <field.FormInput
+                        <field.FormPassword
                             label="Initial password"
                             placeholder="Min. 8 characters"
-                            type="password"
                         />
                     )}
                 </form.AppField>
