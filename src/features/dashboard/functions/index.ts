@@ -119,7 +119,7 @@ export const getDashboardData = createServerFn({ method: "GET" })
                 openOrdersCount,
                 monthlyRevenue:
                     monthlyRevenueAgg._sum.totalAmount?.toNumber() ?? 0,
-                totalLowStockItems: lowStockProducts.length,
+                totalLowStockItems: allLowStockProducts.length,
             },
             lowStockProducts,
             recentOrders: recentOrders.map((o) => ({
