@@ -33,8 +33,9 @@ const PAGE_SIZE = 10;
 // Role levels — higher number = more privileged
 const ROLE_LEVEL: Record<string, number> = {
     staff: 0,
-    admin: 1,
-    superAdmin: 2,
+    manager: 1,
+    admin: 2,
+    superAdmin: 3,
 };
 
 /** Returns true if `actorRole` is allowed to impersonate `targetRole`. */
@@ -90,14 +91,18 @@ function assignableRoles(
     if (actorRole === "superAdmin") {
         return [
             { value: "staff", label: "Staff" },
+            { value: "manager", label: "Manager" },
             { value: "admin", label: "Admin" },
             { value: "superAdmin", label: "Super admin" },
         ];
     }
 
     if (actorRole === "admin") {
-        // Admin can only set staff — they can't promote to admin or higher
-        return [{ value: "staff", label: "Staff" }];
+        // Admin can set staff or manager — they can't promote to admin or higher
+        return [
+            { value: "staff", label: "Staff" },
+            { value: "manager", label: "Manager" },
+        ];
     }
 
     return [];
