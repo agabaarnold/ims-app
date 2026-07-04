@@ -78,7 +78,7 @@ export const createCustomer = createServerFn({ method: "POST" })
                         userId: session.user.id,
                         entityId: customer.id,
                         entityType: "CUSTOMER",
-                        aafter: {
+                        after: {
                             name: customer.name,
                             email: customer.email,
                             phone: customer.phone,
