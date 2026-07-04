@@ -205,20 +205,9 @@ export default function UsersTable() {
                                     </TableCell>
 
                                     <TableCell>
-                                        {user.banned ? (
-                                            <Badge variant="destructive">
-                                                Banned
-                                            </Badge>
-                                        ) : user.emailVerified ? (
-                                            <Badge variant="default">
-                                                Active
-                                            </Badge>
-                                        ) : (
-                                            <Badge variant="outline">
-                                                Unverified
-                                            </Badge>
-                                        )}
+                                        <StatusBadge user={user} />
                                     </TableCell>
+                                    
                                     <TableCell>
                                         <div className="flex justify-end gap-1">
                                             {!isSelf &&
@@ -305,4 +294,14 @@ export default function UsersTable() {
             />
         </div>
     );
+}
+
+function StatusBadge({ user }: { user: UserWithRole }) {
+    if (user.banned) {
+        return <Badge variant="destructive">Banned</Badge>;
+    }
+    if (user.emailVerified) {
+        return <Badge variant="default">Active</Badge>;
+    }
+    return <Badge variant="outline">Unverified</Badge>;
 }
