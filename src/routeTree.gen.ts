@@ -37,6 +37,7 @@ import { Route as AppOrdersOrderIdRouteImport } from './routes/_app/orders/$orde
 import { Route as AppStockTransfersTransferIdIndexRouteImport } from './routes/_app/stock-transfers/$transferId/index'
 import { Route as AppPurchaseOrdersPoIdIndexRouteImport } from './routes/_app/purchase-orders/$poId/index'
 import { Route as AppProductsProductIdIndexRouteImport } from './routes/_app/products/$productId/index'
+import { Route as AppAdminUsersIndexRouteImport } from './routes/_app/admin/users/index'
 import { Route as AppProductsProductIdEditRouteImport } from './routes/_app/products/$productId/edit'
 
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
@@ -180,6 +181,11 @@ const AppProductsProductIdIndexRoute =
     path: '/products/$productId/',
     getParentRoute: () => AppRouteRoute,
   } as any)
+const AppAdminUsersIndexRoute = AppAdminUsersIndexRouteImport.update({
+  id: '/admin/users/',
+  path: '/admin/users/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppProductsProductIdEditRoute =
   AppProductsProductIdEditRouteImport.update({
     id: '/products/$productId/edit',
@@ -212,6 +218,7 @@ export interface FileRoutesByFullPath {
   '/suppliers/': typeof AppSuppliersIndexRoute
   '/warehouses/': typeof AppWarehousesIndexRoute
   '/products/$productId/edit': typeof AppProductsProductIdEditRoute
+  '/admin/users/': typeof AppAdminUsersIndexRoute
   '/products/$productId/': typeof AppProductsProductIdIndexRoute
   '/purchase-orders/$poId/': typeof AppPurchaseOrdersPoIdIndexRoute
   '/stock-transfers/$transferId/': typeof AppStockTransfersTransferIdIndexRoute
@@ -241,6 +248,7 @@ export interface FileRoutesByTo {
   '/suppliers': typeof AppSuppliersIndexRoute
   '/warehouses': typeof AppWarehousesIndexRoute
   '/products/$productId/edit': typeof AppProductsProductIdEditRoute
+  '/admin/users': typeof AppAdminUsersIndexRoute
   '/products/$productId': typeof AppProductsProductIdIndexRoute
   '/purchase-orders/$poId': typeof AppPurchaseOrdersPoIdIndexRoute
   '/stock-transfers/$transferId': typeof AppStockTransfersTransferIdIndexRoute
@@ -273,6 +281,7 @@ export interface FileRoutesById {
   '/_app/suppliers/': typeof AppSuppliersIndexRoute
   '/_app/warehouses/': typeof AppWarehousesIndexRoute
   '/_app/products/$productId/edit': typeof AppProductsProductIdEditRoute
+  '/_app/admin/users/': typeof AppAdminUsersIndexRoute
   '/_app/products/$productId/': typeof AppProductsProductIdIndexRoute
   '/_app/purchase-orders/$poId/': typeof AppPurchaseOrdersPoIdIndexRoute
   '/_app/stock-transfers/$transferId/': typeof AppStockTransfersTransferIdIndexRoute
@@ -304,6 +313,7 @@ export interface FileRouteTypes {
     | '/suppliers/'
     | '/warehouses/'
     | '/products/$productId/edit'
+    | '/admin/users/'
     | '/products/$productId/'
     | '/purchase-orders/$poId/'
     | '/stock-transfers/$transferId/'
@@ -333,6 +343,7 @@ export interface FileRouteTypes {
     | '/suppliers'
     | '/warehouses'
     | '/products/$productId/edit'
+    | '/admin/users'
     | '/products/$productId'
     | '/purchase-orders/$poId'
     | '/stock-transfers/$transferId'
@@ -364,6 +375,7 @@ export interface FileRouteTypes {
     | '/_app/suppliers/'
     | '/_app/warehouses/'
     | '/_app/products/$productId/edit'
+    | '/_app/admin/users/'
     | '/_app/products/$productId/'
     | '/_app/purchase-orders/$poId/'
     | '/_app/stock-transfers/$transferId/'
@@ -575,6 +587,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProductsProductIdIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/admin/users/': {
+      id: '/_app/admin/users/'
+      path: '/admin/users'
+      fullPath: '/admin/users/'
+      preLoaderRoute: typeof AppAdminUsersIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/_app/products/$productId/edit': {
       id: '/_app/products/$productId/edit'
       path: '/products/$productId/edit'
@@ -603,6 +622,7 @@ interface AppRouteRouteChildren {
   AppSuppliersIndexRoute: typeof AppSuppliersIndexRoute
   AppWarehousesIndexRoute: typeof AppWarehousesIndexRoute
   AppProductsProductIdEditRoute: typeof AppProductsProductIdEditRoute
+  AppAdminUsersIndexRoute: typeof AppAdminUsersIndexRoute
   AppProductsProductIdIndexRoute: typeof AppProductsProductIdIndexRoute
   AppPurchaseOrdersPoIdIndexRoute: typeof AppPurchaseOrdersPoIdIndexRoute
   AppStockTransfersTransferIdIndexRoute: typeof AppStockTransfersTransferIdIndexRoute
@@ -626,6 +646,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppSuppliersIndexRoute: AppSuppliersIndexRoute,
   AppWarehousesIndexRoute: AppWarehousesIndexRoute,
   AppProductsProductIdEditRoute: AppProductsProductIdEditRoute,
+  AppAdminUsersIndexRoute: AppAdminUsersIndexRoute,
   AppProductsProductIdIndexRoute: AppProductsProductIdIndexRoute,
   AppPurchaseOrdersPoIdIndexRoute: AppPurchaseOrdersPoIdIndexRoute,
   AppStockTransfersTransferIdIndexRoute: AppStockTransfersTransferIdIndexRoute,
