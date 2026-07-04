@@ -94,9 +94,9 @@ export const getDashboardData = createServerFn({ method: "GET" })
         // Daily revenue for last 30 days — initialise every day to 0 so the
         // chart always shows a full 30-day window with no gaps
         const revenueByDate = new Map<string, number>();
-        for (let i = 29; i >= 0; i--) {
-            const d = new Date();
-            d.setDate(d.getDate() - i);
+        for (const offset of Array.from({ length: 30 }, (_, idx) => 29 - idx)) {
+            const d = new Date(now);
+            d.setDate(d.getDate() - offset);
             revenueByDate.set(d.toISOString().slice(0, 10), 0);
         }
         for (const order of deliveredOrders) {
