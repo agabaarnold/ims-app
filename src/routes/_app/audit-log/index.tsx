@@ -59,7 +59,7 @@ function AuditLogPage() {
                 <h1 className="font-semibold text-2xl tracking-tight md:text-3xl">
                     Audit log
                 </h1>
-                
+
                 <p className="mt-1 text-muted-foreground text-sm">
                     A complete history of every create, update, delete, and
                     workflow action across the system.
@@ -72,12 +72,24 @@ function AuditLogPage() {
                 logs={data.logs}
                 onActionChange={(action) =>
                     navigate({
-                        search: (prev) => ({ ...prev, action, page: 1 }),
+                        search: (prev) => ({
+                            ...prev,
+                            action: action as z.infer<
+                                typeof searchSchema
+                            >["action"],
+                            page: 1,
+                        }),
                     })
                 }
                 onEntityTypeChange={(entityType) =>
                     navigate({
-                        search: (prev) => ({ ...prev, entityType, page: 1 }),
+                        search: (prev) => ({
+                            ...prev,
+                            entityType: entityType as z.infer<
+                                typeof searchSchema
+                            >["entityType"],
+                            page: 1,
+                        }),
                     })
                 }
                 onPageChange={(page) =>
