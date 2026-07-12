@@ -1,4 +1,4 @@
-import { IconSettings, IconUser, IconUsers } from "@tabler/icons-react";
+import { IconHistory, IconSettings, IconUser, IconUsers } from "@tabler/icons-react";
 import { Link, useRouteContext } from "@tanstack/react-router";
 import {
     SidebarGroup,
@@ -15,6 +15,12 @@ interface NavItemsSecondary extends NavItems {
 
 const items: NavItemsSecondary[] = [
     { title: "Users", url: "/admin/users", icon: IconUsers, adminOnly: true },
+    {
+        title: "Audit log",
+        url: "/audit-log",
+        icon: IconHistory,
+        adminOnly: true,
+    },
     { title: "Profile", url: "/profile", icon: IconUser, adminOnly: false },
     {
         title: "Settings",
