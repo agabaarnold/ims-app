@@ -99,7 +99,9 @@ export default function AuditLogTable({
 
                 <Select
                     onValueChange={(value) =>
-                        onActionChange(value === "ALL" ? undefined : value)
+                        onActionChange(
+                            value === "ALL" ? undefined : value ?? undefined
+                        )
                     }
                     value={action ?? "ALL"}
                 >
@@ -121,7 +123,9 @@ export default function AuditLogTable({
 
                 <Select
                     onValueChange={(value) =>
-                        onEntityTypeChange(value === "ALL" ? undefined : value)
+                        onEntityTypeChange(
+                            value === "ALL" ? undefined : value ?? undefined
+                        )
                     }
                     value={entityType ?? "ALL"}
                 >
