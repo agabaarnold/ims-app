@@ -28,6 +28,7 @@ import { Route as AppProductsIndexRouteImport } from './routes/_app/products/ind
 import { Route as AppOrdersIndexRouteImport } from './routes/_app/orders/index'
 import { Route as AppCustomersIndexRouteImport } from './routes/_app/customers/index'
 import { Route as AppCategoriesIndexRouteImport } from './routes/_app/categories/index'
+import { Route as AppAuditLogIndexRouteImport } from './routes/_app/audit-log/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AppStockTransfersNewRouteImport } from './routes/_app/stock-transfers/new'
 import { Route as AppPurchaseOrdersNewRouteImport } from './routes/_app/purchase-orders/new'
@@ -133,6 +134,11 @@ const AppCategoriesIndexRoute = AppCategoriesIndexRouteImport.update({
   path: '/categories/',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppAuditLogIndexRoute = AppAuditLogIndexRouteImport.update({
+  id: '/audit-log/',
+  path: '/audit-log/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -207,6 +213,7 @@ export interface FileRoutesByFullPath {
   '/purchase-orders/new': typeof AppPurchaseOrdersNewRoute
   '/stock-transfers/new': typeof AppStockTransfersNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/audit-log/': typeof AppAuditLogIndexRoute
   '/categories/': typeof AppCategoriesIndexRoute
   '/customers/': typeof AppCustomersIndexRoute
   '/orders/': typeof AppOrdersIndexRoute
@@ -237,6 +244,7 @@ export interface FileRoutesByTo {
   '/purchase-orders/new': typeof AppPurchaseOrdersNewRoute
   '/stock-transfers/new': typeof AppStockTransfersNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/audit-log': typeof AppAuditLogIndexRoute
   '/categories': typeof AppCategoriesIndexRoute
   '/customers': typeof AppCustomersIndexRoute
   '/orders': typeof AppOrdersIndexRoute
@@ -270,6 +278,7 @@ export interface FileRoutesById {
   '/_app/purchase-orders/new': typeof AppPurchaseOrdersNewRoute
   '/_app/stock-transfers/new': typeof AppStockTransfersNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/_app/audit-log/': typeof AppAuditLogIndexRoute
   '/_app/categories/': typeof AppCategoriesIndexRoute
   '/_app/customers/': typeof AppCustomersIndexRoute
   '/_app/orders/': typeof AppOrdersIndexRoute
@@ -302,6 +311,7 @@ export interface FileRouteTypes {
     | '/purchase-orders/new'
     | '/stock-transfers/new'
     | '/api/auth/$'
+    | '/audit-log/'
     | '/categories/'
     | '/customers/'
     | '/orders/'
@@ -332,6 +342,7 @@ export interface FileRouteTypes {
     | '/purchase-orders/new'
     | '/stock-transfers/new'
     | '/api/auth/$'
+    | '/audit-log'
     | '/categories'
     | '/customers'
     | '/orders'
@@ -364,6 +375,7 @@ export interface FileRouteTypes {
     | '/_app/purchase-orders/new'
     | '/_app/stock-transfers/new'
     | '/api/auth/$'
+    | '/_app/audit-log/'
     | '/_app/categories/'
     | '/_app/customers/'
     | '/_app/orders/'
@@ -524,6 +536,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCategoriesIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/audit-log/': {
+      id: '/_app/audit-log/'
+      path: '/audit-log'
+      fullPath: '/audit-log/'
+      preLoaderRoute: typeof AppAuditLogIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -611,6 +630,7 @@ interface AppRouteRouteChildren {
   AppProductsNewRoute: typeof AppProductsNewRoute
   AppPurchaseOrdersNewRoute: typeof AppPurchaseOrdersNewRoute
   AppStockTransfersNewRoute: typeof AppStockTransfersNewRoute
+  AppAuditLogIndexRoute: typeof AppAuditLogIndexRoute
   AppCategoriesIndexRoute: typeof AppCategoriesIndexRoute
   AppCustomersIndexRoute: typeof AppCustomersIndexRoute
   AppOrdersIndexRoute: typeof AppOrdersIndexRoute
@@ -635,6 +655,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppProductsNewRoute: AppProductsNewRoute,
   AppPurchaseOrdersNewRoute: AppPurchaseOrdersNewRoute,
   AppStockTransfersNewRoute: AppStockTransfersNewRoute,
+  AppAuditLogIndexRoute: AppAuditLogIndexRoute,
   AppCategoriesIndexRoute: AppCategoriesIndexRoute,
   AppCustomersIndexRoute: AppCustomersIndexRoute,
   AppOrdersIndexRoute: AppOrdersIndexRoute,
