@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Badge } from "#/components/ui/badge";
 import { Button } from "#/components/ui/button";
 import { Input } from "#/components/ui/input";
@@ -73,15 +74,27 @@ export default function AuditLogTable({
     pageCount,
     onPageChange,
 }: AuditLogTableProps) {
+    const [searchInput, setSearchInput] = useState(search);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (searchInput !== search) {
+                onSearchChange(searchInput);
+            }
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [searchInput, search, onSearchChange]);
+
     return (
         <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-3">
                 <Input
                     aria-label="Search by user or entity id"
                     className="max-w-sm"
-                    onChange={(e) => onSearchChange(e.target.value)}
+                    onChange={(e) => setSearchInput(e.target.value)}
                     placeholder="Search by user or entity id…"
-                    value={search}
+                    value={searchInput}
                 />
 
                 <Select
