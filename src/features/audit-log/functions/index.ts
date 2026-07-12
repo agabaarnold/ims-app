@@ -3,14 +3,12 @@ import { prisma } from "#/lib/db";
 import { authMiddleware } from "#/middleware";
 import { getAuditLogsSchema } from "../schema";
 
-// TODO: Only superAdmin may view the global audit log
-
 export const getAuditLogs = createServerFn({ method: "GET" })
     .middleware([authMiddleware])
     .validator(getAuditLogsSchema)
     .handler(async ({ context: { session }, data }) => {
         const role = session.user.role;
-        if (role !== "admin" && role !== "superAdmin") {
+        if (role !== "superAdmin") {
             throw new Error("You do not have permission to view the audit log");
         }
 
@@ -27,6 +25,14 @@ export const getAuditLogs = createServerFn({ method: "GET" })
                               {
                                   user: {
                                       name: {
+                                          contains: search,
+                                          mode: "insensitive" as const,
+                                      },
+                                  },
+                              },
+                              {
+                                  user: {
+                                      email: {
                                           contains: search,
                                           mode: "insensitive" as const,
                                       },
